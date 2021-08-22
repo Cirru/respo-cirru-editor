@@ -1,0 +1,29 @@
+{
+  "name": "respo-cirru-editor",
+  "version": "0.3.1",
+  "description": "Stack Workflow",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "clj -A:release",
+    "m2": "clj -A:release install",
+    "watch": "shadow-cljs watch client",
+    "serve": "http-server dist -s",
+    "build-cdn": "shadow-cljs clj-run build.main/build-cdn",
+    "build": "shadow-cljs clj-run build.main/build",
+    "up": "yarn build-cdn && tiye-up",
+    "page": "shadow-cljs clj-run build.main/page",
+    "ln": "cd target && rm -f entry && ln -s ../entry"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Cirru/respo-cirru-editor.git"
+  },
+  "author": "jiyinyiyong",
+  "license": "MIT",
+  "devDependencies": {
+    "shadow-cljs": "^2.11.18"
+  },
+  "dependencies": {
+    "shortid": "^2.2.16"
+  }
+}
