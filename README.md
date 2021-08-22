@@ -1,45 +1,43 @@
 
-Respo Cirru Editor
+Respo Cirru Editor, calcit-js version
 ----
 
-Reimplement Cirru Editor in Respo.
+Cirru Editor in Calcit-js Respo. Previous [implemented in ClojureScript](https://github.com/Cirru/respo-cirru-editor.calcit).
 
-Demo http://repo.cirru.org/respo-cirru-editor/
+Demo http://repo.cirru.org/respo-cirru-editor.calcit/
 
 Support several basic shortcuts from [Clacit Editor](https://github.com/Cirru/calcit-editor/wiki/Keyboard-Shortcuts).
 
 ### Usage
 
-[![Clojars Project](https://img.shields.io/clojars/v/cirru/editor.svg)](https://clojars.org/cirru/editor)
-
-```clojure
-[cirru/editor "0.3.1"]
-```
-
 Import `comp-editor` like this:
 
-```clojure
-[cirru-editor.comp.editor :refer [comp-editor]]
-[cirru-editor.util.dom :refer [focus!]]
+```cirru
+ns app.ns
+  :require
+    cirru-editor.comp.editor :refer $ comp-editor
+    cirru-editor.util.dom :refer $ focus!
 ```
 
 Arguments of `comp-editor`:
 
-```clojure
-(defn on-update! [snapshot dispatch!]
-  (dispatch! :update snapshot))
+```cirru
+defn on-update! (snapshot dispatch!)
+  dispatch! :update snapshot
 
-(defn on-command [snapshot dispatch! e])
+defn on-command (snapshot dispatch! e)
 
-(defn schema {:snaphot {:tree []
-                        :focus []
-                        :clipboard []}})
+defn schema $ {}
+  :snaphot $ {}
+    :tree ([])
+    :focus ([])
+    :clipboard []
 
-; states comes from Respo@4.x states management
-(defn render [states snapshot]
-  (fn [cursor]
-    (div {:style {}}
-      (comp-editor states snapshot on-update! on-command))))
+; "states comes from Respo@4.x states management"
+defn render (states snapshot)
+  div
+    {} (:style ({}))
+    comp-editor states snapshot on-update! on-command
 ```
 
 `focus!` is a side-effect. You have to make sure it's called only editor is changed.
@@ -48,7 +46,7 @@ Take `src/cirru_editor/main.cljs` for example.
 
 ### Develop
 
-https://github.com/mvc-works/calcit-workflow
+https://github.com/calcit-lang/respo-calcit-workflow
 
 ### License
 
