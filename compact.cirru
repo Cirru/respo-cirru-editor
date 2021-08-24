@@ -2,7 +2,7 @@
 {} (:package |cirru-editor)
   :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!)
     :modules $ [] |respo.calcit/ |lilac/ |memof/
-    :version nil
+    :version |0.4.0
   :files $ {}
     |cirru-editor.util.keycode $ {}
       :ns $ quote (ns cirru-editor.util.keycode)
