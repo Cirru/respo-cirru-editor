@@ -2,7 +2,7 @@
 {} (:package |cirru-editor)
   :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!)
     :modules $ [] |respo.calcit/ |lilac/ |memof/
-    :version |0.4.0
+    :version |0.4.1
   :files $ {}
     |cirru-editor.util.keycode $ {}
       :ns $ quote (ns cirru-editor.util.keycode)
@@ -108,9 +108,7 @@
             let
                 exp-size $ count expression
                 cursor $ :cursor states
-                state $ if
-                  nil? $ :data states
-                  , false (:data states)
+                state $ either (:data states) false
               if state
                 div
                   {} (:style style-folded)
@@ -131,42 +129,47 @@
                     :on $ {}
                       :click $ on-click modify! coord focus
                       :keydown $ on-keydown state modify! coord on-command cursor
-                  loop
-                      acc $ []
-                      idx 0
-                      expr expression
-                      prev-kind nil
-                    if (empty? expr) acc $ let
-                        item $ first expr
-                        kind $ if (string? item) :leaf
-                          if
-                            and
-                              <= (count item) 1
-                              string? $ first item
-                            , :leaf $ case-default prev-kind :expr (:expr :expr)
-                              :inline-expr $ if
-                                > (count item) 2
-                                , :expr :inline-expr
-                              :leaf $ if
-                                > (count item) 6
-                                , :expr :inline-expr
-                              nil $ if
-                                > (count item) 6
-                                , :expr :inline-expr
-                        pair $ [] idx
-                          let
-                              child-coord $ conj coord idx
-                              child-focus $ if (coord-contains? focus child-coord) focus nil
-                              child-head? $ zero? idx
-                            if (string? item) (comp-token item modify! child-coord child-focus on-command child-head?)
-                              comp-expression (>> states idx) item modify! child-coord (inc level)
-                                and (not tail?)
-                                  = (dec exp-size) idx
-                                  = prev-kind :leaf
-                                , child-focus on-command child-head? $ or (= kind :inline-expr) (= kind :leaf)
-                        next-acc $ conj acc pair
-                      ; println "\"kinds:" prev-kind kind "\" at " item
-                      recur next-acc (inc idx) (rest expr) kind
+                  apply-args
+                      []
+                      , 0 expression nil
+                    fn (acc idx expr prev-kind)
+                      if (empty? expr) acc $ let
+                          item $ first expr
+                          kind $ if (string? item) :leaf
+                            if
+                              and
+                                <= (count item) 1
+                                string? $ first item
+                              , :leaf $ case-default prev-kind :expr (:expr :expr)
+                                :inline-expr $ if
+                                  and
+                                    <= (count item) 2
+                                    every? item string?
+                                  , :inline-expr :expr
+                                :leaf $ if
+                                  and
+                                    <= (count item) 6
+                                    every? item string?
+                                  , :inline-expr :expr
+                                nil $ if
+                                  and
+                                    <= (count item) 6
+                                    every? item string?
+                                  , :inline-expr :expr
+                          pair $ [] idx
+                            let
+                                child-coord $ conj coord idx
+                                child-focus $ if (coord-contains? focus child-coord) focus nil
+                                child-head? $ zero? idx
+                              if (string? item) (comp-token item modify! child-coord child-focus on-command child-head?)
+                                comp-expression (>> states idx) item modify! child-coord (inc level)
+                                  and (not tail?)
+                                    = (dec exp-size) idx
+                                    = prev-kind :leaf
+                                  , child-focus on-command child-head? $ or (= kind :inline-expr) (= kind :leaf)
+                          next-acc $ conj acc pair
+                        ; println "\"kinds:" prev-kind kind "\" at " item
+                        recur next-acc (inc idx) (rest expr) kind
         |on-click $ quote
           defn on-click (modify! coord focus)
             fn (e dispatch!)
@@ -185,7 +188,7 @@
                       if shift? (modify! :before-token coord dispatch!) (modify! :after-token coord dispatch!)
                   (= code keycode/tab)
                     do (.preventDefault event)
-                      if shift? (modify! :unfold-expression coord dispatch!) (modify! :fold-node coord dispatch! dispatch!)
+                      if shift? (modify! :unfold-expression coord dispatch!) (modify! :fold-node coord dispatch!)
                   (= code keycode/enter)
                     if command?
                       if shift? (modify! :append-expression coord dispatch!) (modify! :prepend-expression coord dispatch!)
@@ -228,7 +231,7 @@
             :cursor |pointer
             :margin-bottom |4px
         |style-inline $ quote
-          def style-inline $ {} (:display |inline-block) (:border-width "|0 0 1px 0") (:padding-left 17) (:padding-right 15) (:padding-bottom 2) (:margin-left 4) (:margin-right 4) (:text-align |center)
+          def style-inline $ {} (:display |inline-block) (:border-width "|0 0 1px 0") (:padding-left 7) (:padding-right 7) (:padding-bottom 2) (:margin-left 8) (:margin-right 4) (:text-align |center)
             :background-color $ hsl 200 80 80 0
         |style-tail $ quote
           def style-tail $ {} (:display |inline-block) (:border-width "|0 0 0 1px")
