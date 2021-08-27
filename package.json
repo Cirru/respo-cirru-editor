@@ -1,9 +1,9 @@
 {
   "name": "respo-cirru-editor",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Stack Workflow",
   "main": "index.js",
-  "scripts": {  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git@github.com:Cirru/respo-cirru-editor.git"
@@ -12,10 +12,10 @@
   "license": "MIT",
   "devDependencies": {
     "bottom-tip": "^0.1.2",
-    "vite": "^2.5.0"
+    "vite": "^2.5.1"
   },
   "dependencies": {
-    "@calcit/procs": "^0.4.19",
+    "@calcit/procs": "^0.4.21",
     "shortid": "^2.2.16"
   }
 }
