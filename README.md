@@ -1,6 +1,4 @@
-
-Respo Cirru Editor, calcit-js version
-----
+## Respo Cirru Editor, calcit-js version
 
 Cirru Editor in Calcit-js Respo. Previous [implemented in ClojureScript](https://github.com/Cirru/respo-cirru-editor.calcit).
 
@@ -42,7 +40,47 @@ defn render (states snapshot)
 
 `focus!` is a side-effect. You have to make sure it's called only editor is changed.
 Respo does not provide a `didMount` hook, you have to handle it globally on you own.
-Take `src/cirru_editor/main.cljs` for example.
+
+### Tree updater
+
+Function `cirru-editor.core/cirru-edit` for editing:
+
+```cirru
+cirru-edit snapshot op op-data
+```
+
+with `snapshot` in a structure:
+
+```cirru
+{}
+  :tree $ []
+  :focus $ []
+  :clipboard $ []
+```
+
+| op                  | op-data            | usage                                       |
+| ----------------------- | -------------------- | ------------------------------------------- |
+| `:update-token`         | `[] coord new-token` | edit token                                  |
+| `:after-token`          | `coord`              | insert empty token after current position   |
+| `:before-token`         | `coord`              | add new token before of current token       |
+| `:fold-node`            | `coord`              | increase indentation                        |
+| `:unfold-expression`    | `coord`              | decrease indentation                        |
+| `:unfold-token`         | _none_               | decrease indentation from token             |
+| `:before-expression`    | `coord`              | add new expression before current position  |
+| `:after-expression`     | `coord`              | add new expression after current position   |
+| `:prepend-expression`   | `coord`              | add new token at head of current expression |
+| `:append-expression`    | `coord`              | add new token at tail of current expression |
+| `:remove-node`          | `coord`              | remove at current position                  |
+| `:focus-to`             | `coord`              | focus to position                           |
+| `:node-up`              | _none_               | move focus to parent                        |
+| `:expression-down`      | `coord`              | move focus to first child                   |
+| `:node-left`            | _none_               | move focus to previous sibling              |
+| `:node-right`           | _none_               | move focus to next sibling                  |
+| `:command-copy`         | `coord`              | copy target to buffer                       |
+| `:command-cut`          | `coord`              | cut target to buffer                        |
+| `:command-paste`        | `coord`              | paste buffer at current position            |
+| `:tree-reset`           | `tree`               | reset                                       |
+| `:duplicate-expression` | _none_               | duplicate current expression                |
 
 ### Develop
 
