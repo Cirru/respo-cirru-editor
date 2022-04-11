@@ -2,7 +2,8 @@
 {} (:package |cirru-editor)
   :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!)
     :modules $ [] |respo.calcit/ |lilac/ |memof/
-    :version |0.4.1
+    :version |0.4.2
+  :entries $ {}
   :files $ {}
     |cirru-editor.util.keycode $ {}
       :ns $ quote (ns cirru-editor.util.keycode)
@@ -27,23 +28,23 @@
         |dev? $ quote
           def dev? $ = "\"dev" (get-env "\"mode")
         |site $ quote
-          def site $ {} (:dev-ui "\"http://localhost:8100/main-fonts.css") (:release-ui "\"http://cdn.tiye.me/favored-fonts/main-fonts.css") (:cdn-url "\"http://cdn.tiye.me/respo-cirru-editor/") (:cdn-folder "\"tiye.me:cdn/respo-cirru-editor") (:title "\"Cirru Editor") (:icon "\"http://cdn.tiye.me/logo/cirru.png") (:storage-key "\"respo-cirru-editor") (:upload-folder "\"tiye.me:repo/Cirru/respo-cirru-editor/")
+          def site $ {} (:title "\"Cirru Editor") (:icon "\"http://cdn.tiye.me/logo/cirru.png") (:storage-key "\"respo-cirru-editor")
     |cirru-editor.comp.editor $ {}
       :ns $ quote
         ns cirru-editor.comp.editor $ :require
-          [] hsl.core :refer $ [] hsl
-          [] respo.core :refer $ [] defcomp <> div style span
-          [] respo.comp.inspect :refer $ [] comp-inspect
-          [] respo.comp.space :refer $ [] =<
-          [] cirru-editor.modifier.core :refer $ [] updater
-          [] cirru-editor.comp.expression :refer $ [] comp-expression style-expression
-          [] cirru-editor.comp.token :refer $ [] style-token
-          [] respo.render.html :refer $ [] style->string
+          hsl.core :refer $ hsl
+          respo.core :refer $ defcomp <> div style span
+          respo.comp.inspect :refer $ comp-inspect
+          respo.comp.space :refer $ =<
+          cirru-editor.core :refer $ cirru-edit
+          cirru-editor.comp.expression :refer $ comp-expression style-expression
+          cirru-editor.comp.token :refer $ style-token
+          respo.render.html :refer $ style->string
       :defs $ {}
         |handle-update $ quote
           defn handle-update (snapshot on-update!)
             fn (op op-data dispatch!)
-              on-update! (updater snapshot op op-data) dispatch!
+              on-update! (cirru-edit snapshot op op-data) dispatch!
         |comp-editor $ quote
           defcomp comp-editor (states snapshot on-update! on-command)
             div
@@ -71,38 +72,25 @@
       :defs $ {}
         |store $ quote
           def store $ {}
+            :states $ {}
             :tree $ [] "\"defn" "\"get-something" ([]) ([] "\"[]" "\"1" "\"-1" "\"\"2" "\"true" "\"nil" "\":k")
             :focus $ []
             :clipboard $ []
     |cirru-editor.comp.expression $ {}
       :ns $ quote
         ns cirru-editor.comp.expression $ :require
-          [] respo.util.format :refer $ [] hsl
-          [] respo.core :refer $ [] defcomp list-> >> <> div span
-          [] respo.comp.space :refer $ [] =<
-          [] respo.comp.inspect :refer $ [] comp-inspect
-          [] cirru-editor.comp.token :refer $ [] comp-token
-          [] cirru-editor.util.detect :refer $ [] coord-contains? shallow? deep?
-          [] cirru-editor.util.keycode :as keycode
+          respo.util.format :refer $ hsl
+          respo.core :refer $ defcomp list-> >> <> div span
+          respo.comp.space :refer $ =<
+          respo.comp.inspect :refer $ comp-inspect
+          cirru-editor.comp.token :refer $ comp-token
+          cirru-editor.util.detect :refer $ coord-contains? shallow? deep?
+          cirru-editor.util.keycode :as keycode
           cirru-editor.util :refer $ pos? zero?
       :defs $ {}
         |style-expression $ quote
-          def style-expression $ {} (:border-style |solid)
+          def style-expression $ {} (:border-style |solid) (:outline |none) (:padding-left 8) (:padding-right 0) (:padding-top 2) (:padding-bottom 0) (:margin-left 12) (:margin-right 0) (:margin-top 0) (:margin-bottom 4) (:border-width "|0 0 0 1px") (:min-height |26px) (:min-width |16px) (:vertical-align |top) (:box-sizing |border-box) (:border-radius "\"8px")
             :border-color $ hsl 0 0 32 0.9
-            :outline |none
-            :padding-left 8
-            :padding-right 0
-            :padding-top 2
-            :padding-bottom 0
-            :margin-left 12
-            :margin-right 0
-            :margin-top 0
-            :margin-bottom 4
-            :border-width "|0 0 0 1px"
-            :min-height |26px
-            :min-width |16px
-            :vertical-align |top
-            :box-sizing |border-box
         |comp-expression $ quote
           defcomp comp-expression (states expression modify! coord level tail? focus on-command head? inline?)
             let
@@ -112,10 +100,9 @@
               if state
                 div
                   {} (:style style-folded)
-                    :on $ {}
-                      :click $ fn (e dispatch!)
-                        dispatch! cursor $ not state
-                      :keydown $ on-keydown state modify! coord on-command cursor
+                    :on-click $ fn (e dispatch!)
+                      dispatch! cursor $ not state
+                    :on-keydown $ on-keydown state modify! coord on-command cursor
                   <> (first expression) nil
                 list->
                   {} (:tab-index 0)
@@ -126,9 +113,8 @@
                         , style-tail
                       if (= coord focus)
                         {} $ :border-color (hsl 0 0 100 0.6)
-                    :on $ {}
-                      :click $ on-click modify! coord focus
-                      :keydown $ on-keydown state modify! coord on-command cursor
+                    :on-click $ on-click modify! coord focus
+                    :on-keydown $ on-keydown state modify! coord on-command cursor
                   apply-args
                       []
                       , 0 expression nil
@@ -184,27 +170,27 @@
                   command? $ or (.-metaKey event) (.-ctrlKey event)
                 cond
                     = code keycode/space
-                    do (.preventDefault event)
+                    do (.!preventDefault event)
                       if shift? (modify! :before-token coord dispatch!) (modify! :after-token coord dispatch!)
                   (= code keycode/tab)
-                    do (.preventDefault event)
+                    do (.!preventDefault event)
                       if shift? (modify! :unfold-expression coord dispatch!) (modify! :fold-node coord dispatch!)
                   (= code keycode/enter)
                     if command?
                       if shift? (modify! :append-expression coord dispatch!) (modify! :prepend-expression coord dispatch!)
                       if shift? (modify! :before-expression coord dispatch!) (modify! :after-expression coord dispatch!)
                   (= code keycode/backspace)
-                    do (.preventDefault event) (modify! :remove-node coord dispatch!)
+                    do (.!preventDefault event) (modify! :remove-node coord dispatch!)
                   (= code keycode/left)
-                    do (.preventDefault event) (modify! :node-left coord dispatch!)
+                    do (.!preventDefault event) (modify! :node-left coord dispatch!)
                   (= code keycode/right)
-                    do (.preventDefault event) (modify! :node-right coord dispatch!)
+                    do (.!preventDefault event) (modify! :node-right coord dispatch!)
                   (= code keycode/up)
-                    do (.preventDefault event) (modify! :node-up coord dispatch!)
+                    do (.!preventDefault event) (modify! :node-up coord dispatch!)
                   (= code keycode/down)
-                    do (.preventDefault event) (modify! :expression-down coord dispatch!)
+                    do (.!preventDefault event) (modify! :expression-down coord dispatch!)
                   (and command? (= code keycode/key-b))
-                    do (.preventDefault event) (modify! :duplicate-expression coord dispatch!)
+                    do (.!preventDefault event) (modify! :duplicate-expression coord dispatch!)
                   (and command? (= code keycode/key-c))
                     modify! :command-copy coord dispatch!
                   (and command? (= code keycode/key-x))
@@ -300,12 +286,10 @@
                 + 4 $ * (count content) 9
         |*ctx $ quote
           defatom *ctx $ if (exists? js/document)
-            .getContext (.createElement js/document |canvas) |2d
+            .!getContext (js/document.createElement |canvas) |2d
             , nil
     |cirru-editor.util.detect $ {}
-      :ns $ quote
-        ns cirru-editor.util.detect $ :require
-          [] clojure.string :refer $ [] includes?
+      :ns $ quote (ns cirru-editor.util.detect)
       :defs $ {}
         |shallow? $ quote
           defn shallow? (expression)
@@ -326,16 +310,49 @@
                 , false
         |has-blank? $ quote
           defn has-blank? (x) (includes? x "| ")
+    |cirru-editor.core $ {}
+      :ns $ quote
+        ns cirru-editor.core $ :require (cirru-editor.modifier.tree :as tree) (cirru-editor.modifier.focus :as focus) (cirru-editor.modifier.command :as command)
+      :defs $ {}
+        |default-handler $ quote
+          defn default-handler (snapshot op-data) snapshot
+        |cirru-edit $ quote
+          defn cirru-edit (snapshot op op-data) (; println :update-state op op-data)
+            let
+                handler $ case-default op
+                  do (println "\"Unknown op:" op) default-handler
+                  :update-token tree/update-token
+                  :after-token tree/after-token
+                  :fold-node tree/fold-node
+                  :unfold-expression tree/unfold-expression
+                  :unfold-token tree/unfold-token
+                  :before-expression tree/before-expression
+                  :after-expression tree/after-expression
+                  :prepend-expression tree/prepend-expression
+                  :append-expression tree/append-expression
+                  :before-token tree/before-token
+                  :remove-node tree/remove-node
+                  :focus-to focus/focus-to
+                  :node-up focus/node-up
+                  :expression-down focus/expression-down
+                  :node-left focus/node-left
+                  :node-right focus/node-right
+                  :command-copy command/copy
+                  :command-cut command/cut
+                  :command-paste command/paste
+                  :tree-reset tree/tree-reset
+                  :duplicate-expression tree/duplicate-expression
+              handler snapshot op-data
     |cirru-editor.main $ {}
       :ns $ quote
         ns cirru-editor.main $ :require
-          [] respo.core :refer $ [] render! clear-cache! realize-ssr!
-          [] respo.cursor :refer $ [] update-states
-          [] cirru-editor.comp.container :refer $ [] comp-container
-          [] cljs.reader :refer $ [] read-string
-          [] cirru-editor.util.dom :refer $ [] focus!
-          [] cirru-editor.schema :as schema
-          [] cirru-editor.config :as config
+          respo.core :refer $ render! clear-cache! realize-ssr!
+          respo.cursor :refer $ update-states
+          cirru-editor.comp.container :refer $ comp-container
+          cljs.reader :refer $ read-string
+          cirru-editor.util.dom :refer $ focus!
+          cirru-editor.schema :as schema
+          cirru-editor.config :as config
           "\"./calcit.build-errors" :default build-errors
           "\"bottom-tip" :default hud!
       :defs $ {}
@@ -345,9 +362,10 @@
             if @*touched $ do (reset! *touched false) (println "|changing focus") (focus!)
         |*touched $ quote (defatom *touched false)
         |mount-target $ quote
-          def mount-target $ .querySelector js/document |.app
+          def mount-target $ js/document.querySelector |.app
         |main! $ quote
           defn main! ()
+            if config/dev? $ load-console-formatter!
             println "\"Running mode:" $ if config/dev? "\"dev" "\"release"
             render-app!
             add-watch *store :changes $ fn (s p) (render-app!)
@@ -384,7 +402,7 @@
           [] cirru-editor.comp.editor :refer $ [] comp-editor
       :defs $ {}
         |on-command $ quote
-          defn on-command (snapshot dispatch! e) (println "\"command" e)
+          defn on-command (snapshot dispatch! e) (js/console.log "\"command" e)
         |comp-container $ quote
           defcomp comp-container (store)
             let
@@ -440,11 +458,11 @@
     |cirru-editor.comp.token $ {}
       :ns $ quote
         ns cirru-editor.comp.token $ :require
-          [] respo.util.format :refer $ [] hsl
-          [] respo.core :refer $ [] defcomp <> div input
-          [] cirru-editor.util.measure :refer $ [] text-width
-          [] cirru-editor.util.detect :refer $ [] has-blank?
-          [] cirru-editor.util.keycode :as keycode
+          respo.util.format :refer $ hsl
+          respo.core :refer $ defcomp <> div input
+          cirru-editor.util.measure :refer $ text-width
+          cirru-editor.util.detect :refer $ has-blank?
+          cirru-editor.util.keycode :as keycode
           cirru-editor.util :refer $ zero?
       :defs $ {}
         |style-token $ quote
@@ -478,7 +496,7 @@
                     {} $ :color "\"rgb(173, 31, 31)"
                   head? $ {}
                     :color $ hsl 40 80 60 0.9
-                  :else nil
+                  true nil
                 if
                   or (has-blank? token)
                     zero? $ count token
@@ -511,57 +529,24 @@
                   thin-cursor? $ = (.-selectionStart target) (.-selectionEnd target)
                 cond
                     and (= code keycode/space) (not shift?)
-                    do (.preventDefault event) (modify! :after-token coord dispatch!)
+                    do (.!preventDefault event) (modify! :after-token coord dispatch!)
                   (= code keycode/tab)
-                    do (.preventDefault event)
+                    do (.!preventDefault event)
                       if shift? (modify! :unfold-token coord dispatch!) (modify! :fold-node coord dispatch!)
                   (= code keycode/enter)
                     if shift? (modify! :before-token coord dispatch!) (modify! :after-token coord dispatch!)
                   (= code keycode/backspace)
                     if (= token |)
-                      do (modify! :remove-node coord dispatch!) (.preventDefault event)
+                      do (modify! :remove-node coord dispatch!) (.!preventDefault event)
                   (= code keycode/up)
-                    do (.preventDefault event) (modify! :node-up coord dispatch!)
+                    do (.!preventDefault event) (modify! :node-up coord dispatch!)
                   (and thin-cursor? at-start? (= code keycode/left))
-                    do (.preventDefault event) (modify! :node-left coord dispatch!)
+                    do (.!preventDefault event) (modify! :node-left coord dispatch!)
                   (and thin-cursor? at-end? (= code keycode/right))
-                    do (.preventDefault event) (modify! :node-right coord dispatch!)
+                    do (.!preventDefault event) (modify! :node-right coord dispatch!)
                   (and shift? command? (= code keycode/key-v))
-                    do (.preventDefault event) (modify! :command-paste coord dispatch!)
-                  :else $ if command? (on-command e dispatch!) nil
-    |cirru-editor.modifier.core $ {}
-      :ns $ quote
-        ns cirru-editor.modifier.core $ :require ([] cirru-editor.modifier.tree :as tree) ([] cirru-editor.modifier.focus :as focus) ([] cirru-editor.modifier.command :as command)
-      :defs $ {}
-        |default-handler $ quote
-          defn default-handler (snapshot op-data) snapshot
-        |updater $ quote
-          defn updater (snapshot op op-data) (; println :update-state op op-data)
-            let
-                handler $ case-default op
-                  do (println "\"Unknown op:" op) default-handler
-                  :update-token tree/update-token
-                  :after-token tree/after-token
-                  :fold-node tree/fold-node
-                  :unfold-expression tree/unfold-expression
-                  :unfold-token tree/unfold-token
-                  :before-expression tree/before-expression
-                  :after-expression tree/after-expression
-                  :prepend-expression tree/prepend-expression
-                  :append-expression tree/append-expression
-                  :before-token tree/before-token
-                  :remove-node tree/remove-node
-                  :focus-to focus/focus-to
-                  :node-up focus/node-up
-                  :expression-down focus/expression-down
-                  :node-left focus/node-left
-                  :node-right focus/node-right
-                  :command-copy command/copy
-                  :command-cut command/cut
-                  :command-paste command/paste
-                  :tree-reset tree/tree-reset
-                  :duplicate-expression tree/duplicate-expression
-              handler snapshot op-data
+                    do (.!preventDefault event) (modify! :command-paste coord dispatch!)
+                  true $ if command? (on-command e dispatch!) nil
     |cirru-editor.modifier.tree $ {}
       :ns $ quote
         ns cirru-editor.modifier.tree $ :require
@@ -654,7 +639,7 @@
             let
                 coord op-data
               if
-                > (count coord) 0
+                not $ empty? coord
                 -> snapshot
                   update-in
                     cons :tree $ butlast coord
@@ -775,7 +760,7 @@
                       cond
                           zero? position
                           cons ([] |) parent
-                        :else $ concat (subvec parent 0 position)
+                        true $ concat (subvec parent 0 position)
                           [] $ [] |
                           subvec parent position
                 update :focus $ fn (focus) (conj focus 0)
@@ -800,11 +785,11 @@
           defn focus! () $ js/requestAnimationFrame
             fn (timestap)
               let
-                  editor-focus $ .querySelector js/document |.editor-focused
-                  current-focus $ .-activeElement js/document
+                  editor-focus $ js/document.querySelector |.editor-focused
+                  current-focus js/document.activeElement
                 if (some? editor-focus)
                   if
                     not $ identical? editor-focus current-focus
-                    .focus editor-focus
+                    .!focus editor-focus
                     , nil
                   println "|Editor warning: cannot find focus target."
