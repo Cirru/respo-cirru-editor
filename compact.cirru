@@ -1,6 +1,6 @@
 
 {} (:package |cirru-editor)
-  :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!) (:version |0.4.2)
+  :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!) (:version |0.4.3)
     :modules $ [] |respo.calcit/ |lilac/ |memof/
   :entries $ {}
   :files $ {}
@@ -410,9 +410,8 @@
                         butlast parent
                       true $ concat (.slice parent 0 position)
                         .slice parent $ inc position
-                update :focus $ fn (focus)
-                  if (zero? position) (butlast coord)
-                    conj (butlast coord) (dec position)
+                assoc :focus $ if (zero? position) (butlast coord)
+                  conj (butlast coord) (dec position)
                 assoc :clipboard expression
         |paste $ quote
           defn paste (snapshot op-data)
@@ -425,50 +424,45 @@
     |cirru-editor.modifier.focus $ {}
       :defs $ {}
         |expression-down $ quote
-          defn expression-down (snapshot op-data)
+          defn expression-down (snapshot coord)
             let
-                coord op-data
                 expression $ get-in snapshot (prepend coord :tree)
-              -> snapshot $ update :focus
-                fn (focus)
-                  if
-                    pos? $ count expression
-                    conj focus 0
-                    , focus
+              -> snapshot $ assoc :focus
+                if
+                  pos? $ count expression
+                  conj coord 0
+                  , coord
         |focus-to $ quote
           defn focus-to (snapshot op-data)
             let
                 coord op-data
               assoc snapshot :focus coord
         |node-left $ quote
-          defn node-left (snapshot op-data)
-            -> snapshot $ update :focus
-              fn (focus)
-                let
-                    position $ last focus
-                  conj (butlast focus)
-                    if (pos? position) (dec position) position
+          defn node-left (snapshot focus)
+            -> snapshot $ assoc :focus
+              let
+                  position $ last focus
+                conj (butlast focus)
+                  if (pos? position) (dec position) position
         |node-right $ quote
-          defn node-right (snapshot op-data)
-            -> snapshot $ update :focus
-              fn (focus)
-                let
-                    position $ last focus
-                    parent $ get-in snapshot
-                      concat ([] :tree) (butlast focus)
-                  conj (butlast focus)
-                    if
-                      < position $ dec (count parent)
-                      inc position
-                      , position
+          defn node-right (snapshot focus)
+            -> snapshot $ assoc :focus
+              let
+                  position $ last focus
+                  parent $ get-in snapshot
+                    concat ([] :tree) (butlast focus)
+                conj (butlast focus)
+                  if
+                    < position $ dec (count parent)
+                    inc position
+                    , position
         |node-up $ quote
-          defn node-up (snapshot op-data)
-            -> snapshot $ update :focus
-              fn (focus)
-                if
-                  pos? $ count focus
-                  .slice focus 0 $ dec (count focus)
-                  , focus
+          defn node-up (snapshot focus)
+            -> snapshot $ assoc :focus
+              if
+                pos? $ count focus
+                .slice focus 0 $ dec (count focus)
+                , focus
       :ns $ quote
         ns cirru-editor.modifier.focus $ :require
           cirru-editor.util :refer $ pos?
@@ -493,10 +487,9 @@
                             subvec parent 0 $ inc position
                             [] $ [] |
                             subvec parent $ inc position
-                  update :focus $ fn (focus)
-                    conj (butlast focus)
-                      inc $ last focus
-                      , 0
+                  assoc :focus $ conj (butlast coord)
+                    inc $ last coord
+                    , 0
                 if
                   = (:tree snapshot) ([])
                   -> snapshot
@@ -521,9 +514,8 @@
                           subvec expression 0 $ inc (last coord)
                           [] |
                           subvec expression $ inc (last coord)
-                  update :focus $ fn (coord)
-                    conj (butlast coord)
-                      inc $ last coord
+                  assoc :focus $ conj (butlast coord)
+                    inc $ last coord
                 if
                   = (:tree snapshot) ([])
                   -> snapshot
@@ -538,8 +530,7 @@
               -> snapshot
                 update-in (cons :tree coord)
                   fn (parent) (conj parent |)
-                update :focus $ fn (focus)
-                  conj focus $ count expression
+                assoc :focus $ conj coord (count expression)
         |before-expression $ quote
           defn before-expression (snapshot op-data)
             let
@@ -556,7 +547,7 @@
                         true $ concat (subvec parent 0 position)
                           [] $ [] |
                           subvec parent position
-                update :focus $ fn (focus) (conj focus 0)
+                assoc :focus $ conj coord 0
         |before-token $ quote
           defn before-token (snapshot op-data)
             let
@@ -571,31 +562,28 @@
                         cons | parent
                       true $ concat (&list:slice parent 0 position) ([] |) (&list:slice parent position)
         |duplicate-expression $ quote
-          defn duplicate-expression (snapshot op-data)
-            let
-                focus $ :focus snapshot
-              if (empty? focus) snapshot $ -> snapshot
-                update :focus $ fn (focus)
-                  if
-                    = 1 $ count focus
-                    [] $ inc (first focus)
-                    conj (butlast focus)
-                      inc $ last focus
-                update :tree $ fn (tree)
-                  if
-                    = 1 $ count focus
-                    let
-                        pos $ first focus
-                      concat
-                        .slice tree 0 $ inc pos
-                        .slice tree pos
-                    update-in tree (butlast focus)
-                      fn (parent)
-                        let
-                            pos $ last focus
-                          concat
-                            .slice parent 0 $ inc pos
-                            .slice parent pos
+          defn duplicate-expression (snapshot focus)
+            if (empty? focus) snapshot $ -> snapshot
+              assoc :focus $ if
+                = 1 $ count focus
+                [] $ inc (first focus)
+                conj (butlast focus)
+                  inc $ last focus
+              update :tree $ fn (tree)
+                if
+                  = 1 $ count focus
+                  let
+                      pos $ first focus
+                    concat
+                      .slice tree 0 $ inc pos
+                      .slice tree pos
+                  update-in tree (butlast focus)
+                    fn (parent)
+                      let
+                          pos $ last focus
+                        concat
+                          .slice parent 0 $ inc pos
+                          .slice parent pos
         |fold-node $ quote
           defn fold-node (snapshot op-data)
             let
@@ -603,7 +591,7 @@
               -> snapshot
                 update-in (cons :tree coord)
                   fn (node) ([] node)
-                update :focus $ fn (coord) (conj coord 0)
+                assoc :focus $ conj coord 0
         |prepend-expression $ quote
           defn prepend-expression (snapshot op-data)
             let
@@ -611,7 +599,7 @@
               -> snapshot
                 update-in (cons :tree coord)
                   fn (parent) (cons | parent)
-                update :focus $ fn (focus) (conj focus 0)
+                assoc :focus $ conj coord 0
         |remove-node $ quote
           defn remove-node (snapshot op-data)
             let
@@ -632,12 +620,11 @@
                             butlast parent
                           true $ concat (.slice parent 0 position)
                             .slice parent $ inc position
-                  update :focus $ fn (focus)
-                    let
-                        position $ last focus
-                      if (zero? position) (butlast focus)
-                        concat (butlast focus)
-                          [] $ dec position
+                  assoc :focus $ let
+                      position $ last coord
+                    if (zero? position) (butlast coord)
+                      concat (butlast coord)
+                        [] $ dec position
                 , snapshot
         |tree-reset $ quote
           defn tree-reset (snapshot op-data)
@@ -665,7 +652,7 @@
                                 concat (butlast parent) expression
                               true $ concat (subvec parent 0 position) expression
                                 subvec parent $ inc position
-                    update :focus $ fn (focus) (butlast focus)
+                    assoc :focus $ butlast coord
                 (= 1 (count coord))
                   -> snapshot $ update :tree
                     fn (parent)
@@ -684,7 +671,7 @@
           defn unfold-token (snapshot op-data)
             let
                 tree $ :tree snapshot
-                focus $ :focus snapshot
+                focus op-data
               if (empty? focus) snapshot $ let
                   parent-coord $ butlast focus
                   parent $ get-in tree parent-coord

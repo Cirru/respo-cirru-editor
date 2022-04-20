@@ -54,7 +54,6 @@ with `snapshot` in a structure:
 ```cirru
 {}
   :tree $ []
-  :focus $ []
   :clipboard $ []
 ```
 
@@ -65,22 +64,31 @@ with `snapshot` in a structure:
 | `:before-token`         | `coord`              | add new token before of current token       |
 | `:fold-node`            | `coord`              | increase indentation                        |
 | `:unfold-expression`    | `coord`              | decrease indentation                        |
-| `:unfold-token`         | _none_               | decrease indentation from token             |
+| `:unfold-token`         | `coord`              | decrease indentation from token             |
 | `:before-expression`    | `coord`              | add new expression before current position  |
 | `:after-expression`     | `coord`              | add new expression after current position   |
 | `:prepend-expression`   | `coord`              | add new token at head of current expression |
 | `:append-expression`    | `coord`              | add new token at tail of current expression |
 | `:remove-node`          | `coord`              | remove at current position                  |
 | `:focus-to`             | `coord`              | focus to position                           |
-| `:node-up`              | _none_               | move focus to parent                        |
+| `:node-up`              | `coord`              | move focus to parent                        |
 | `:expression-down`      | `coord`              | move focus to first child                   |
-| `:node-left`            | _none_               | move focus to previous sibling              |
-| `:node-right`           | _none_               | move focus to next sibling                  |
+| `:node-left`            | `coord`              | move focus to previous sibling              |
+| `:node-right`           | `coord`              | move focus to next sibling                  |
 | `:command-copy`         | `coord`              | copy target to buffer                       |
 | `:command-cut`          | `coord`              | cut target to buffer                        |
 | `:command-paste`        | `coord`              | paste buffer at current position            |
 | `:tree-reset`           | `tree`               | reset                                       |
-| `:duplicate-expression` | _none_               | duplicate current expression                |
+| `:duplicate-expression` | `coord`              | duplicate current expression                |
+
+returns structure:
+
+```cirru
+{}
+  :tree $ []
+  :clipboard $ []
+  :focus $ []
+```
 
 ### Develop
 
