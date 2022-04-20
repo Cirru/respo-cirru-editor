@@ -1,8 +1,8 @@
 ## Respo Cirru Editor, calcit-js version
 
-Cirru Editor in Calcit-js Respo. Previous [implemented in ClojureScript](https://github.com/Cirru/respo-cirru-editor.calcit).
+Cirru Editor in Calcit-js Respo. Previous [implemented in ClojureScript](https://github.com/Cirru/respo-cirru-editor).
 
-Demo http://repo.cirru.org/respo-cirru-editor.calcit/
+Demo http://repo.cirru.org/respo-cirru-editor/
 
 Support several basic shortcuts from [Clacit Editor](https://github.com/Cirru/calcit-editor/wiki/Keyboard-Shortcuts).
 
@@ -58,7 +58,7 @@ with `snapshot` in a structure:
   :clipboard $ []
 ```
 
-| op                  | op-data            | usage                                       |
+| op                      | op-data              | usage                                       |
 | ----------------------- | -------------------- | ------------------------------------------- |
 | `:update-token`         | `[] coord new-token` | edit token                                  |
 | `:after-token`          | `coord`              | insert empty token after current position   |
