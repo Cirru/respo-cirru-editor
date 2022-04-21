@@ -1,6 +1,6 @@
 
 {} (:package |cirru-editor)
-  :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!) (:version |0.4.3)
+  :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!) (:version |0.4.4)
     :modules $ [] |respo.calcit/ |lilac/ |memof/
   :entries $ {}
   :files $ {}
@@ -439,23 +439,25 @@
               assoc snapshot :focus coord
         |node-left $ quote
           defn node-left (snapshot focus)
-            -> snapshot $ assoc :focus
-              let
-                  position $ last focus
-                conj (butlast focus)
-                  if (pos? position) (dec position) position
+            if (empty? focus) (assoc snapshot :focus focus)
+              -> snapshot $ assoc :focus
+                let
+                    position $ last focus
+                  conj (butlast focus)
+                    if (pos? position) (dec position) position
         |node-right $ quote
           defn node-right (snapshot focus)
-            -> snapshot $ assoc :focus
-              let
-                  position $ last focus
-                  parent $ get-in snapshot
-                    concat ([] :tree) (butlast focus)
-                conj (butlast focus)
-                  if
-                    < position $ dec (count parent)
-                    inc position
-                    , position
+            if (empty? focus) (assoc snapshot :focus focus)
+              -> snapshot $ assoc :focus
+                let
+                    position $ last focus
+                    parent $ get-in snapshot
+                      concat ([] :tree) (butlast focus)
+                  conj (butlast focus)
+                    if
+                      < position $ dec (count parent)
+                      inc position
+                      , position
         |node-up $ quote
           defn node-up (snapshot focus)
             -> snapshot $ assoc :focus
@@ -469,33 +471,30 @@
     |cirru-editor.modifier.tree $ {}
       :defs $ {}
         |after-expression $ quote
-          defn after-expression (snapshot op-data)
-            let
-                coord op-data
+          defn after-expression (snapshot coord)
+            if (empty? coord)
               if
-                pos? $ count coord
+                = (:tree snapshot) ([])
                 -> snapshot
-                  update-in
-                    cons :tree $ butlast coord
-                    fn (parent)
-                      let
-                          position $ last coord
-                        cond
-                            = position $ dec (count parent)
-                            conj parent $ [] |
-                          :else $ concat
-                            subvec parent 0 $ inc position
-                            [] $ [] |
-                            subvec parent $ inc position
-                  assoc :focus $ conj (butlast coord)
-                    inc $ last coord
-                    , 0
-                if
-                  = (:tree snapshot) ([])
-                  -> snapshot
-                    assoc :focus $ [] 0
-                    assoc :tree $ [] |
-                  , snapshot
+                  assoc :focus $ [] 0
+                  assoc :tree $ [] |
+                , snapshot
+              -> snapshot
+                update-in
+                  cons :tree $ butlast coord
+                  fn (parent)
+                    let
+                        position $ last coord
+                      cond
+                          = position $ dec (count parent)
+                          conj parent $ [] |
+                        :else $ concat
+                          subvec parent 0 $ inc position
+                          [] $ [] |
+                          subvec parent $ inc position
+                assoc :focus $ conj (butlast coord)
+                  inc $ last coord
+                  , 0
         |after-token $ quote
           defn after-token (snapshot op-data)
             let
@@ -532,27 +531,24 @@
                   fn (parent) (conj parent |)
                 assoc :focus $ conj coord (count expression)
         |before-expression $ quote
-          defn before-expression (snapshot op-data)
-            let
-                coord op-data
-              -> snapshot
-                update-in
-                  cons :tree $ butlast coord
-                  fn (parent)
-                    let
-                        position $ last coord
-                      cond
-                          zero? position
-                          cons ([] |) parent
-                        true $ concat (subvec parent 0 position)
-                          [] $ [] |
-                          subvec parent position
-                assoc :focus $ conj coord 0
+          defn before-expression (snapshot coord)
+            if (empty? coord) snapshot $ -> snapshot
+              update-in
+                cons :tree $ butlast coord
+                fn (parent)
+                  let
+                      position $ last coord
+                    cond
+                        zero? position
+                        cons ([] |) parent
+                      true $ concat (subvec parent 0 position)
+                        [] $ [] |
+                        subvec parent position
+              assoc :focus $ conj coord 0
         |before-token $ quote
-          defn before-token (snapshot op-data)
-            let
-                coord op-data
-              -> snapshot $ update-in
+          defn before-token (snapshot coord)
+            if (empty? coord) snapshot $ -> snapshot
+              update-in
                 cons :tree $ butlast coord
                 fn (parent)
                   let
