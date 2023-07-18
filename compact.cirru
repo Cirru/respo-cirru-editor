@@ -345,10 +345,13 @@
         |*store $ quote (defatom *store schema/store)
         |*touched $ quote (defatom *touched false)
         |dispatch! $ quote
-          defn dispatch! (op op-data) (; println |dispatch: op op-data)
-            case-default op nil
-              :save $ reset! *store op-data
-              :states $ reset! *store (update-states @*store op-data)
+          defn dispatch! (op) (; println |dispatch: op op-data)
+            tag-match op
+                :save d
+                reset! *store d
+              (:states cursor s)
+                reset! *store $ update-states @*store cursor s
+              _ @*store
             reset! *touched true
         |main! $ quote
           defn main! ()
