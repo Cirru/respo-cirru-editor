@@ -1,6 +1,6 @@
 
 {}
-  :configs $ {} (:extension |.cljs) (:init-fn |cirru-editor.main/main!) (:output |src) (:port 6001) (:reload-fn |cirru-editor.main/reload!) (:storage-key |calcit.cirru) (:version |0.4.4)
+  :configs $ {} (:extension |.cljs) (:init-fn |cirru-editor.main/main!) (:output |src) (:port 6001) (:reload-fn |cirru-editor.main/reload!) (:storage-key |calcit.cirru) (:version |0.4.5)
     :modules $ [] |respo.calcit/ |lilac/ |memof/
   :entries $ {}
   :ir $ {} (:package |cirru-editor)
@@ -286,7 +286,6 @@
                   |j $ {} (:at 1506616926005) (:type :expr)
                     :data $ {}
                       |T $ {} (:at 1506616926005) (:by |root) (:text |op) (:type :leaf)
-                      |j $ {} (:at 1506616926005) (:by |root) (:text |op-data) (:type :leaf)
                       |r $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                   |r $ {} (:at 1506616926005) (:type :expr)
                     :data $ {}
@@ -296,7 +295,6 @@
                           |T $ {} (:at 1649581712401) (:by |Y9S0aNaMwg) (:text |cirru-edit) (:type :leaf)
                           |j $ {} (:at 1506616926005) (:by |root) (:text |snapshot) (:type :leaf)
                           |r $ {} (:at 1506616926005) (:by |root) (:text |op) (:type :leaf)
-                          |v $ {} (:at 1506616926005) (:by |root) (:text |op-data) (:type :leaf)
                       |r $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
           |style-box $ {} (:at 1506616926005) (:type :expr)
             :data $ {}
@@ -493,11 +491,15 @@
                                       |r $ {} (:at 1629654902608) (:by |Y9S0aNaMwg) (:type :expr)
                                         :data $ {}
                                           |T $ {} (:at 1629655326622) (:by |Y9S0aNaMwg) (:text |dispatch!) (:type :leaf)
-                                          |b $ {} (:at 1629654918641) (:by |Y9S0aNaMwg) (:text |cursor) (:type :leaf)
-                                          |j $ {} (:at 1629654902608) (:by |Y9S0aNaMwg) (:type :expr)
+                                          |j $ {} (:at 1689393531867) (:by |Y9S0aNaMwg) (:type :expr)
                                             :data $ {}
-                                              |T $ {} (:at 1629654902608) (:by |Y9S0aNaMwg) (:text |not) (:type :leaf)
-                                              |j $ {} (:at 1629654902608) (:by |Y9S0aNaMwg) (:text |state) (:type :leaf)
+                                              |D $ {} (:at 1689393532452) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                              |L $ {} (:at 1689393534575) (:by |Y9S0aNaMwg) (:text |:states) (:type :leaf)
+                                              |P $ {} (:at 1689393535211) (:by |Y9S0aNaMwg) (:text |cursor) (:type :leaf)
+                                              |T $ {} (:at 1629654902608) (:by |Y9S0aNaMwg) (:type :expr)
+                                                :data $ {}
+                                                  |T $ {} (:at 1629654902608) (:by |Y9S0aNaMwg) (:text |not) (:type :leaf)
+                                                  |j $ {} (:at 1629654902608) (:by |Y9S0aNaMwg) (:text |state) (:type :leaf)
                               |t $ {} (:at 1506616926005) (:type :expr)
                                 :data $ {}
                                   |T $ {} (:at 1649580293564) (:by |Y9S0aNaMwg) (:text |:on-keydown) (:type :leaf)
@@ -929,8 +931,11 @@
                       |r $ {} (:at 1506616926005) (:type :expr)
                         :data $ {}
                           |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                          |j $ {} (:at 1506616926005) (:by |root) (:text |:focus-to) (:type :leaf)
-                          |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                          |j $ {} (:at 1689881406354) (:by |Y9S0aNaMwg) (:type :expr)
+                            :data $ {}
+                              |D $ {} (:at 1689881407032) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                              |T $ {} (:at 1506616926005) (:by |root) (:text |:focus-to) (:type :leaf)
+                              |b $ {} (:at 1689881408464) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                           |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
           |on-keydown $ {} (:at 1506616926005) (:type :expr)
             :data $ {}
@@ -1014,14 +1019,20 @@
                                       |r $ {} (:at 1506616926005) (:type :expr)
                                         :data $ {}
                                           |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                          |j $ {} (:at 1506616926005) (:by |root) (:text |:before-token) (:type :leaf)
-                                          |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                          |j $ {} (:at 1689881293669) (:by |Y9S0aNaMwg) (:type :expr)
+                                            :data $ {}
+                                              |D $ {} (:at 1689881294371) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                              |T $ {} (:at 1506616926005) (:by |root) (:text |:before-token) (:type :leaf)
+                                              |b $ {} (:at 1689881295433) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                           |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                                       |v $ {} (:at 1506616926005) (:type :expr)
                                         :data $ {}
                                           |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                          |j $ {} (:at 1506616926005) (:by |root) (:text |:after-token) (:type :leaf)
-                                          |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                          |j $ {} (:at 1689881297388) (:by |Y9S0aNaMwg) (:type :expr)
+                                            :data $ {}
+                                              |D $ {} (:at 1689881298078) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                              |T $ {} (:at 1506616926005) (:by |root) (:text |:after-token) (:type :leaf)
+                                              |b $ {} (:at 1689881298984) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                           |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                           |r $ {} (:at 1506616926005) (:type :expr)
                             :data $ {}
@@ -1044,14 +1055,20 @@
                                       |r $ {} (:at 1506616926005) (:type :expr)
                                         :data $ {}
                                           |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                          |j $ {} (:at 1506616926005) (:by |root) (:text |:unfold-expression) (:type :leaf)
-                                          |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                          |j $ {} (:at 1689881309397) (:by |Y9S0aNaMwg) (:type :expr)
+                                            :data $ {}
+                                              |D $ {} (:at 1689881310159) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                              |T $ {} (:at 1506616926005) (:by |root) (:text |:unfold-expression) (:type :leaf)
+                                              |b $ {} (:at 1689881312961) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                           |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                                       |v $ {} (:at 1506616926005) (:type :expr)
                                         :data $ {}
                                           |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                          |j $ {} (:at 1506616926005) (:by |root) (:text |:fold-node) (:type :leaf)
-                                          |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                          |r $ {} (:at 1689881302762) (:by |Y9S0aNaMwg) (:type :expr)
+                                            :data $ {}
+                                              |D $ {} (:at 1689881303409) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                              |L $ {} (:at 1689881307548) (:by |Y9S0aNaMwg) (:text |:fold-node) (:type :leaf)
+                                              |T $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
                                           |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                           |v $ {} (:at 1506616926005) (:type :expr)
                             :data $ {}
@@ -1071,14 +1088,20 @@
                                       |r $ {} (:at 1506616926005) (:type :expr)
                                         :data $ {}
                                           |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                          |j $ {} (:at 1506616926005) (:by |root) (:text |:append-expression) (:type :leaf)
-                                          |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                          |j $ {} (:at 1689881317730) (:by |Y9S0aNaMwg) (:type :expr)
+                                            :data $ {}
+                                              |D $ {} (:at 1689881318618) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                              |T $ {} (:at 1506616926005) (:by |root) (:text |:append-expression) (:type :leaf)
+                                              |b $ {} (:at 1689881319400) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                           |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                                       |v $ {} (:at 1506616926005) (:type :expr)
                                         :data $ {}
                                           |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                          |j $ {} (:at 1506616926005) (:by |root) (:text |:prepend-expression) (:type :leaf)
-                                          |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                          |j $ {} (:at 1689881320493) (:by |Y9S0aNaMwg) (:type :expr)
+                                            :data $ {}
+                                              |D $ {} (:at 1689881321158) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                              |T $ {} (:at 1506616926005) (:by |root) (:text |:prepend-expression) (:type :leaf)
+                                              |b $ {} (:at 1689881321968) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                           |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                                   |v $ {} (:at 1506616926005) (:type :expr)
                                     :data $ {}
@@ -1087,14 +1110,20 @@
                                       |r $ {} (:at 1506616926005) (:type :expr)
                                         :data $ {}
                                           |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                          |j $ {} (:at 1506616926005) (:by |root) (:text |:before-expression) (:type :leaf)
-                                          |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                          |j $ {} (:at 1689881324580) (:by |Y9S0aNaMwg) (:type :expr)
+                                            :data $ {}
+                                              |D $ {} (:at 1689881325317) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                              |T $ {} (:at 1506616926005) (:by |root) (:text |:before-expression) (:type :leaf)
+                                              |b $ {} (:at 1689881326984) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                           |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                                       |v $ {} (:at 1506616926005) (:type :expr)
                                         :data $ {}
                                           |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                          |j $ {} (:at 1506616926005) (:by |root) (:text |:after-expression) (:type :leaf)
-                                          |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                          |j $ {} (:at 1689881329331) (:by |Y9S0aNaMwg) (:type :expr)
+                                            :data $ {}
+                                              |D $ {} (:at 1689881330067) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                              |T $ {} (:at 1506616926005) (:by |root) (:text |:after-expression) (:type :leaf)
+                                              |b $ {} (:at 1689881331126) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                           |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                           |x $ {} (:at 1506616926005) (:type :expr)
                             :data $ {}
@@ -1113,8 +1142,11 @@
                                   |r $ {} (:at 1506616926005) (:type :expr)
                                     :data $ {}
                                       |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                      |j $ {} (:at 1506616926005) (:by |root) (:text |:remove-node) (:type :leaf)
-                                      |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                      |j $ {} (:at 1689881336168) (:by |Y9S0aNaMwg) (:type :expr)
+                                        :data $ {}
+                                          |D $ {} (:at 1689881336789) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                          |T $ {} (:at 1506616926005) (:by |root) (:text |:remove-node) (:type :leaf)
+                                          |b $ {} (:at 1689881338246) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                       |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                           |y $ {} (:at 1506616926005) (:type :expr)
                             :data $ {}
@@ -1133,8 +1165,11 @@
                                   |r $ {} (:at 1506616926005) (:type :expr)
                                     :data $ {}
                                       |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                      |j $ {} (:at 1506616926005) (:by |root) (:text |:node-left) (:type :leaf)
-                                      |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                      |j $ {} (:at 1689881343372) (:by |Y9S0aNaMwg) (:type :expr)
+                                        :data $ {}
+                                          |D $ {} (:at 1689881344165) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                          |T $ {} (:at 1506616926005) (:by |root) (:text |:node-left) (:type :leaf)
+                                          |b $ {} (:at 1689881344909) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                       |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                           |yT $ {} (:at 1506616926005) (:type :expr)
                             :data $ {}
@@ -1153,8 +1188,11 @@
                                   |r $ {} (:at 1506616926005) (:type :expr)
                                     :data $ {}
                                       |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                      |j $ {} (:at 1506616926005) (:by |root) (:text |:node-right) (:type :leaf)
-                                      |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                      |j $ {} (:at 1689881346834) (:by |Y9S0aNaMwg) (:type :expr)
+                                        :data $ {}
+                                          |D $ {} (:at 1689881347445) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                          |T $ {} (:at 1506616926005) (:by |root) (:text |:node-right) (:type :leaf)
+                                          |b $ {} (:at 1689881348196) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                       |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                           |yj $ {} (:at 1506616926005) (:type :expr)
                             :data $ {}
@@ -1173,8 +1211,11 @@
                                   |r $ {} (:at 1506616926005) (:type :expr)
                                     :data $ {}
                                       |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                      |j $ {} (:at 1506616926005) (:by |root) (:text |:node-up) (:type :leaf)
-                                      |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                      |j $ {} (:at 1689881350016) (:by |Y9S0aNaMwg) (:type :expr)
+                                        :data $ {}
+                                          |D $ {} (:at 1689881350606) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                          |T $ {} (:at 1506616926005) (:by |root) (:text |:node-up) (:type :leaf)
+                                          |b $ {} (:at 1689881351521) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                       |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                           |yr $ {} (:at 1506616926005) (:type :expr)
                             :data $ {}
@@ -1193,8 +1234,11 @@
                                   |r $ {} (:at 1506616926005) (:type :expr)
                                     :data $ {}
                                       |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                      |j $ {} (:at 1506616926005) (:by |root) (:text |:expression-down) (:type :leaf)
-                                      |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                      |j $ {} (:at 1689881352968) (:by |Y9S0aNaMwg) (:type :expr)
+                                        :data $ {}
+                                          |D $ {} (:at 1689881353983) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                          |T $ {} (:at 1506616926005) (:by |root) (:text |:expression-down) (:type :leaf)
+                                          |b $ {} (:at 1689881354821) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                       |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                           |yv $ {} (:at 1506616926005) (:type :expr)
                             :data $ {}
@@ -1217,8 +1261,11 @@
                                   |r $ {} (:at 1506616926005) (:type :expr)
                                     :data $ {}
                                       |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                      |j $ {} (:at 1506616926005) (:by |root) (:text |:duplicate-expression) (:type :leaf)
-                                      |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                      |j $ {} (:at 1689881358082) (:by |Y9S0aNaMwg) (:type :expr)
+                                        :data $ {}
+                                          |D $ {} (:at 1689881358666) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                          |T $ {} (:at 1506616926005) (:by |root) (:text |:duplicate-expression) (:type :leaf)
+                                          |b $ {} (:at 1689881359370) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                       |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                           |yx $ {} (:at 1506616926005) (:type :expr)
                             :data $ {}
@@ -1234,8 +1281,11 @@
                               |j $ {} (:at 1506616926005) (:type :expr)
                                 :data $ {}
                                   |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |:command-copy) (:type :leaf)
-                                  |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                  |j $ {} (:at 1689881362532) (:by |Y9S0aNaMwg) (:type :expr)
+                                    :data $ {}
+                                      |D $ {} (:at 1689881363116) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                      |T $ {} (:at 1506616926005) (:by |root) (:text |:command-copy) (:type :leaf)
+                                      |b $ {} (:at 1689881364835) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                   |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                           |yy $ {} (:at 1506616926005) (:type :expr)
                             :data $ {}
@@ -1251,8 +1301,11 @@
                               |j $ {} (:at 1506616926005) (:type :expr)
                                 :data $ {}
                                   |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |:command-cut) (:type :leaf)
-                                  |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                  |j $ {} (:at 1689881369197) (:by |Y9S0aNaMwg) (:type :expr)
+                                    :data $ {}
+                                      |D $ {} (:at 1689881369853) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                      |T $ {} (:at 1506616926005) (:by |root) (:text |:command-cut) (:type :leaf)
+                                      |b $ {} (:at 1689881370672) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                   |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                           |yyT $ {} (:at 1506616926005) (:type :expr)
                             :data $ {}
@@ -1268,8 +1321,11 @@
                               |j $ {} (:at 1506616926005) (:type :expr)
                                 :data $ {}
                                   |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |:command-paste) (:type :leaf)
-                                  |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                  |j $ {} (:at 1689881374509) (:by |Y9S0aNaMwg) (:type :expr)
+                                    :data $ {}
+                                      |D $ {} (:at 1689881375337) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                      |T $ {} (:at 1506616926005) (:by |root) (:text |:command-paste) (:type :leaf)
+                                      |b $ {} (:at 1689881376850) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                   |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                           |yyj $ {} (:at 1506616926005) (:type :expr)
                             :data $ {}
@@ -1286,11 +1342,15 @@
                               |j $ {} (:at 1506616926005) (:type :expr)
                                 :data $ {}
                                   |T $ {} (:at 1629655492553) (:by |Y9S0aNaMwg) (:text |dispatch!) (:type :leaf)
-                                  |b $ {} (:at 1629655486144) (:by |Y9S0aNaMwg) (:text |cursor) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:type :expr)
+                                  |j $ {} (:at 1689881383616) (:by |Y9S0aNaMwg) (:type :expr)
                                     :data $ {}
-                                      |T $ {} (:at 1506616926005) (:by |root) (:text |not) (:type :leaf)
-                                      |j $ {} (:at 1506616926005) (:by |root) (:text |state) (:type :leaf)
+                                      |D $ {} (:at 1689881384341) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                      |H $ {} (:at 1689881391455) (:by |Y9S0aNaMwg) (:text |:states) (:type :leaf)
+                                      |L $ {} (:at 1689881386895) (:by |Y9S0aNaMwg) (:text |cursor) (:type :leaf)
+                                      |T $ {} (:at 1506616926005) (:type :expr)
+                                        :data $ {}
+                                          |T $ {} (:at 1506616926005) (:by |root) (:text |not) (:type :leaf)
+                                          |j $ {} (:at 1506616926005) (:by |root) (:text |state) (:type :leaf)
                           |yyr $ {} (:at 1506616926005) (:type :expr)
                             :data $ {}
                               |T $ {} (:at 1629655482516) (:by |Y9S0aNaMwg) (:text |true) (:type :leaf)
@@ -1912,8 +1972,11 @@
                       |r $ {} (:at 1506616926005) (:type :expr)
                         :data $ {}
                           |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                          |j $ {} (:at 1506616926005) (:by |root) (:text |:focus-to) (:type :leaf)
-                          |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                          |r $ {} (:at 1689881257911) (:by |Y9S0aNaMwg) (:type :expr)
+                            :data $ {}
+                              |D $ {} (:at 1689881258543) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                              |L $ {} (:at 1689881497958) (:by |Y9S0aNaMwg) (:text |:focus-to) (:type :leaf)
+                              |T $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
                           |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
           |on-input $ {} (:at 1506616926005) (:type :expr)
             :data $ {}
@@ -1933,15 +1996,18 @@
                   |r $ {} (:at 1506616926005) (:type :expr)
                     :data $ {}
                       |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                      |j $ {} (:at 1506616926005) (:by |root) (:text |:update-token) (:type :leaf)
-                      |r $ {} (:at 1506616926005) (:type :expr)
+                      |j $ {} (:at 1689881178535) (:by |Y9S0aNaMwg) (:type :expr)
                         :data $ {}
-                          |T $ {} (:at 1506616926005) (:by |root) (:text |[]) (:type :leaf)
-                          |j $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
-                          |r $ {} (:at 1506616926005) (:type :expr)
+                          |D $ {} (:at 1689881180473) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                          |T $ {} (:at 1506616926005) (:by |root) (:text |:update-token) (:type :leaf)
+                          |b $ {} (:at 1689881182446) (:by |Y9S0aNaMwg) (:type :expr)
                             :data $ {}
-                              |T $ {} (:at 1506616926005) (:by |root) (:text |:value) (:type :leaf)
-                              |j $ {} (:at 1506616926005) (:by |root) (:text |e) (:type :leaf)
+                              |T $ {} (:at 1689881182446) (:by |Y9S0aNaMwg) (:text |[]) (:type :leaf)
+                              |b $ {} (:at 1689881182446) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
+                              |h $ {} (:at 1689881182446) (:by |Y9S0aNaMwg) (:type :expr)
+                                :data $ {}
+                                  |T $ {} (:at 1689881182446) (:by |Y9S0aNaMwg) (:text |:value) (:type :leaf)
+                                  |b $ {} (:at 1689881182446) (:by |Y9S0aNaMwg) (:text |e) (:type :leaf)
                       |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
           |on-keydown $ {} (:at 1506616926005) (:type :expr)
             :data $ {}
@@ -2072,8 +2138,11 @@
                                   |r $ {} (:at 1506616926005) (:type :expr)
                                     :data $ {}
                                       |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                      |j $ {} (:at 1506616926005) (:by |root) (:text |:after-token) (:type :leaf)
-                                      |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                      |r $ {} (:at 1689881196995) (:by |Y9S0aNaMwg) (:type :expr)
+                                        :data $ {}
+                                          |D $ {} (:at 1689881197674) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                          |L $ {} (:at 1689881198607) (:by |Y9S0aNaMwg) (:text |:after-token) (:type :leaf)
+                                          |T $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
                                       |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                           |r $ {} (:at 1506616926005) (:type :expr)
                             :data $ {}
@@ -2096,14 +2165,20 @@
                                       |r $ {} (:at 1506616926005) (:type :expr)
                                         :data $ {}
                                           |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                          |j $ {} (:at 1506616926005) (:by |root) (:text |:unfold-token) (:type :leaf)
-                                          |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                          |r $ {} (:at 1689881202518) (:by |Y9S0aNaMwg) (:type :expr)
+                                            :data $ {}
+                                              |D $ {} (:at 1689881203326) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                              |L $ {} (:at 1689881203931) (:by |Y9S0aNaMwg) (:text |:unfold-token) (:type :leaf)
+                                              |T $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
                                           |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                                       |v $ {} (:at 1506616926005) (:type :expr)
                                         :data $ {}
                                           |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                          |j $ {} (:at 1506616926005) (:by |root) (:text |:fold-node) (:type :leaf)
-                                          |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                          |j $ {} (:at 1689881207678) (:by |Y9S0aNaMwg) (:type :expr)
+                                            :data $ {}
+                                              |D $ {} (:at 1689881208345) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                              |T $ {} (:at 1506616926005) (:by |root) (:text |:fold-node) (:type :leaf)
+                                              |b $ {} (:at 1689881211162) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                           |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                           |v $ {} (:at 1506616926005) (:type :expr)
                             :data $ {}
@@ -2119,14 +2194,20 @@
                                   |r $ {} (:at 1506616926005) (:type :expr)
                                     :data $ {}
                                       |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                      |j $ {} (:at 1506616926005) (:by |root) (:text |:before-token) (:type :leaf)
-                                      |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                      |j $ {} (:at 1689881215247) (:by |Y9S0aNaMwg) (:type :expr)
+                                        :data $ {}
+                                          |D $ {} (:at 1689881216808) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                          |T $ {} (:at 1506616926005) (:by |root) (:text |:before-token) (:type :leaf)
+                                          |b $ {} (:at 1689881217536) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                       |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                                   |v $ {} (:at 1506616926005) (:type :expr)
                                     :data $ {}
                                       |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                      |j $ {} (:at 1506616926005) (:by |root) (:text |:after-token) (:type :leaf)
-                                      |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                      |j $ {} (:at 1689881218779) (:by |Y9S0aNaMwg) (:type :expr)
+                                        :data $ {}
+                                          |D $ {} (:at 1689881219482) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                          |T $ {} (:at 1506616926005) (:by |root) (:text |:after-token) (:type :leaf)
+                                          |b $ {} (:at 1689881224113) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                       |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                           |x $ {} (:at 1506616926005) (:type :expr)
                             :data $ {}
@@ -2149,8 +2230,11 @@
                                       |j $ {} (:at 1506616926005) (:type :expr)
                                         :data $ {}
                                           |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                          |j $ {} (:at 1506616926005) (:by |root) (:text |:remove-node) (:type :leaf)
-                                          |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                          |j $ {} (:at 1689881227410) (:by |Y9S0aNaMwg) (:type :expr)
+                                            :data $ {}
+                                              |D $ {} (:at 1689881228084) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                              |T $ {} (:at 1506616926005) (:by |root) (:text |:remove-node) (:type :leaf)
+                                              |b $ {} (:at 1689881228893) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                           |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                                       |r $ {} (:at 1506616926005) (:type :expr)
                                         :data $ {}
@@ -2173,8 +2257,11 @@
                                   |r $ {} (:at 1506616926005) (:type :expr)
                                     :data $ {}
                                       |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                      |j $ {} (:at 1506616926005) (:by |root) (:text |:node-up) (:type :leaf)
-                                      |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                      |j $ {} (:at 1689881234173) (:by |Y9S0aNaMwg) (:type :expr)
+                                        :data $ {}
+                                          |D $ {} (:at 1689881234895) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                          |T $ {} (:at 1506616926005) (:by |root) (:text |:node-up) (:type :leaf)
+                                          |b $ {} (:at 1689881235736) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                       |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                           |yT $ {} (:at 1506616926005) (:type :expr)
                             :data $ {}
@@ -2198,8 +2285,11 @@
                                   |r $ {} (:at 1506616926005) (:type :expr)
                                     :data $ {}
                                       |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                      |j $ {} (:at 1506616926005) (:by |root) (:text |:node-left) (:type :leaf)
-                                      |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                      |j $ {} (:at 1689881237971) (:by |Y9S0aNaMwg) (:type :expr)
+                                        :data $ {}
+                                          |D $ {} (:at 1689881240242) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                          |T $ {} (:at 1506616926005) (:by |root) (:text |:node-left) (:type :leaf)
+                                          |b $ {} (:at 1689881241567) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                       |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                           |yj $ {} (:at 1506616926005) (:type :expr)
                             :data $ {}
@@ -2223,8 +2313,11 @@
                                   |r $ {} (:at 1506616926005) (:type :expr)
                                     :data $ {}
                                       |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                      |j $ {} (:at 1506616926005) (:by |root) (:text |:node-right) (:type :leaf)
-                                      |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                      |j $ {} (:at 1689881242964) (:by |Y9S0aNaMwg) (:type :expr)
+                                        :data $ {}
+                                          |D $ {} (:at 1689881243603) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                          |T $ {} (:at 1506616926005) (:by |root) (:text |:node-right) (:type :leaf)
+                                          |b $ {} (:at 1689881244398) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                       |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                           |yr $ {} (:at 1506616926005) (:type :expr)
                             :data $ {}
@@ -2248,8 +2341,11 @@
                                   |r $ {} (:at 1506616926005) (:type :expr)
                                     :data $ {}
                                       |T $ {} (:at 1506616926005) (:by |root) (:text |modify!) (:type :leaf)
-                                      |j $ {} (:at 1506616926005) (:by |root) (:text |:command-paste) (:type :leaf)
-                                      |r $ {} (:at 1506616926005) (:by |root) (:text |coord) (:type :leaf)
+                                      |j $ {} (:at 1689881246353) (:by |Y9S0aNaMwg) (:type :expr)
+                                        :data $ {}
+                                          |D $ {} (:at 1689881247137) (:by |Y9S0aNaMwg) (:text |::) (:type :leaf)
+                                          |T $ {} (:at 1506616926005) (:by |root) (:text |:command-paste) (:type :leaf)
+                                          |b $ {} (:at 1689881248199) (:by |Y9S0aNaMwg) (:text |coord) (:type :leaf)
                                       |v $ {} (:at 1506616926005) (:by |root) (:text |dispatch!) (:type :leaf)
                           |yv $ {} (:at 1506616926005) (:type :expr)
                             :data $ {}
@@ -2441,124 +2537,259 @@
                 :data $ {}
                   |T $ {} (:at 1506616926005) (:by |root) (:text |snapshot) (:type :leaf)
                   |j $ {} (:at 1506616926005) (:by |root) (:text |op) (:type :leaf)
-                  |r $ {} (:at 1506616926005) (:by |root) (:text |op-data) (:type :leaf)
               |v $ {} (:at 1506616926005) (:type :expr)
                 :data $ {}
                   |T $ {} (:at 1506616926005) (:by |root) (:text |;) (:type :leaf)
                   |j $ {} (:at 1506616926005) (:by |root) (:text |println) (:type :leaf)
                   |r $ {} (:at 1506616926005) (:by |root) (:text |:update-state) (:type :leaf)
                   |v $ {} (:at 1506616926005) (:by |root) (:text |op) (:type :leaf)
-                  |x $ {} (:at 1506616926005) (:by |root) (:text |op-data) (:type :leaf)
-              |x $ {} (:at 1506616926005) (:type :expr)
+              |x $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
                 :data $ {}
-                  |T $ {} (:at 1506616926005) (:by |root) (:text |let) (:type :leaf)
-                  |j $ {} (:at 1506616926005) (:type :expr)
+                  |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |tag-match) (:type :leaf)
+                  |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |op) (:type :leaf)
+                  |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
                     :data $ {}
-                      |T $ {} (:at 1506616926005) (:type :expr)
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
                         :data $ {}
-                          |T $ {} (:at 1506616926005) (:by |root) (:text |handler) (:type :leaf)
-                          |j $ {} (:at 1506616926005) (:type :expr)
-                            :data $ {}
-                              |T $ {} (:at 1629653539276) (:by |Y9S0aNaMwg) (:text |case-default) (:type :leaf)
-                              |j $ {} (:at 1506616926005) (:by |root) (:text |op) (:type :leaf)
-                              |n $ {} (:at 1629653545215) (:by |Y9S0aNaMwg) (:type :expr)
-                                :data $ {}
-                                  |D $ {} (:at 1629653546090) (:by |Y9S0aNaMwg) (:text |do) (:type :leaf)
-                                  |L $ {} (:at 1629653546378) (:by |Y9S0aNaMwg) (:type :expr)
-                                    :data $ {}
-                                      |T $ {} (:at 1629653547128) (:by |Y9S0aNaMwg) (:text |println) (:type :leaf)
-                                      |j $ {} (:at 1629653550767) (:by |Y9S0aNaMwg) (:text "|\"Unknown op:") (:type :leaf)
-                                      |r $ {} (:at 1629653551117) (:by |Y9S0aNaMwg) (:text |op) (:type :leaf)
-                                  |T $ {} (:at 1629653542812) (:by |Y9S0aNaMwg) (:text |default-handler) (:type :leaf)
-                              |r $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:update-token) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |tree/update-token) (:type :leaf)
-                              |v $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:after-token) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |tree/after-token) (:type :leaf)
-                              |x $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:fold-node) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |tree/fold-node) (:type :leaf)
-                              |y $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:unfold-expression) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |tree/unfold-expression) (:type :leaf)
-                              |yT $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:unfold-token) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |tree/unfold-token) (:type :leaf)
-                              |yj $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:before-expression) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |tree/before-expression) (:type :leaf)
-                              |yr $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:after-expression) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |tree/after-expression) (:type :leaf)
-                              |yv $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:prepend-expression) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |tree/prepend-expression) (:type :leaf)
-                              |yx $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:append-expression) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |tree/append-expression) (:type :leaf)
-                              |yy $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:before-token) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |tree/before-token) (:type :leaf)
-                              |yyT $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:remove-node) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |tree/remove-node) (:type :leaf)
-                              |yyj $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:focus-to) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |focus/focus-to) (:type :leaf)
-                              |yyr $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:node-up) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |focus/node-up) (:type :leaf)
-                              |yyv $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:expression-down) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |focus/expression-down) (:type :leaf)
-                              |yyx $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:node-left) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |focus/node-left) (:type :leaf)
-                              |yyy $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:node-right) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |focus/node-right) (:type :leaf)
-                              |yyyT $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:command-copy) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |command/copy) (:type :leaf)
-                              |yyyj $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:command-cut) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |command/cut) (:type :leaf)
-                              |yyyr $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:command-paste) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |command/paste) (:type :leaf)
-                              |yyyv $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:tree-reset) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |tree/tree-reset) (:type :leaf)
-                              |yyyx $ {} (:at 1506616926005) (:type :expr)
-                                :data $ {}
-                                  |T $ {} (:at 1506616926005) (:by |root) (:text |:duplicate-expression) (:type :leaf)
-                                  |j $ {} (:at 1506616926005) (:by |root) (:text |tree/duplicate-expression) (:type :leaf)
-                  |r $ {} (:at 1506616926005) (:type :expr)
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:update-token) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |tree/update-token) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |l $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
                     :data $ {}
-                      |T $ {} (:at 1506616926005) (:by |root) (:text |handler) (:type :leaf)
-                      |j $ {} (:at 1506616926005) (:by |root) (:text |snapshot) (:type :leaf)
-                      |r $ {} (:at 1506616926005) (:by |root) (:text |op-data) (:type :leaf)
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:after-token) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |tree/after-token) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |o $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                    :data $ {}
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:fold-node) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |tree/fold-node) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |q $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                    :data $ {}
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:unfold-expression) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |tree/unfold-expression) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |s $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                    :data $ {}
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:unfold-token) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |tree/unfold-token) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |t $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                    :data $ {}
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:before-expression) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |tree/before-expression) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |u $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                    :data $ {}
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:after-expression) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |tree/after-expression) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |v $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                    :data $ {}
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:prepend-expression) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |tree/prepend-expression) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |w $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                    :data $ {}
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:append-expression) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |tree/append-expression) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |x $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                    :data $ {}
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:before-token) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |tree/before-token) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |y $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                    :data $ {}
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:remove-node) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |tree/remove-node) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |z $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                    :data $ {}
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:focus-to) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |focus/focus-to) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |zD $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                    :data $ {}
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:node-up) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |focus/node-up) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |zP $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                    :data $ {}
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:expression-down) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |focus/expression-down) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |zY $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                    :data $ {}
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:node-left) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |focus/node-left) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |ze $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                    :data $ {}
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:node-right) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |focus/node-right) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |zj $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                    :data $ {}
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:command-copy) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |command/copy) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |zn $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                    :data $ {}
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:command-cut) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |command/cut) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |zq $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                    :data $ {}
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:command-paste) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |command/paste) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |zs $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                    :data $ {}
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:tree-reset) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |tree/tree-reset) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |zt $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                    :data $ {}
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |:duplicate-expression) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |tree/duplicate-expression) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |d) (:type :leaf)
+                  |zu $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                    :data $ {}
+                      |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |_) (:type :leaf)
+                      |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                        :data $ {}
+                          |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |do) (:type :leaf)
+                          |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:type :expr)
+                            :data $ {}
+                              |T $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |eprintln) (:type :leaf)
+                              |b $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text "|\"Unknown op:") (:type :leaf)
+                              |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |op) (:type :leaf)
+                          |h $ {} (:at 1689881146730) (:by |Y9S0aNaMwg) (:text |snapshot) (:type :leaf)
           |default-handler $ {} (:at 1506616926005) (:type :expr)
             :data $ {}
               |T $ {} (:at 1506616926005) (:by |root) (:text |defn) (:type :leaf)

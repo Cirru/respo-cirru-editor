@@ -1,6 +1,6 @@
 
 {} (:package |cirru-editor)
-  :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!) (:version |0.4.4)
+  :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!) (:version |0.4.5)
     :modules $ [] |respo.calcit/ |lilac/ |memof/
   :entries $ {}
   :files $ {}
@@ -46,8 +46,8 @@
             fn (e dispatch!) (on-command snapshot dispatch! e)
         |handle-update $ quote
           defn handle-update (snapshot on-update!)
-            fn (op op-data dispatch!)
-              on-update! (cirru-edit snapshot op op-data) dispatch!
+            fn (op dispatch!)
+              on-update! (cirru-edit snapshot op) dispatch!
         |style-box $ quote
           def style-box $ {} (:flex 1) (:overflow-y |auto) (:padding "|100px 0 200px 0")
         |style-editor $ quote
@@ -74,7 +74,7 @@
                 div
                   {} (:style style-folded)
                     :on-click $ fn (e dispatch!)
-                      dispatch! cursor $ not state
+                      dispatch! $ :: :states cursor (not state)
                     :on-keydown $ on-keydown state modify! coord on-command cursor
                   <> (first expression) nil
                 list->
@@ -132,7 +132,8 @@
         |on-click $ quote
           defn on-click (modify! coord focus)
             fn (e dispatch!)
-              if (not= coord focus) (modify! :focus-to coord dispatch!)
+              if (not= coord focus)
+                modify! (:: :focus-to coord) dispatch!
         |on-keydown $ quote
           defn on-keydown (state modify! coord on-command cursor)
             fn (e dispatch!)
@@ -144,34 +145,48 @@
                 cond
                     = code keycode/space
                     do (.!preventDefault event)
-                      if shift? (modify! :before-token coord dispatch!) (modify! :after-token coord dispatch!)
+                      if shift?
+                        modify! (:: :before-token coord) dispatch!
+                        modify! (:: :after-token coord) dispatch!
                   (= code keycode/tab)
                     do (.!preventDefault event)
-                      if shift? (modify! :unfold-expression coord dispatch!) (modify! :fold-node coord dispatch!)
+                      if shift?
+                        modify! (:: :unfold-expression coord) dispatch!
+                        modify! (:: :fold-node coord) dispatch!
                   (= code keycode/enter)
                     if command?
-                      if shift? (modify! :append-expression coord dispatch!) (modify! :prepend-expression coord dispatch!)
-                      if shift? (modify! :before-expression coord dispatch!) (modify! :after-expression coord dispatch!)
+                      if shift?
+                        modify! (:: :append-expression coord) dispatch!
+                        modify! (:: :prepend-expression coord) dispatch!
+                      if shift?
+                        modify! (:: :before-expression coord) dispatch!
+                        modify! (:: :after-expression coord) dispatch!
                   (= code keycode/backspace)
-                    do (.!preventDefault event) (modify! :remove-node coord dispatch!)
+                    do (.!preventDefault event)
+                      modify! (:: :remove-node coord) dispatch!
                   (= code keycode/left)
-                    do (.!preventDefault event) (modify! :node-left coord dispatch!)
+                    do (.!preventDefault event)
+                      modify! (:: :node-left coord) dispatch!
                   (= code keycode/right)
-                    do (.!preventDefault event) (modify! :node-right coord dispatch!)
+                    do (.!preventDefault event)
+                      modify! (:: :node-right coord) dispatch!
                   (= code keycode/up)
-                    do (.!preventDefault event) (modify! :node-up coord dispatch!)
+                    do (.!preventDefault event)
+                      modify! (:: :node-up coord) dispatch!
                   (= code keycode/down)
-                    do (.!preventDefault event) (modify! :expression-down coord dispatch!)
+                    do (.!preventDefault event)
+                      modify! (:: :expression-down coord) dispatch!
                   (and command? (= code keycode/key-b))
-                    do (.!preventDefault event) (modify! :duplicate-expression coord dispatch!)
+                    do (.!preventDefault event)
+                      modify! (:: :duplicate-expression coord) dispatch!
                   (and command? (= code keycode/key-c))
-                    modify! :command-copy coord dispatch!
+                    modify! (:: :command-copy coord) dispatch!
                   (and command? (= code keycode/key-x))
-                    modify! :command-cut coord dispatch!
+                    modify! (:: :command-cut coord) dispatch!
                   (and command? (= code keycode/key-v))
-                    modify! :command-paste coord dispatch!
+                    modify! (:: :command-paste coord) dispatch!
                   (and command? shift? (= code keycode/key-f))
-                    dispatch! cursor $ not state
+                    dispatch! $ :: :states cursor (not state)
                   true $ if command? (on-command e dispatch!) nil
         |style-expression $ quote
           def style-expression $ {} (:border-style |solid) (:outline |none) (:padding-left 8) (:padding-right 0) (:padding-top 2) (:padding-bottom 0) (:margin-left 12) (:margin-right 0) (:margin-top 0) (:margin-bottom 4) (:border-width "|0 0 0 1px") (:min-height |26px) (:min-width |16px) (:vertical-align |top) (:box-sizing |border-box) (:border-radius "\"8px")
@@ -246,12 +261,13 @@
         |on-click $ quote
           defn on-click (modify! coord focus)
             fn (e dispatch!)
-              if (not= coord focus) (modify! :focus-to coord dispatch!)
+              if (not= coord focus)
+                modify! (:: :focus-to coord) dispatch!
         |on-input $ quote
           defn on-input (modify! coord)
             fn (e dispatch!)
-              modify! :update-token
-                [] coord $ :value e
+              modify!
+                :: :update-token $ [] coord (:value e)
                 , dispatch!
         |on-keydown $ quote
           defn on-keydown (modify! coord token on-command)
@@ -267,23 +283,34 @@
                   thin-cursor? $ = (.-selectionStart target) (.-selectionEnd target)
                 cond
                     and (= code keycode/space) (not shift?)
-                    do (.!preventDefault event) (modify! :after-token coord dispatch!)
+                    do (.!preventDefault event)
+                      modify! (:: :after-token coord) dispatch!
                   (= code keycode/tab)
                     do (.!preventDefault event)
-                      if shift? (modify! :unfold-token coord dispatch!) (modify! :fold-node coord dispatch!)
+                      if shift?
+                        modify! (:: :unfold-token coord) dispatch!
+                        modify! (:: :fold-node coord) dispatch!
                   (= code keycode/enter)
-                    if shift? (modify! :before-token coord dispatch!) (modify! :after-token coord dispatch!)
+                    if shift?
+                      modify! (:: :before-token coord) dispatch!
+                      modify! (:: :after-token coord) dispatch!
                   (= code keycode/backspace)
                     if (= token |)
-                      do (modify! :remove-node coord dispatch!) (.!preventDefault event)
+                      do
+                        modify! (:: :remove-node coord) dispatch!
+                        .!preventDefault event
                   (= code keycode/up)
-                    do (.!preventDefault event) (modify! :node-up coord dispatch!)
+                    do (.!preventDefault event)
+                      modify! (:: :node-up coord) dispatch!
                   (and thin-cursor? at-start? (= code keycode/left))
-                    do (.!preventDefault event) (modify! :node-left coord dispatch!)
+                    do (.!preventDefault event)
+                      modify! (:: :node-left coord) dispatch!
                   (and thin-cursor? at-end? (= code keycode/right))
-                    do (.!preventDefault event) (modify! :node-right coord dispatch!)
+                    do (.!preventDefault event)
+                      modify! (:: :node-right coord) dispatch!
                   (and shift? command? (= code keycode/key-v))
-                    do (.!preventDefault event) (modify! :command-paste coord dispatch!)
+                    do (.!preventDefault event)
+                      modify! (:: :command-paste coord) dispatch!
                   true $ if command? (on-command e dispatch!) nil
         |pattern-number $ quote
           def pattern-number $ new js/RegExp "\"-?[\\d\\.]+"
@@ -310,32 +337,31 @@
     |cirru-editor.core $ {}
       :defs $ {}
         |cirru-edit $ quote
-          defn cirru-edit (snapshot op op-data) (; println :update-state op op-data)
-            let
-                handler $ case-default op
-                  do (println "\"Unknown op:" op) default-handler
-                  :update-token tree/update-token
-                  :after-token tree/after-token
-                  :fold-node tree/fold-node
-                  :unfold-expression tree/unfold-expression
-                  :unfold-token tree/unfold-token
-                  :before-expression tree/before-expression
-                  :after-expression tree/after-expression
-                  :prepend-expression tree/prepend-expression
-                  :append-expression tree/append-expression
-                  :before-token tree/before-token
-                  :remove-node tree/remove-node
-                  :focus-to focus/focus-to
-                  :node-up focus/node-up
-                  :expression-down focus/expression-down
-                  :node-left focus/node-left
-                  :node-right focus/node-right
-                  :command-copy command/copy
-                  :command-cut command/cut
-                  :command-paste command/paste
-                  :tree-reset tree/tree-reset
-                  :duplicate-expression tree/duplicate-expression
-              handler snapshot op-data
+          defn cirru-edit (snapshot op) (; println :update-state op)
+            tag-match op
+                :update-token d
+                tree/update-token snapshot d
+              (:after-token d) (tree/after-token snapshot d)
+              (:fold-node d) (tree/fold-node snapshot d)
+              (:unfold-expression d) (tree/unfold-expression snapshot d)
+              (:unfold-token d) (tree/unfold-token snapshot d)
+              (:before-expression d) (tree/before-expression snapshot d)
+              (:after-expression d) (tree/after-expression snapshot d)
+              (:prepend-expression d) (tree/prepend-expression snapshot d)
+              (:append-expression d) (tree/append-expression snapshot d)
+              (:before-token d) (tree/before-token snapshot d)
+              (:remove-node d) (tree/remove-node snapshot d)
+              (:focus-to d) (focus/focus-to snapshot d)
+              (:node-up d) (focus/node-up snapshot d)
+              (:expression-down d) (focus/expression-down snapshot d)
+              (:node-left d) (focus/node-left snapshot d)
+              (:node-right d) (focus/node-right snapshot d)
+              (:command-copy d) (command/copy snapshot d)
+              (:command-cut d) (command/cut snapshot d)
+              (:command-paste d) (command/paste snapshot d)
+              (:tree-reset d) (tree/tree-reset snapshot d)
+              (:duplicate-expression d) (tree/duplicate-expression snapshot d)
+              _ $ do (eprintln "\"Unknown op:" op) snapshot
         |default-handler $ quote
           defn default-handler (snapshot op-data) snapshot
       :ns $ quote
