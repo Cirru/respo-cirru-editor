@@ -1,6 +1,6 @@
 
 {} (:package |cirru-editor)
-  :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!) (:version |0.4.5)
+  :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!) (:version |0.4.6)
     :modules $ [] |respo.calcit/ |lilac/ |memof/
   :entries $ {}
   :files $ {}
@@ -11,34 +11,30 @@
             let
                 states $ :states store
               div
-                {} $ :style
-                  {} (:position |absolute) (:width |100%) (:height |100%) (:display |flex) (:flex-direction |column)
-                    :background-color $ hsl 0 0 0
+                {} $ :class-name style-container
                 comp-editor states store on-update! on-command
         |on-command $ quote
           defn on-command (snapshot dispatch! e) (js/console.log "\"command" e)
         |on-update! $ quote
           defn on-update! (snapshot dispatch!) (dispatch! :save snapshot)
+        |style-container $ quote
+          defstyle style-container $ {}
+            "\"&" $ {} (:position |absolute) (:width |100%) (:height |100%) (:display |flex) (:flex-direction |column)
+              :background-color $ hsl 0 0 0
       :ns $ quote
         ns cirru-editor.comp.container $ :require
-          [] respo.util.format :refer $ [] hsl
-          [] respo.core :refer $ [] defcomp <> div span
-          [] cirru-editor.comp.editor :refer $ [] comp-editor
+          respo.util.format :refer $ hsl
+          respo.core :refer $ defcomp <> div span
+          cirru-editor.comp.editor :refer $ comp-editor
+          respo.css :refer $ defstyle
     |cirru-editor.comp.editor $ {}
       :defs $ {}
-        |common-styles $ quote
-          def common-styles $ str |.cirru-expression{
-            style->string $ .to-list style-expression
-            , "|} .cirru-token{"
-              style->string $ .to-list style-token
-              , |}
         |comp-editor $ quote
           defcomp comp-editor (states snapshot on-update! on-command)
             div
-              {} $ :style style-editor
-              style $ {} (:innerHTML common-styles)
+              {} $ :class-name style-editor
               div
-                {} $ :style style-box
+                {} $ :class-name style-box
                 comp-expression states (:tree snapshot) (handle-update snapshot on-update!) ([]) 0 false (:focus snapshot) (handle-command on-command snapshot) true false
               ; comp-inspect snapshot $ {} (:bottom 0) (:left 0)
         |handle-command $ quote
@@ -49,9 +45,11 @@
             fn (op dispatch!)
               on-update! (cirru-edit snapshot op) dispatch!
         |style-box $ quote
-          def style-box $ {} (:flex 1) (:overflow-y |auto) (:padding "|100px 0 200px 0")
+          defstyle style-box $ {}
+            "\"&" $ {} (:flex 1) (:overflow-y |auto) (:padding "|100px 0 200px 0")
         |style-editor $ quote
-          def style-editor $ {} (:padding "|8px 8px 8px 8px") (:min-height |200px) (:display |flex) (:flex-direction |column) (:position |relative) (:flex 1)
+          defstyle style-editor $ {}
+            "\"&" $ {} (:padding "|8px 8px 8px 8px") (:min-height |200px) (:display |flex) (:flex-direction |column) (:position |relative) (:flex 1)
       :ns $ quote
         ns cirru-editor.comp.editor $ :require
           hsl.core :refer $ hsl
@@ -59,9 +57,8 @@
           respo.comp.inspect :refer $ comp-inspect
           respo.comp.space :refer $ =<
           cirru-editor.core :refer $ cirru-edit
-          cirru-editor.comp.expression :refer $ comp-expression style-expression
-          cirru-editor.comp.token :refer $ style-token
-          respo.render.html :refer $ style->string
+          cirru-editor.comp.expression :refer $ comp-expression
+          respo.css :refer $ defstyle
     |cirru-editor.comp.expression $ {}
       :defs $ {}
         |comp-expression $ quote
@@ -72,14 +69,15 @@
                 state $ either (:data states) false
               if state
                 div
-                  {} (:style style-folded)
+                  {} (:class-name style-folded)
                     :on-click $ fn (e dispatch!)
                       dispatch! $ :: :states cursor (not state)
                     :on-keydown $ on-keydown state modify! coord on-command cursor
                   <> (first expression) nil
                 list->
                   {} (:tab-index 0)
-                    :class-name $ if (= coord focus) "|editor-focused cirru-expression" |cirru-expression
+                    :class-name $ str-spaced style-expression
+                      if (= coord focus) |editor-focused "\""
                     :style $ merge ({}) (if inline? style-inline)
                       if
                         and tail? (not head?) (pos? level)
@@ -92,43 +90,45 @@
                       []
                       , 0 expression nil
                     fn (acc idx expr prev-kind)
-                      if (empty? expr) acc $ let
-                          item $ first expr
-                          kind $ if (string? item) :leaf
-                            if
-                              and
-                                <= (count item) 1
-                                string? $ first item
-                              , :leaf $ case-default prev-kind :expr (:expr :expr)
-                                :inline-expr $ if
+                      list-match expr
+                        () acc
+                        (item es)
+                          let
+                              kind $ if (string? item) :leaf
+                                if
                                   and
-                                    <= (count item) 2
-                                    every? item string?
-                                  , :inline-expr :expr
-                                :leaf $ if
-                                  and
-                                    <= (count item) 6
-                                    every? item string?
-                                  , :inline-expr :expr
-                                nil $ if
-                                  and
-                                    <= (count item) 6
-                                    every? item string?
-                                  , :inline-expr :expr
-                          pair $ [] idx
-                            let
-                                child-coord $ conj coord idx
-                                child-focus $ if (coord-contains? focus child-coord) focus nil
-                                child-head? $ zero? idx
-                              if (string? item) (comp-token item modify! child-coord child-focus on-command child-head?)
-                                comp-expression (>> states idx) item modify! child-coord (inc level)
-                                  and (not tail?)
-                                    = (dec exp-size) idx
-                                    = prev-kind :leaf
-                                  , child-focus on-command child-head? $ or (= kind :inline-expr) (= kind :leaf)
-                          next-acc $ conj acc pair
-                        ; println "\"kinds:" prev-kind kind "\" at " item
-                        recur next-acc (inc idx) (rest expr) kind
+                                    <= (count item) 1
+                                    string? $ first item
+                                  , :leaf $ case-default prev-kind :expr (:expr :expr)
+                                    :inline-expr $ if
+                                      and
+                                        <= (count item) 2
+                                        every? item string?
+                                      , :inline-expr :expr
+                                    :leaf $ if
+                                      and
+                                        <= (count item) 6
+                                        every? item string?
+                                      , :inline-expr :expr
+                                    nil $ if
+                                      and
+                                        <= (count item) 6
+                                        every? item string?
+                                      , :inline-expr :expr
+                              pair $ [] idx
+                                let
+                                    child-coord $ conj coord idx
+                                    child-focus $ if (coord-contains? focus child-coord) focus nil
+                                    child-head? $ zero? idx
+                                  if (string? item) (comp-token item modify! child-coord child-focus on-command child-head?)
+                                    comp-expression (>> states idx) item modify! child-coord (inc level)
+                                      and (not tail?)
+                                        = (dec exp-size) idx
+                                        = prev-kind :leaf
+                                      , child-focus on-command child-head? $ or (= kind :inline-expr) (= kind :leaf)
+                              next-acc $ conj acc pair
+                            ; println "\"kinds:" prev-kind kind "\" at " item
+                            recur next-acc (inc idx) es kind
         |on-click $ quote
           defn on-click (modify! coord focus)
             fn (e dispatch!)
@@ -189,24 +189,26 @@
                     dispatch! $ :: :states cursor (not state)
                   true $ if command? (on-command e dispatch!) nil
         |style-expression $ quote
-          def style-expression $ {} (:border-style |solid) (:outline |none) (:padding-left 8) (:padding-right 0) (:padding-top 2) (:padding-bottom 0) (:margin-left 12) (:margin-right 0) (:margin-top 0) (:margin-bottom 4) (:border-width "|0 0 0 1px") (:min-height |26px) (:min-width |16px) (:vertical-align |top) (:box-sizing |border-box) (:border-radius "\"8px")
-            :border-color $ hsl 0 0 32 0.9
+          defstyle style-expression $ {}
+            "\"&" $ {} (:border-style |solid) (:outline |none) (:padding-left 8) (:padding-right 0) (:padding-top 2) (:padding-bottom 0) (:margin-left 12) (:margin-right 0) (:margin-top 0) (:margin-bottom 4) (:border-width "|0 0 0 1px") (:min-height |26px) (:min-width |16px) (:vertical-align |top) (:box-sizing |border-box) (:border-radius "\"8px")
+              :border-color $ hsl 0 0 32 0.9
         |style-folded $ quote
-          def style-folded $ {} (:display |inline-block)
-            :color $ hsl 180 80 60
-            :font-family "|Source Code Pro,Menlo,monospace"
-            :font-size |15px
-            :outline |none
-            :border-width |1px
-            :border-style |solid
-            :border-color $ hsl 0 0 100 0.5
-            :padding-left 16
-            :padding-right 16
-            :vertical-align |top
-            :line-height |27px
-            :border-radius |16px
-            :cursor |pointer
-            :margin-bottom |4px
+          defstyle style-folded $ {}
+            "\"&" $ {} (:display |inline-block)
+              :color $ hsl 180 80 60
+              :font-family "|Source Code Pro,Menlo,monospace"
+              :font-size |15px
+              :outline |none
+              :border-width |1px
+              :border-style |solid
+              :border-color $ hsl 0 0 100 0.5
+              :padding-left 16
+              :padding-right 16
+              :vertical-align |top
+              :line-height |27px
+              :border-radius |16px
+              :cursor |pointer
+              :margin-bottom |4px
         |style-inline $ quote
           def style-inline $ {} (:display |inline-block) (:border-width "|0 0 1px 0") (:padding-left 7) (:padding-right 7) (:padding-bottom 2) (:margin-left 8) (:margin-right 4) (:text-align |center)
             :background-color $ hsl 200 80 80 0
@@ -223,16 +225,19 @@
           cirru-editor.util.detect :refer $ coord-contains? shallow? deep?
           cirru-editor.util.keycode :as keycode
           cirru-editor.util :refer $ pos? zero?
+          respo.css :refer $ defstyle
     |cirru-editor.comp.token $ {}
       :defs $ {}
+        |code-font $ quote (def code-font "|Source Code Pro,Menlo,monospace")
         |comp-token $ quote
           defcomp comp-token (token modify! coord focus on-command head?)
             input $ {} (:value token) (:spellcheck false)
-              :class-name $ if (= coord focus) "|editor-focused cirru-token" |cirru-token
-              :style $ merge ({})
+              :class-name $ str-spaced style-token
+                if (= coord focus) |editor-focused "\""
+              :style $ merge
                 {} $ :width
                   str
-                    + 8 $ text-width token 15 (:font-family style-token)
+                    + 8 $ text-width token 15 code-font
                     , |px
                 cond
                     contains? (#{} "\"true" "\"false") token
@@ -315,10 +320,11 @@
         |pattern-number $ quote
           def pattern-number $ new js/RegExp "\"-?[\\d\\.]+"
         |style-token $ quote
-          def style-token $ {} (:border |none) (:font-size |15px) (:line-height |24px) (:font-family "|Source Code Pro,Menlo,monospace") (:padding "|0 2px") (:margin-left 2) (:margin-right 2) (:outline |none) (:max-width |320px)
-            :background-color $ hsl 0 0 100 0
-            :color $ hsl 200 12 67 0.9
-            :text-align |center
+          defstyle style-token $ {}
+            "\"&" $ {} (:border |none) (:font-size |15px) (:line-height |24px) (:font-family code-font) (:padding "|0 2px") (:margin-left 2) (:margin-right 2) (:outline |none) (:max-width |320px)
+              :background-color $ hsl 0 0 100 0
+              :color $ hsl 200 12 67 0.9
+              :text-align |center
       :ns $ quote
         ns cirru-editor.comp.token $ :require
           respo.util.format :refer $ hsl
@@ -327,6 +333,7 @@
           cirru-editor.util.detect :refer $ has-blank?
           cirru-editor.util.keycode :as keycode
           cirru-editor.util :refer $ zero?
+          respo.css :refer $ defstyle
     |cirru-editor.config $ {}
       :defs $ {}
         |dev? $ quote
