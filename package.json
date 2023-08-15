@@ -1,6 +1,6 @@
 {
   "name": "respo-cirru-editor",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "Stack Workflow",
   "main": "index.js",
   "scripts": {},
@@ -12,9 +12,9 @@
   "license": "MIT",
   "devDependencies": {
     "bottom-tip": "^0.1.5",
-    "vite": "^4.4.5"
+    "vite": "^4.4.9"
   },
   "dependencies": {
-    "@calcit/procs": "^0.7.5"
+    "@calcit/procs": "^0.7.13"
   }
 }
