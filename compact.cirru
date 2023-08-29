@@ -1,10 +1,10 @@
 
 {} (:package |cirru-editor)
-  :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!) (:version |0.5.0)
+  :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!) (:version |0.6.0)
     :modules $ [] |respo.calcit/ |lilac/ |memof/
   :entries $ {}
   :files $ {}
-    |cirru-editor.comp.container $ {}
+    |cirru-editor.comp.container $ %{} :FileEntry
       :defs $ {}
         |comp-container $ %{} :CodeEntry (:doc |)
           :code $ quote
@@ -32,7 +32,7 @@
             respo.core :refer $ defcomp <> div span
             cirru-editor.comp.editor :refer $ comp-editor
             respo.css :refer $ defstyle
-    |cirru-editor.comp.editor $ {}
+    |cirru-editor.comp.editor $ %{} :FileEntry
       :defs $ {}
         |comp-editor $ %{} :CodeEntry (:doc |)
           :code $ quote
@@ -70,7 +70,7 @@
             cirru-editor.core :refer $ cirru-edit
             cirru-editor.comp.expression :refer $ comp-expression
             respo.css :refer $ defstyle
-    |cirru-editor.comp.expression $ {}
+    |cirru-editor.comp.expression $ %{} :FileEntry
       :defs $ {}
         |comp-expression $ %{} :CodeEntry (:doc |)
           :code $ quote
@@ -245,7 +245,7 @@
             cirru-editor.util.keycode :as keycode
             cirru-editor.util :refer $ pos? zero?
             respo.css :refer $ defstyle
-    |cirru-editor.comp.token $ {}
+    |cirru-editor.comp.token $ %{} :FileEntry
       :defs $ {}
         |code-font $ %{} :CodeEntry (:doc |)
           :code $ quote (def code-font "|Source Code Pro,Menlo,monospace")
@@ -361,7 +361,7 @@
             cirru-editor.util.keycode :as keycode
             cirru-editor.util :refer $ zero?
             respo.css :refer $ defstyle
-    |cirru-editor.config $ {}
+    |cirru-editor.config $ %{} :FileEntry
       :defs $ {}
         |dev? $ %{} :CodeEntry (:doc |)
           :code $ quote
@@ -371,7 +371,7 @@
             def site $ {} (:title "\"Cirru Editor") (:icon "\"http://cdn.tiye.me/logo/cirru.png") (:storage-key "\"respo-cirru-editor")
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote (ns cirru-editor.config)
-    |cirru-editor.core $ {}
+    |cirru-editor.core $ %{} :FileEntry
       :defs $ {}
         |cirru-edit $ %{} :CodeEntry (:doc |)
           :code $ quote
@@ -406,7 +406,7 @@
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
           ns cirru-editor.core $ :require (cirru-editor.modifier.tree :as tree) (cirru-editor.modifier.focus :as focus) (cirru-editor.modifier.command :as command)
-    |cirru-editor.main $ {}
+    |cirru-editor.main $ %{} :FileEntry
       :defs $ {}
         |*store $ %{} :CodeEntry (:doc |)
           :code $ quote (defatom *store schema/store)
@@ -458,7 +458,7 @@
             cirru-editor.config :as config
             "\"./calcit.build-errors" :default build-errors
             "\"bottom-tip" :default hud!
-    |cirru-editor.modifier.command $ {}
+    |cirru-editor.modifier.command $ %{} :FileEntry
       :defs $ {}
         |copy $ %{} :CodeEntry (:doc |)
           :code $ quote
@@ -502,7 +502,7 @@
         :code $ quote
           ns cirru-editor.modifier.command $ :require
             cirru-editor.util :refer $ zero?
-    |cirru-editor.modifier.focus $ {}
+    |cirru-editor.modifier.focus $ %{} :FileEntry
       :defs $ {}
         |expression-down $ %{} :CodeEntry (:doc |)
           :code $ quote
@@ -555,7 +555,7 @@
         :code $ quote
           ns cirru-editor.modifier.focus $ :require
             cirru-editor.util :refer $ pos?
-    |cirru-editor.modifier.tree $ {}
+    |cirru-editor.modifier.tree $ %{} :FileEntry
       :defs $ {}
         |after-expression $ %{} :CodeEntry (:doc |)
           :code $ quote
@@ -787,7 +787,7 @@
         :code $ quote
           ns cirru-editor.modifier.tree $ :require
             cirru-editor.util :refer $ zero? pos? subvec cons
-    |cirru-editor.schema $ {}
+    |cirru-editor.schema $ %{} :FileEntry
       :defs $ {}
         |store $ %{} :CodeEntry (:doc |)
           :code $ quote
@@ -798,7 +798,7 @@
               :clipboard $ []
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote (ns cirru-editor.schema)
-    |cirru-editor.util $ {}
+    |cirru-editor.util $ %{} :FileEntry
       :defs $ {}
         |cons $ %{} :CodeEntry (:doc |)
           :code $ quote
@@ -813,7 +813,7 @@
             defn zero? (x) (&= x 0)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote (ns cirru-editor.util)
-    |cirru-editor.util.detect $ {}
+    |cirru-editor.util.detect $ %{} :FileEntry
       :defs $ {}
         |coord-contains? $ %{} :CodeEntry (:doc |)
           :code $ quote
@@ -840,7 +840,7 @@
                 , expression
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote (ns cirru-editor.util.detect)
-    |cirru-editor.util.dom $ {}
+    |cirru-editor.util.dom $ %{} :FileEntry
       :defs $ {}
         |focus! $ %{} :CodeEntry (:doc |)
           :code $ quote
@@ -857,7 +857,7 @@
                     println "|Editor warning: cannot find focus target."
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote (ns cirru-editor.util.dom)
-    |cirru-editor.util.keycode $ {}
+    |cirru-editor.util.keycode $ %{} :FileEntry
       :defs $ {}
         |backspace $ %{} :CodeEntry (:doc |)
           :code $ quote (def backspace 8)
@@ -889,7 +889,7 @@
           :code $ quote (def up 38)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote (ns cirru-editor.util.keycode)
-    |cirru-editor.util.measure $ {}
+    |cirru-editor.util.measure $ %{} :FileEntry
       :defs $ {}
         |*ctx $ %{} :CodeEntry (:doc |)
           :code $ quote
