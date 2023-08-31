@@ -1,10 +1,10 @@
 
 {} (:package |cirru-editor)
-  :configs $ {} (:extension |.cljs) (:init-fn |cirru-editor.main/main!) (:output |src) (:port 6001) (:reload-fn |cirru-editor.main/reload!) (:storage-key |calcit.cirru) (:version |0.5.0)
+  :configs $ {} (:init-fn |cirru-editor.main/main!) (:port 6001) (:reload-fn |cirru-editor.main/reload!) (:storage-key |calcit.cirru) (:version |0.6.0)
     :modules $ [] |respo.calcit/ |lilac/ |memof/
   :entries $ {}
   :files $ {}
-    |cirru-editor.comp.container $ {}
+    |cirru-editor.comp.container $ %{} :FileEntry
       :defs $ {}
         |comp-container $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1506616926005) (:by nil)
@@ -154,7 +154,7 @@
                     |h $ %{} :Expr (:at 1691938352244) (:by |Y9S0aNaMwg)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1691938354020) (:by |Y9S0aNaMwg) (:text |defstyle)
-    |cirru-editor.comp.editor $ {}
+    |cirru-editor.comp.editor $ %{} :FileEntry
       :defs $ {}
         |comp-editor $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1506616926005) (:by nil)
@@ -404,7 +404,7 @@
                     |h $ %{} :Expr (:at 1691938459666) (:by |Y9S0aNaMwg)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1691938460682) (:by |Y9S0aNaMwg) (:text |defstyle)
-    |cirru-editor.comp.expression $ {}
+    |cirru-editor.comp.expression $ %{} :FileEntry
       :defs $ {}
         |comp-expression $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1506616926005) (:by nil)
@@ -1682,7 +1682,7 @@
                     |h $ %{} :Expr (:at 1691938423544) (:by |Y9S0aNaMwg)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1691938424607) (:by |Y9S0aNaMwg) (:text |defstyle)
-    |cirru-editor.comp.token $ {}
+    |cirru-editor.comp.token $ %{} :FileEntry
       :defs $ {}
         |code-font $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1691939054599) (:by |Y9S0aNaMwg)
@@ -2524,7 +2524,7 @@
                     |h $ %{} :Expr (:at 1691938932480) (:by |Y9S0aNaMwg)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1691938933594) (:by |Y9S0aNaMwg) (:text |defstyle)
-    |cirru-editor.config $ {}
+    |cirru-editor.config $ %{} :FileEntry
       :defs $ {}
         |dev? $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1558114511094) (:by |Y9S0aNaMwg)
@@ -2564,7 +2564,7 @@
           :data $ {}
             |T $ %{} :Leaf (:at 1558114432819) (:by |Y9S0aNaMwg) (:text |ns)
             |j $ %{} :Leaf (:at 1558114432819) (:by |Y9S0aNaMwg) (:text |cirru-editor.config)
-    |cirru-editor.core $ {}
+    |cirru-editor.core $ %{} :FileEntry
       :defs $ {}
         |cirru-edit $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1506616926005) (:by nil)
@@ -2861,7 +2861,7 @@
                     |j $ %{} :Leaf (:at 1506616926005) (:by |root) (:text |cirru-editor.modifier.command)
                     |r $ %{} :Leaf (:at 1506616926005) (:by |root) (:text |:as)
                     |v $ %{} :Leaf (:at 1506616926005) (:by |root) (:text |command)
-    |cirru-editor.main $ {}
+    |cirru-editor.main $ %{} :FileEntry
       :defs $ {}
         |*store $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1506616926005) (:by nil)
@@ -3139,7 +3139,7 @@
                     |T $ %{} :Leaf (:at 1629654623233) (:by |Y9S0aNaMwg) (:text "|\"bottom-tip")
                     |j $ %{} :Leaf (:at 1629654623233) (:by |Y9S0aNaMwg) (:text |:default)
                     |r $ %{} :Leaf (:at 1629654623233) (:by |Y9S0aNaMwg) (:text |hud!)
-    |cirru-editor.modifier.command $ {}
+    |cirru-editor.modifier.command $ %{} :FileEntry
       :defs $ {}
         |copy $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1506616926005) (:by nil)
@@ -3406,7 +3406,7 @@
                     |r $ %{} :Expr (:at 1629653729845) (:by |Y9S0aNaMwg)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1629653729845) (:by |Y9S0aNaMwg) (:text |zero?)
-    |cirru-editor.modifier.focus $ {}
+    |cirru-editor.modifier.focus $ %{} :FileEntry
       :defs $ {}
         |expression-down $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1506616926005) (:by nil)
@@ -3684,7 +3684,7 @@
                     |r $ %{} :Expr (:at 1629653842052) (:by |Y9S0aNaMwg)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1629653846243) (:by |Y9S0aNaMwg) (:text |pos?)
-    |cirru-editor.modifier.tree $ {}
+    |cirru-editor.modifier.tree $ %{} :FileEntry
       :defs $ {}
         |after-expression $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1506616926005) (:by nil)
@@ -5086,7 +5086,7 @@
                         |j $ %{} :Leaf (:at 1629653998941) (:by |Y9S0aNaMwg) (:text |pos?)
                         |r $ %{} :Leaf (:at 1629654035763) (:by |Y9S0aNaMwg) (:text |subvec)
                         |v $ %{} :Leaf (:at 1629654061996) (:by |Y9S0aNaMwg) (:text |cons)
-    |cirru-editor.schema $ {}
+    |cirru-editor.schema $ %{} :FileEntry
       :defs $ {}
         |store $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1506616926005) (:by nil)
@@ -5140,8 +5140,7 @@
           :data $ {}
             |T $ %{} :Leaf (:at 1506616926005) (:by |root) (:text |ns)
             |j $ %{} :Leaf (:at 1506616926005) (:by |root) (:text |cirru-editor.schema)
-    |cirru-editor.util $ {}
-      :configs $ {}
+    |cirru-editor.util $ %{} :FileEntry
       :defs $ {}
         |cons $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1629654062739) (:by |Y9S0aNaMwg)
@@ -5194,7 +5193,7 @@
           :data $ {}
             |T $ %{} :Leaf (:at 1629653710475) (:by |Y9S0aNaMwg) (:text |ns)
             |j $ %{} :Leaf (:at 1629653710475) (:by |Y9S0aNaMwg) (:text |cirru-editor.util)
-    |cirru-editor.util.detect $ {}
+    |cirru-editor.util.detect $ %{} :FileEntry
       :defs $ {}
         |coord-contains? $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1506616926005) (:by nil)
@@ -5317,7 +5316,7 @@
           :data $ {}
             |T $ %{} :Leaf (:at 1506616926005) (:by |root) (:text |ns)
             |j $ %{} :Leaf (:at 1506616926005) (:by |root) (:text |cirru-editor.util.detect)
-    |cirru-editor.util.dom $ {}
+    |cirru-editor.util.dom $ %{} :FileEntry
       :defs $ {}
         |focus! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1506616926005) (:by nil)
@@ -5383,7 +5382,7 @@
           :data $ {}
             |T $ %{} :Leaf (:at 1506616926005) (:by |root) (:text |ns)
             |j $ %{} :Leaf (:at 1506616926005) (:by |root) (:text |cirru-editor.util.dom)
-    |cirru-editor.util.keycode $ {}
+    |cirru-editor.util.keycode $ %{} :FileEntry
       :defs $ {}
         |backspace $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1506616926005) (:by nil)
@@ -5474,7 +5473,7 @@
           :data $ {}
             |T $ %{} :Leaf (:at 1506616926005) (:by |root) (:text |ns)
             |j $ %{} :Leaf (:at 1506616926005) (:by |root) (:text |cirru-editor.util.keycode)
-    |cirru-editor.util.measure $ {}
+    |cirru-editor.util.measure $ %{} :FileEntry
       :defs $ {}
         |*ctx $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1506616926005) (:by nil)
