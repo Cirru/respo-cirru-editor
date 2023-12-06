@@ -1,6 +1,6 @@
 
 {} (:package |cirru-editor)
-  :configs $ {} (:init-fn |cirru-editor.main/main!) (:port 6001) (:reload-fn |cirru-editor.main/reload!) (:storage-key |calcit.cirru) (:version |0.6.0)
+  :configs $ {} (:init-fn |cirru-editor.main/main!) (:port 6001) (:reload-fn |cirru-editor.main/reload!) (:storage-key |calcit.cirru) (:version |0.6.1)
     :modules $ [] |respo.calcit/ |lilac/ |memof/
   :entries $ {}
   :files $ {}
@@ -5543,7 +5543,7 @@
                               |T $ %{} :Leaf (:at 1506616926005) (:by |root) (:text |.-width)
                               |j $ %{} :Expr (:at 1506616926005) (:by nil)
                                 :data $ {}
-                                  |T $ %{} :Leaf (:at 1506616926005) (:by |root) (:text |.measureText)
+                                  |T $ %{} :Leaf (:at 1701877712387) (:by |Y9S0aNaMwg) (:text |.!measureText)
                                   |j $ %{} :Leaf (:at 1506616926005) (:by |root) (:text |ctx)
                                   |r $ %{} :Leaf (:at 1506616926005) (:by |root) (:text |content)
                       |v $ %{} :Expr (:at 1506616926005) (:by nil)

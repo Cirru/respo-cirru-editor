@@ -1,6 +1,6 @@
 {
   "name": "respo-cirru-editor",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Respo Cirru Editor",
   "main": "index.js",
   "scripts": {},
@@ -12,9 +12,9 @@
   "license": "MIT",
   "devDependencies": {
     "bottom-tip": "^0.1.5",
-    "vite": "^4.4.9"
+    "vite": "^5.0.6"
   },
   "dependencies": {
-    "@calcit/procs": "^0.8.0-a3"
+    "@calcit/procs": "^0.8.14"
   }
 }

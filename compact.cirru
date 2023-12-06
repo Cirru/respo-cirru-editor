@@ -1,6 +1,6 @@
 
 {} (:package |cirru-editor)
-  :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!) (:version |0.6.0)
+  :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!) (:version |0.6.1)
     :modules $ [] |respo.calcit/ |lilac/ |memof/
   :entries $ {}
   :files $ {}
@@ -904,7 +904,7 @@
                 if (some? ctx)
                   do
                     set! (.-font ctx) (str font-size "|px " font-family)
-                    .-width $ .measureText ctx content
+                    .-width $ .!measureText ctx content
                   + 4 $ * (count content) 9
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote (ns cirru-editor.util.measure)
