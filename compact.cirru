@@ -1,6 +1,6 @@
 
 {} (:package |cirru-editor)
-  :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!) (:version |0.6.1)
+  :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!) (:version |0.6.2)
     :modules $ [] |respo.calcit/ |lilac/ |memof/
   :entries $ {}
   :files $ {}
@@ -98,6 +98,18 @@
                           {} $ :border-color (hsl 0 0 100 0.6)
                       :on-click $ on-click modify! coord focus
                       :on-keydown $ on-keydown state modify! coord on-command cursor
+                      :on-mousedown $ fn (e d!)
+                        let
+                            event $ :event e
+                          if
+                            identical? (.-target event) (.-currentTarget event)
+                            -> event .-target .-classList $ .!add "\"mouse-active"
+                      :on-mouseup $ fn (e d!)
+                        let
+                            event $ :event e
+                          if
+                            identical? (.-target event) (.-currentTarget event)
+                            -> event .-target .-classList $ .!remove "\"mouse-active"
                     apply-args
                         []
                         , 0 expression nil
@@ -136,7 +148,7 @@
                                       comp-expression (>> states idx) item modify! child-coord (inc level)
                                         and (not tail?)
                                           = (dec exp-size) idx
-                                          = prev-kind :leaf
+                                          or (= prev-kind :leaf) (= prev-kind :inline-expr)
                                         , child-focus on-command child-head? $ or (= kind :inline-expr) (= kind :leaf)
                                 next-acc $ conj acc pair
                               ; println "\"kinds:" prev-kind kind "\" at " item
@@ -207,6 +219,8 @@
             defstyle style-expression $ {}
               "\"&" $ {} (:border-style |solid) (:outline |none) (:padding-left 8) (:padding-right 0) (:padding-top 2) (:padding-bottom 0) (:margin-left 12) (:margin-right 0) (:margin-top 0) (:margin-bottom 4) (:border-width "|0 0 0 1px") (:min-height |26px) (:min-width |16px) (:vertical-align |top) (:box-sizing |border-box) (:border-radius "\"8px")
                 :border-color $ hsl 0 0 32 0.9
+                :user-select :none
+              "\"&.mouse-active" $ {} (:transform "\"translate(1px,0)")
         |style-folded $ %{} :CodeEntry (:doc |)
           :code $ quote
             defstyle style-folded $ {}
@@ -227,8 +241,9 @@
                 :margin-bottom |4px
         |style-inline $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def style-inline $ {} (:display |inline-block) (:border-width "|0 0 1px 0") (:padding-left 7) (:padding-right 7) (:padding-bottom 2) (:margin-left 8) (:margin-right 4) (:text-align |center)
+            def style-inline $ {} (:display :inline-block) (:border-width "|0 0 1px 0") (:padding-left 7) (:padding-right 7) (:padding-bottom 2) (:margin-left 8) (:margin-right 4) (:text-align "\"center")
               :background-color $ hsl 200 80 80 0
+              :min-width 24
         |style-tail $ %{} :CodeEntry (:doc |)
           :code $ quote
             def style-tail $ {} (:display |inline-block) (:border-width "|0 0 0 1px")
@@ -351,6 +366,10 @@
                 :background-color $ hsl 0 0 100 0
                 :color $ hsl 200 12 67 0.9
                 :text-align |center
+                :border-radius "\"8px"
+              "\"&:focus" $ {}
+                :background-color $ hsl 0 0 100 0.2
+              "\"&:active" $ {} (:transform "\"translate(1px,0)")
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
           ns cirru-editor.comp.token $ :require
