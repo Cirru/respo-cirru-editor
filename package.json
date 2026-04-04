@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "compile": "caps --ci && cr compact.cirru js",
-    "release": "yarn vite build --base=./"
+    "release": "yarn compile && yarn vite build --base=./"
   },
   "repository": {
     "type": "git",
