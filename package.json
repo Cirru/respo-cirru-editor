@@ -1,9 +1,13 @@
 {
   "name": "respo-cirru-editor",
-  "version": "0.6.2",
+  "version": "0.6.3",
+  "packageManager": "yarn@4.12.0",
   "description": "Respo Cirru Editor",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "compile": "caps --ci && cr compact.cirru js",
+    "release": "yarn compile && yarn vite build --base=./"
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:Cirru/respo-cirru-editor.git"
@@ -15,6 +19,6 @@
     "vite": "npm:rolldown-vite@latest"
   },
   "dependencies": {
-    "@calcit/procs": "^0.9.12"
+    "@calcit/procs": "^0.12.14"
   }
 }

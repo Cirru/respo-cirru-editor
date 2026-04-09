@@ -1,6 +1,6 @@
 
 {} (:package |cirru-editor)
-  :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!) (:version |0.6.2)
+  :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!) (:version |0.6.3)
     :modules $ [] |respo.calcit/ |lilac/ |memof/
   :entries $ {}
   :files $ {}
@@ -826,7 +826,11 @@
           :code $ quote
             defn pos? (x) (&> x 0)
         |subvec $ %{} :CodeEntry (:doc |)
-          :code $ quote (def subvec &list:slice)
+          :code $ quote
+            defn subvec (xs start-index ? end-index)
+              if (some? end-index)
+                &list:slice xs start-index end-index
+                &list:slice xs start-index $ count xs
         |zero? $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn zero? (x) (&= x 0)
@@ -845,9 +849,7 @@
         |deep? $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn deep? (expression)
-              some
-                fn (item) (vector? item)
-                , expression
+              any? expression $ fn (item) (list? item)
         |has-blank? $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn has-blank? (x) (includes? x "| ")
