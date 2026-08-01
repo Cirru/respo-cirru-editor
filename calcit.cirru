@@ -1,8 +1,9 @@
 
-{} (:about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `cr query` to inspect and `cr edit`/`cr tree` to modify. Run `cr docs agents --full` first. Manual edits must follow format and schema conventions, then run `cr edit format`.") (:package |cirru-editor)
-  :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!) (:version |0.6.4)
-    :modules $ [] |respo.calcit/ |lilac/ |memof/
+{} (:about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `cr query` to inspect and `cr edit`/`cr tree` to modify. Run `cr docs agents --full` first. Manual edits must follow format and schema conventions, then run `cr edit format`.") (:package |cirru-editor) (:version |0.6.5)
   :entries $ {}
+    :default $ {} (:description |) (:init-fn 'cirru-editor.main/main!) (:mode :native) (:reload-fn 'cirru-editor.main/reload!)
+      :modules $ [] |respo.calcit/ |lilac/ |memof/
+      :type-slots $ {}
   :files $ {}
     |cirru-editor.comp.container $ %{} :FileEntry
       :defs $ {}
@@ -317,6 +318,14 @@
                   :keydown $ on-keydown modify! coord token on-command
                   :click $ on-click modify! coord focus
           :examples $ []
+        |create-number-pattern $ %{} :CodeEntry (:doc |)
+          :code $ quote
+            defn create-number-pattern () $ new js/RegExp |-?[\d\.]+
+          :examples $ []
+          :schema $ :: :fn
+            {} (:return :dynamic)
+              :args $ []
+              :features $ #{} :js-ffi
         |on-click $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn on-click (modify! coord focus)
@@ -379,7 +388,7 @@
           :examples $ []
         |pattern-number $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
-            def pattern-number $ new js/RegExp |-?[\d\.]+
+            def pattern-number $ create-number-pattern
           :examples $ []
         |style-token $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
@@ -405,14 +414,15 @@
             respo.css :refer $ defstyle
     |cirru-editor.config $ %{} :FileEntry
       :defs $ {}
-        |dev? $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |dev? $ %{} :CodeEntry (:doc |) (:schema :bool)
           :code $ quote
             def dev? $ = |dev (get-env |mode)
           :examples $ []
-        |site $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |site $ %{} :CodeEntry (:doc |)
           :code $ quote
             def site $ {} (:title "|Cirru Editor") (:icon |http://cdn.tiye.me/logo/cirru.png) (:storage-key |respo-cirru-editor)
           :examples $ []
+          :schema $ :: :map :tag :string
       :ns $ %{} :NsEntry (:doc |)
         :code $ quote (ns cirru-editor.config)
     |cirru-editor.core $ %{} :FileEntry
@@ -469,7 +479,7 @@
                 _ @*store
               reset! *touched true
           :examples $ []
-        |main! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |main! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn main! ()
               if config/dev? $ load-console-formatter!
@@ -478,6 +488,10 @@
               add-watch *store :changes $ fn (s p) (render-app!)
               println "|app started!"
           :examples $ []
+          :schema $ :: :fn
+            {} (:return :dynamic)
+              :args $ []
+              :features $ #{} :js-ffi
         |mount-target $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             def mount-target $ js/document.querySelector |.app
@@ -634,7 +648,7 @@
                           position $ last coord
                         cond
                             = position $ dec (count parent)
-                            conj parent $ [] |
+                            conj (assert-type parent :list) ([] |)
                           :else $ concat
                             subvec parent 0 $ inc position
                             [] $ [] |
@@ -878,25 +892,36 @@
           :code $ quote
             defn cons (y xs) (prepend xs y)
           :examples $ []
-        |pos? $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |pos? $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn pos? (x) (&> x 0)
           :examples $ []
-        |subvec $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: :fn
+            {} (:return :bool)
+              :args $ [] :number
+        |subvec $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn subvec (xs start-index ? end-index)
               if (some? end-index) (&list:slice xs start-index end-index)
                 &list:slice xs start-index $ count xs
           :examples $ []
-        |zero? $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: :fn
+            {}
+              :args $ [] (:: :list 'T) :number (:: :optional :number)
+              :generics $ [] 'T
+              :return $ :: :list 'T
+        |zero? $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn zero? (x) (&= x 0)
           :examples $ []
+          :schema $ :: :fn
+            {} (:return :bool)
+              :args $ [] :number
       :ns $ %{} :NsEntry (:doc |)
         :code $ quote (ns cirru-editor.util)
     |cirru-editor.util.detect $ %{} :FileEntry
       :defs $ {}
-        |coord-contains? $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |coord-contains? $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn coord-contains? (a b)
               if (nil? a) false $ if (empty? b) true
@@ -905,22 +930,33 @@
                   recur (rest a) (rest b)
                   , false
           :examples $ []
+          :schema $ :: :fn
+            {} (:return :bool)
+              :args $ []
+                :: :optional $ :: :list :number
+                :: :list :number
         |deep? $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn deep? (expression)
               any? expression $ fn (item) (list? item)
           :examples $ []
-        |has-blank? $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |has-blank? $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn has-blank? (x) (includes? x "| ")
           :examples $ []
-        |shallow? $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: :fn
+            {} (:return :bool)
+              :args $ [] :string
+        |shallow? $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn shallow? (expression)
               every?
                 fn (item) (string? item)
                 , expression
           :examples $ []
+          :schema $ :: :fn
+            {} (:return :bool)
+              :args $ [] (:: :list :string)
       :ns $ %{} :NsEntry (:doc |)
         :code $ quote (ns cirru-editor.util.detect)
     |cirru-editor.util.dom $ %{} :FileEntry
@@ -943,46 +979,46 @@
         :code $ quote (ns cirru-editor.util.dom)
     |cirru-editor.util.keycode $ %{} :FileEntry
       :defs $ {}
-        |backspace $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |backspace $ %{} :CodeEntry (:doc |) (:schema :number)
           :code $ quote (def backspace 8)
           :examples $ []
-        |down $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |down $ %{} :CodeEntry (:doc |) (:schema :number)
           :code $ quote (def down 40)
           :examples $ []
-        |enter $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |enter $ %{} :CodeEntry (:doc |) (:schema :number)
           :code $ quote (def enter 13)
           :examples $ []
-        |key-b $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |key-b $ %{} :CodeEntry (:doc |) (:schema :number)
           :code $ quote (def key-b 66)
           :examples $ []
-        |key-c $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |key-c $ %{} :CodeEntry (:doc |) (:schema :number)
           :code $ quote (def key-c 67)
           :examples $ []
-        |key-f $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |key-f $ %{} :CodeEntry (:doc |) (:schema :number)
           :code $ quote (def key-f 70)
           :examples $ []
-        |key-s $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |key-s $ %{} :CodeEntry (:doc |) (:schema :number)
           :code $ quote (def key-s 83)
           :examples $ []
-        |key-v $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |key-v $ %{} :CodeEntry (:doc |) (:schema :number)
           :code $ quote (def key-v 86)
           :examples $ []
-        |key-x $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |key-x $ %{} :CodeEntry (:doc |) (:schema :number)
           :code $ quote (def key-x 88)
           :examples $ []
-        |left $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |left $ %{} :CodeEntry (:doc |) (:schema :number)
           :code $ quote (def left 37)
           :examples $ []
-        |right $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |right $ %{} :CodeEntry (:doc |) (:schema :number)
           :code $ quote (def right 39)
           :examples $ []
-        |space $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |space $ %{} :CodeEntry (:doc |) (:schema :number)
           :code $ quote (def space 32)
           :examples $ []
-        |tab $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |tab $ %{} :CodeEntry (:doc |) (:schema :number)
           :code $ quote (def tab 9)
           :examples $ []
-        |up $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |up $ %{} :CodeEntry (:doc |) (:schema :number)
           :code $ quote (def up 38)
           :examples $ []
       :ns $ %{} :NsEntry (:doc |)
@@ -991,11 +1027,19 @@
       :defs $ {}
         |*ctx $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
-            defatom *ctx $ if (exists? js/document)
+            defatom *ctx $ create-context
+          :examples $ []
+        |create-context $ %{} :CodeEntry (:doc |)
+          :code $ quote
+            defn create-context () $ if (exists? js/document)
               .!getContext (js/document.createElement |canvas) |2d
               , nil
           :examples $ []
-        |text-width $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: :fn
+            {} (:return :dynamic)
+              :args $ []
+              :features $ #{} :js-ffi
+        |text-width $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn text-width (content font-size font-family)
               let
@@ -1006,5 +1050,9 @@
                     .-width $ .!measureText ctx content
                   + 4 $ * (count content) 9
           :examples $ []
+          :schema $ :: :fn
+            {} (:return :number)
+              :args $ [] :string :number :string
+              :features $ #{} :js-ffi
       :ns $ %{} :NsEntry (:doc |)
         :code $ quote (ns cirru-editor.util.measure)
