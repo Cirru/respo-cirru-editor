@@ -1,8 +1,9 @@
 
-{} (:about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `cr query` to inspect and `cr edit`/`cr tree` to modify. Run `cr docs agents --full` first. Manual edits must follow format and schema conventions, then run `cr edit format`.") (:package |cirru-editor)
-  :configs $ {} (:init-fn |cirru-editor.main/main!) (:reload-fn |cirru-editor.main/reload!) (:version |0.6.4)
-    :modules $ [] |respo.calcit/ |lilac/ |memof/
+{} (:about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `cr query` to inspect and `cr edit`/`cr tree` to modify. Run `cr docs agents --full` first. Manual edits must follow format and schema conventions, then run `cr edit format`.") (:package |cirru-editor) (:version |0.6.5)
   :entries $ {}
+    :default $ {} (:description |) (:init-fn 'cirru-editor.main/main!) (:mode :native) (:reload-fn 'cirru-editor.main/reload!)
+      :modules $ [] |respo.calcit/ |lilac/ |memof/
+      :type-slots $ {}
   :files $ {}
     |cirru-editor.comp.container $ %{} :FileEntry
       :defs $ {}
@@ -317,6 +318,14 @@
                   :keydown $ on-keydown modify! coord token on-command
                   :click $ on-click modify! coord focus
           :examples $ []
+        |create-number-pattern $ %{} :CodeEntry (:doc |)
+          :code $ quote
+            defn create-number-pattern () $ new js/RegExp |-?[\d\.]+
+          :examples $ []
+          :schema $ :: :fn
+            {} (:return :dynamic)
+              :args $ []
+              :features $ #{} :js-ffi
         |on-click $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn on-click (modify! coord focus)
@@ -379,7 +388,7 @@
           :examples $ []
         |pattern-number $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
-            def pattern-number $ new js/RegExp |-?[\d\.]+
+            def pattern-number $ create-number-pattern
           :examples $ []
         |style-token $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
@@ -469,7 +478,7 @@
                 _ @*store
               reset! *touched true
           :examples $ []
-        |main! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |main! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn main! ()
               if config/dev? $ load-console-formatter!
@@ -478,6 +487,10 @@
               add-watch *store :changes $ fn (s p) (render-app!)
               println "|app started!"
           :examples $ []
+          :schema $ :: :fn
+            {} (:return :dynamic)
+              :args $ []
+              :features $ #{} :js-ffi
         |mount-target $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             def mount-target $ js/document.querySelector |.app
@@ -634,7 +647,7 @@
                           position $ last coord
                         cond
                             = position $ dec (count parent)
-                            conj parent $ [] |
+                            conj (assert-type parent :list) ([] |)
                           :else $ concat
                             subvec parent 0 $ inc position
                             [] $ [] |
@@ -991,11 +1004,19 @@
       :defs $ {}
         |*ctx $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
-            defatom *ctx $ if (exists? js/document)
+            defatom *ctx $ create-context
+          :examples $ []
+        |create-context $ %{} :CodeEntry (:doc |)
+          :code $ quote
+            defn create-context () $ if (exists? js/document)
               .!getContext (js/document.createElement |canvas) |2d
               , nil
           :examples $ []
-        |text-width $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: :fn
+            {} (:return :dynamic)
+              :args $ []
+              :features $ #{} :js-ffi
+        |text-width $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn text-width (content font-size font-family)
               let
@@ -1006,5 +1027,9 @@
                     .-width $ .!measureText ctx content
                   + 4 $ * (count content) 9
           :examples $ []
+          :schema $ :: :fn
+            {} (:return :number)
+              :args $ [] :string :number :string
+              :features $ #{} :js-ffi
       :ns $ %{} :NsEntry (:doc |)
         :code $ quote (ns cirru-editor.util.measure)
