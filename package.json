@@ -1,11 +1,11 @@
 {
   "name": "respo-cirru-editor",
-  "version": "0.6.3",
+  "version": "0.6.5",
   "packageManager": "yarn@4.12.0",
   "description": "Respo Cirru Editor",
   "main": "index.js",
   "scripts": {
-    "compile": "caps --ci && cr compact.cirru js",
+    "compile": "caps --ci && cr calcit.cirru js",
     "release": "yarn compile && yarn vite build --base=./"
   },
   "repository": {
@@ -19,6 +19,6 @@
     "vite": "npm:rolldown-vite@latest"
   },
   "dependencies": {
-    "@calcit/procs": "^0.12.14"
+    "@calcit/procs": "^0.12.56"
   }
 }
