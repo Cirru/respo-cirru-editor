@@ -12,7 +12,9 @@
           :code $ quote
             defcomp comp-container (store)
               let
-                  states $ :states store
+                  states $
+                    get store :states
+                    , .unwrap-or ({})
                 div
                   {} $ :class-name style-container
                   comp-editor states store on-update! on-command
@@ -51,7 +53,14 @@
                 {} $ :class-name style-editor
                 div
                   {} $ :class-name style-box
-                  comp-expression states (:tree snapshot) (handle-update snapshot on-update!) ([]) 0 false (:focus snapshot) (handle-command on-command snapshot) true false
+                  comp-expression states
+                    (get snapshot :tree) .unwrap-or $ []
+                    handle-update snapshot on-update!
+                    []
+                    , 0 false
+                      (get snapshot :focus) .unwrap-or $ []
+                      handle-command on-command snapshot
+                      , true false
                 ; comp-inspect snapshot $ {} (:bottom 0) (:left 0)
           :examples $ []
           :schema $ :: 'Dynamic
@@ -97,39 +106,50 @@
             defcomp comp-expression (states expression modify! coord level tail? focus on-command head? inline?)
               let
                   exp-size $ count expression
-                  cursor $ :cursor states
-                  state $ either (:data states) false
+                  cursor $
+                    get states :cursor
+                    , .unwrap-or ([])
+                  state $ either (get states :data) false
                 if state
                   div
                     {} (:class-name style-folded)
                       :on-click $ fn (e dispatch!)
                         dispatch! $ :: :states cursor (not state)
                       :on-keydown $ on-keydown state modify! coord on-command cursor
-                    <> (first expression) nil
+                    <>
+                        first expression
+                        , .unwrap-or |
+                      , nil
                   list->
                     {} (:tab-index 0)
                       :class-name $ str-spaced style-expression
                         if (= coord focus) |editor-focused |
-                      :style $ merge ({}) (if inline? style-inline)
+                      :style $ merge ({})
+                        if inline? style-inline $ {}
                         if
                           and tail? (not head?) (pos? level)
-                          , style-tail
+                          , style-tail $ {}
                         if (= coord focus)
                           {} $ :border-color (hsl 0 0 100 0.6)
+                          {}
                       :on-click $ on-click modify! coord focus
                       :on-keydown $ on-keydown state modify! coord on-command cursor
                       :on-mousedown $ fn (e d!)
                         let
-                            event $ :event e
+                            event $
+                              get e :event
+                              , .unwrap
                           if
                             identical? (.-target event) (.-currentTarget event)
-                            -> event .-target .-classList $ .!add |mouse-active
+                            -> event .-target .?-classList $ .?!add |mouse-active
                       :on-mouseup $ fn (e d!)
                         let
-                            event $ :event e
+                            event $
+                              get e :event
+                              , .unwrap
                           if
                             identical? (.-target event) (.-currentTarget event)
-                            -> event .-target .-classList $ .!remove |mouse-active
+                            -> event .-target .?-classList $ .?!remove |mouse-active
                     apply-args
                         []
                         , 0 expression nil
@@ -142,7 +162,9 @@
                                   if
                                     and
                                       <= (count item) 1
-                                      string? $ first item
+                                      let
+                                          head $ first item
+                                        if head.some? (string? head.unwrap) false
                                     , :leaf $ case-default prev-kind :expr (:expr :expr)
                                       :inline-expr $ if
                                         and
@@ -188,8 +210,12 @@
             defn on-keydown (state modify! coord on-command cursor)
               fn (e dispatch!)
                 let
-                    code $ :key-code e
-                    event $ :original-event e
+                    code $
+                      get e :key-code
+                      , .unwrap-or 0
+                    event $
+                      get e :original-event
+                      , .unwrap
                     shift? $ .-shiftKey event
                     command? $ or (.-metaKey event) (.-ctrlKey event)
                   cond
@@ -316,21 +342,22 @@
                       {} $ :color "|rgb(119, 102, 204)"
                     (contains? (#{} |nil) token)
                       {} $ :color "|rgb(163, 41, 143)"
-                    (= "|#\"" (.slice token 0 2))
+                    (= "|#\"" (slice token 0 2))
                       {} $ :color (hsl 300 60 45)
-                    (contains? (#{} "|\"" ||) (.slice token 0 1))
+                    (contains? (#{} "|\"" ||) (slice token 0 1))
                       {} $ :color "|rgb(75, 210, 75)"
-                    (contains? (#{} |:) (.slice token 0 1))
+                    (contains? (#{} |:) (slice token 0 1))
                       {} $ :color "|rgb(136, 136, 191)"
                     (.!test pattern-number token)
                       {} $ :color "|rgb(173, 31, 31)"
                     head? $ {}
                       :color $ hsl 40 80 60 0.9
-                    true nil
+                    true $ {}
                   if
                     or (has-blank? token)
                       zero? $ count token
                     {} $ :background-color (hsl 0 0 100 0.16)
+                    {}
                 :on $ {}
                   :input $ on-input modify! coord
                   :keydown $ on-keydown modify! coord token on-command
@@ -358,7 +385,8 @@
             defn on-input (modify! coord)
               fn (e dispatch!)
                 modify!
-                  :: :update-token $ [] coord (:value e)
+                  :: :update-token $ [] coord
+                    (get e :value) .unwrap-or |
                   , dispatch!
           :examples $ []
           :schema $ :: 'Dynamic
@@ -367,14 +395,24 @@
             defn on-keydown (modify! coord token on-command)
               fn (e dispatch!)
                 let
-                    code $ :key-code e
-                    event $ :original-event e
+                    code $
+                      get e :key-code
+                      , .unwrap-or 0
+                    event $
+                      get e :original-event
+                      , .unwrap
                     shift? $ .-shiftKey event
                     command? $ or (.-metaKey event) (.-ctrlKey event)
-                    target $ .-target event
-                    at-start? $ zero? (.-selectionStart target)
-                    at-end? $ = (count token) (.-selectionEnd target)
-                    thin-cursor? $ = (.-selectionStart target) (.-selectionEnd target)
+                    target $ .?-target event
+                    selection-start $
+                      parse-float $ str (.?-selectionStart target)
+                      , .unwrap-or 0
+                    selection-end $
+                      parse-float $ str (.?-selectionEnd target)
+                      , .unwrap-or 0
+                    at-start? $ zero? selection-start
+                    at-end? $ = (count token) selection-end
+                    thin-cursor? $ = selection-start selection-end
                   cond
                       and (= code keycode/space) (not shift?)
                       do (.!preventDefault event)
@@ -440,7 +478,8 @@
       :defs $ {}
         'dev? $ %{} 'CodeEntry (:doc |)
           :code $ quote
-            def dev? $ = |dev (get-env |mode)
+            def dev? $ = |dev
+              (get-env |mode) .unwrap-or |
           :examples $ []
           :schema $ :: 'Bool
         'site $ %{} 'CodeEntry (:doc |)
@@ -455,7 +494,7 @@
         'cirru-edit $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn cirru-edit (snapshot op) (; println :update-state op)
-              tag-match op
+              match op
                 (:update-token d) (tree/update-token snapshot d)
                 (:after-token d) (tree/after-token snapshot d)
                 (:fold-node d) (tree/fold-node snapshot d)
@@ -501,7 +540,7 @@
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn dispatch! (op) (; println |dispatch: op op-data)
-              tag-match op
+              match op
                 (:save d) (reset! *store d)
                 (:states cursor s)
                   reset! *store $ update-states @*store cursor s
@@ -573,15 +612,18 @@
             defn cut (snapshot op-data)
               let
                   coord op-data
-                  expression $ get-in snapshot
-                    concat ([] :tree) coord
-                  position $ last coord
+                  expression $
+                    get-in snapshot $ concat ([] :tree) coord
+                    , .unwrap-or ([])
+                  position $
+                    last coord
+                    , .unwrap-or 0
                 -> snapshot
                   update-in
                     concat ([] :tree) (butlast coord)
                     fn (parent)
                       let
-                          parent $ option:unwrap-or parent ([])
+                          parent $ parent.unwrap-or ([])
                         cond
                             = 1 $ count parent
                             []
@@ -600,7 +642,10 @@
             defn paste (snapshot op-data)
               let
                   coord op-data
-                -> snapshot $ assoc-in (prepend coord :tree) (:clipboard snapshot)
+                  clipboard $
+                    get snapshot :clipboard
+                    , .unwrap-or ([])
+                -> snapshot $ assoc-in (prepend coord :tree) clipboard
           :examples $ []
           :schema $ :: 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
@@ -635,7 +680,9 @@
               if (empty? focus) (assoc snapshot :focus focus)
                 -> snapshot $ assoc :focus
                   let
-                      position $ last focus
+                      position $
+                        last focus
+                        , .unwrap-or 0
                     conj (butlast focus)
                       if (pos? position) (dec position) position
           :examples $ []
@@ -646,9 +693,12 @@
               if (empty? focus) (assoc snapshot :focus focus)
                 -> snapshot $ assoc :focus
                   let
-                      position $ last focus
-                      parent $ get-in snapshot
-                        concat ([] :tree) (butlast focus)
+                      position $
+                        last focus
+                        , .unwrap-or 0
+                      parent $
+                        get-in snapshot $ concat ([] :tree) (butlast focus)
+                        , .unwrap-or ([])
                     conj (butlast focus)
                       if
                         < position $ dec (count parent)
@@ -662,7 +712,7 @@
               -> snapshot $ assoc :focus
                 if
                   pos? $ count focus
-                  .slice focus 0 $ dec (count focus)
+                  slice focus 0 $ dec (count focus)
                   , focus
           :examples $ []
           :schema $ :: 'Dynamic
@@ -677,7 +727,10 @@
             defn after-expression (snapshot coord)
               if (empty? coord)
                 if
-                  = (:tree snapshot) ([])
+                  =
+                      get snapshot :tree
+                      , .unwrap-or $ []
+                    []
                   -> snapshot
                     assoc :focus $ [] 0
                     assoc :tree $ [] |
@@ -687,17 +740,21 @@
                     cons :tree $ butlast coord
                     fn (parent)
                       let
-                          parent $ option:unwrap-or parent ([])
-                          position $ last coord
+                          parent $ parent.unwrap-or ([])
+                          position $
+                            last coord
+                            , .unwrap-or 0
                         cond
                             = position $ dec (count parent)
-                            conj (assert-type parent 'List) ([] |)
+                            conj parent $ [] |
                           true $ concat
-                            subvec parent 0 $ inc position
+                            subvec parent 0 $ %some (inc position)
                             [] $ [] |
                             subvec parent $ inc position
                   assoc :focus $ conj (butlast coord)
-                    inc $ last coord
+                    inc $
+                      last coord
+                      , .unwrap-or 0
                     , 0
           :examples $ []
           :schema $ :: 'Dynamic
@@ -712,18 +769,27 @@
                     update-in
                       cons :tree $ butlast coord
                       fn (expression)
-                        if
-                          = (last coord)
-                            dec $ count expression
-                          conj expression $ str |
-                          concat
-                            subvec expression 0 $ inc (last coord)
-                            [] |
-                            subvec expression $ inc (last coord)
+                        let
+                            expression $ expression.unwrap-or ([])
+                            position $
+                              last coord
+                              , .unwrap-or 0
+                          if
+                            = position $ dec (count expression)
+                            conj expression $ str |
+                            concat
+                              subvec expression 0 $ %some (inc position)
+                              [] |
+                              subvec expression $ inc position
                     assoc :focus $ conj (butlast coord)
-                      inc $ last coord
+                      inc $
+                        last coord
+                        , .unwrap-or 0
                   if
-                    = (:tree snapshot) ([])
+                    =
+                        get snapshot :tree
+                        , .unwrap-or $ []
+                      []
                     -> snapshot
                       assoc :focus $ [] 0
                       assoc :tree $ [] |
@@ -735,11 +801,15 @@
             defn append-expression (snapshot op-data)
               let
                   coord op-data
-                  expression $ get-in snapshot (cons :tree coord)
+                  expression $
+                    get-in snapshot $ cons :tree coord
+                    , .unwrap-or ([])
                 -> snapshot
                   update-in (cons :tree coord)
                     fn (parent)
-                      conj parent $ str |
+                      conj
+                        parent.unwrap-or $ []
+                        str |
                   assoc :focus $ conj coord (count expression)
           :examples $ []
           :schema $ :: 'Dynamic
@@ -751,11 +821,15 @@
                   cons :tree $ butlast coord
                   fn (parent)
                     let
-                        position $ last coord
+                        parent $ parent.unwrap-or ([])
+                        position $
+                          last coord
+                          , .unwrap-or 0
                       cond
                           zero? position
                           cons ([] |) parent
-                        true $ concat (subvec parent 0 position)
+                        true $ concat
+                          subvec parent 0 $ %some position
                           [] $ [] |
                           subvec parent position
                 assoc :focus $ conj coord 0
@@ -769,7 +843,10 @@
                   cons :tree $ butlast coord
                   fn (parent)
                     let
-                        position $ last coord
+                        parent $ parent.unwrap-or ([])
+                        position $
+                          last coord
+                          , .unwrap-or 0
                       cond
                           zero? position
                           cons | parent
@@ -782,22 +859,33 @@
               if (empty? focus) snapshot $ -> snapshot
                 assoc :focus $ if
                   = 1 $ count focus
-                  [] $ inc (first focus)
-                  conj (butlast focus)
-                    inc $ last focus
+                  let
+                      pos $
+                        first focus
+                        , .unwrap-or 0
+                    [] $ inc pos
+                  let
+                      pos $
+                        last focus
+                        , .unwrap-or 0
+                    conj (butlast focus) (inc pos)
                 update :tree $ fn (tree)
                   if
                     = 1 $ count focus
                     let
-                        pos $ first focus
+                        pos $
+                          first focus
+                          , .unwrap-or 0
                       concat
-                        .slice tree 0 $ inc pos
-                        .slice tree pos
+                        slice tree 0 $ inc pos
+                        slice tree pos
                     update-in tree (butlast focus)
                       fn (parent)
                         let
-                            parent $ option:unwrap-or parent ([])
-                            pos $ last focus
+                            parent $ parent.unwrap-or ([])
+                            pos $
+                              last focus
+                              , .unwrap-or 0
                           concat
                             .slice parent 0 $ inc pos
                             .slice parent pos
@@ -837,8 +925,10 @@
                       prepend (butlast coord) :tree
                       fn (parent)
                         let
-                            parent $ option:unwrap-or parent ([])
-                            position $ last coord
+                            parent $ parent.unwrap-or ([])
+                            position $
+                              last coord
+                              , .unwrap-or 0
                           cond
                               = 1 $ count parent
                               []
@@ -848,7 +938,9 @@
                             true $ concat (.slice parent 0 position)
                               .slice parent $ inc position
                     assoc :focus $ let
-                        position $ last coord
+                        position $
+                          last coord
+                          , .unwrap-or 0
                       if (zero? position) (butlast coord)
                         concat (butlast coord)
                           [] $ dec position
@@ -874,31 +966,45 @@
                     -> snapshot
                       update :tree $ fn (tree)
                         let
-                            expression $ get-in tree coord
-                            position $ last coord
+                            expression $
+                              get-in tree coord
+                              , .unwrap-or ([])
+                            position $
+                              last coord
+                              , .unwrap-or 0
                           update-in tree (butlast coord)
                             fn (parent)
-                              cond
-                                  zero? position
-                                  concat expression $ rest parent
-                                (= position (dec (count parent)))
-                                  concat (butlast parent) expression
-                                true $ concat (subvec parent 0 position) expression
-                                  subvec parent $ inc position
+                              let
+                                  parent $ parent.unwrap-or ([])
+                                cond
+                                    zero? position
+                                    concat expression $ rest parent
+                                  (= position (dec (count parent)))
+                                    concat (butlast parent) expression
+                                  true $ concat
+                                    subvec parent 0 $ %some position
+                                    , expression
+                                      subvec parent $ inc position
                       assoc :focus $ butlast coord
                   (= 1 (count coord))
                     -> snapshot $ update :tree
                       fn (parent)
                         let
-                            expression $ get-in parent coord
-                            position $ last coord
+                            expression $
+                              get-in parent coord
+                              , .unwrap-or ([])
+                            position $
+                              last coord
+                              , .unwrap-or 0
                           cond
                               zero? position
                               concat expression $ rest parent
                             (= position (dec (count parent)))
                               concat (butlast parent) expression
-                            true $ concat (subvec parent 0 position) expression
-                              subvec parent $ inc position
+                            true $ concat
+                              subvec parent 0 $ %some position
+                              , expression
+                                subvec parent $ inc position
                   true snapshot
           :examples $ []
           :schema $ :: 'Dynamic
@@ -906,15 +1012,23 @@
           :code $ quote
             defn unfold-token (snapshot op-data)
               let
-                  tree $ :tree snapshot
+                  tree $
+                    get snapshot :tree
+                    , .unwrap-or ([])
                   focus op-data
                 if (empty? focus) snapshot $ let
                     parent-coord $ butlast focus
-                    parent $ get-in tree parent-coord
+                    parent $
+                      get-in tree parent-coord
+                      , .unwrap-or ([])
                   if
                     = (count parent) 1
                     -> snapshot
-                      update-in (cons :tree parent-coord) first
+                      update-in (cons :tree parent-coord)
+                        fn (value)
+                          let
+                              value $ value.unwrap-or ([])
+                            first value
                       assoc :focus parent-coord
                     , snapshot
           :examples $ []
@@ -961,13 +1075,13 @@
               :args $ [] 'Number
         'subvec $ %{} 'CodeEntry (:doc |)
           :code $ quote
-            defn subvec (xs start-index ? end-index)
-              if (some? end-index) (&list:slice xs start-index end-index)
+            defn subvec (xs start-index end-index)
+              if (option:some? end-index) (&list:slice xs start-index end-index.unwrap)
                 &list:slice xs start-index $ count xs
           :examples $ []
           :schema $ :: 'Fn
             {}
-              :args $ [] (:: 'List 'T) 'Number (:: 'Optional 'Number)
+              :args $ [] (:: 'List 'T) 'Number (:: 'Option 'Number)
               :generics $ [] 'T
               :return $ :: 'List 'T
         'zero? $ %{} 'CodeEntry (:doc |)
@@ -984,17 +1098,15 @@
         'coord-contains? $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn coord-contains? (a b)
-              if (nil? a) false $ if (empty? b) true
-                if (empty? a) false $ if
+              if (empty? b) true $ if (empty? a) false
+                if
                   = (first a) (first b)
                   recur (rest a) (rest b)
                   , false
           :examples $ []
           :schema $ :: 'Fn
             {} (:return 'Bool)
-              :args $ []
-                :: 'Optional $ :: 'List 'Number
-                :: 'List 'Number
+              :args $ [] (:: 'List 'Number) (:: 'List 'Number)
         'deep? $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn deep? (expression)
@@ -1027,9 +1139,9 @@
             defn focus! () $ js/requestAnimationFrame
               fn (timestap)
                 let
-                    editor-focus $ js/document.querySelector |.editor-focused
+                    editor-focus $ .?!querySelector js/document |.editor-focused
                     current-focus js/document.activeElement
-                  if (some? editor-focus)
+                  if (js-present? editor-focus)
                     if
                       not $ identical? editor-focus current-focus
                       .!focus editor-focus
@@ -1109,7 +1221,7 @@
         'create-context $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn create-context () $ if (exists? js/document)
-              .!getContext (js/document.createElement |canvas) |2d
+              .?!getContext (js/document.createElement |canvas) |2d
               , nil
           :examples $ []
           :schema $ :: 'Fn
@@ -1121,10 +1233,10 @@
             defn text-width (content font-size font-family)
               let
                   ctx @*ctx
-                if (some? ctx)
+                if (js-present? ctx)
                   do
                     set! (.-font ctx) (str font-size "|px " font-family)
-                    .-width $ .!measureText ctx content
+                    .?-width $ .!measureText ctx content
                   + 4 $ * (count content) 9
           :examples $ []
           :schema $ :: 'Fn
