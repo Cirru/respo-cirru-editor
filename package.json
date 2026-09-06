@@ -19,6 +19,6 @@
     "vite": "npm:rolldown-vite@latest"
   },
   "dependencies": {
-    "@calcit/procs": "^0.12.56"
+    "@calcit/procs": "0.13.77"
   }
 }
