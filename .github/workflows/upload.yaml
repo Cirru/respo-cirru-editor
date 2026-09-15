@@ -48,9 +48,29 @@ jobs:
         calcit calcit.cirru edit format
         git diff --exit-code -- calcit.cirru
         calcit calcit.cirru --check-only
+        calcit calcit.cirru analyze check-public \
+          --ns cirru-editor.comp.container \
+          --ns cirru-editor.comp.editor \
+          --ns cirru-editor.comp.expression \
+          --ns cirru-editor.comp.token \
+          --ns cirru-editor.config \
+          --ns cirru-editor.core \
+          --ns cirru-editor.main \
+          --ns cirru-editor.modifier.command \
+          --ns cirru-editor.modifier.focus \
+          --ns cirru-editor.modifier.tree \
+          --ns cirru-editor.schema \
+          --ns cirru-editor.util \
+          --ns cirru-editor.util.detect \
+          --ns cirru-editor.util.dom \
+          --ns cirru-editor.util.keycode \
+          --ns cirru-editor.util.measure \
+          --summary-only --format json
         calcit calcit.cirru analyze quality --baseline config/calcit-quality.cirru
         calcit calcit.cirru analyze dynamic-methods --max 0
         calcit calcit.cirru analyze deprecated --summary-only
+        calcit calcit.cirru docs format-md README.md --check
+        calcit calcit.cirru docs check-md README.md --failures-only
 
     - name: Build web assets
       run: |

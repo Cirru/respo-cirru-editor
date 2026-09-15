@@ -11,30 +11,30 @@ Support several basic shortcuts from [Clacit Editor](https://github.com/Cirru/ca
 Import `comp-editor` like this:
 
 ```cirru
-ns app.ns
-  :require
-    cirru-editor.comp.editor :refer $ comp-editor
-    cirru-editor.util.dom :refer $ focus!
+ns app.ns $ :require
+  cirru-editor.comp.editor :refer $ comp-editor
+  cirru-editor.util.dom :refer $ focus!
 ```
 
 Arguments of `comp-editor`:
 
-```cirru
+```cirru.no-check
 defn on-update! (snapshot dispatch!)
-  dispatch! :update snapshot
+  dispatch! $ :: :update snapshot
 
-defn on-command (snapshot dispatch! e)
+defn on-command (snapshot dispatch! e) &unit
 
-defn schema $ {}
-  :snaphot $ {}
-    :tree ([])
-    :focus ([])
+defn schema $ {} $ :snapshot
+  {}
+    :tree $ []
+    :focus $ []
     :clipboard []
 
 ; "states comes from Respo@4.x states management"
+
 defn render (states snapshot)
   div
-    {} (:style ({}))
+    {} $ :style $ {}
     comp-editor states snapshot on-update! on-command
 ```
 
@@ -45,7 +45,7 @@ Respo does not provide a `didMount` hook, you have to handle it globally on you 
 
 Function `cirru-editor.core/cirru-edit` for editing:
 
-```cirru
+```cirru.no-check
 cirru-edit snapshot op op-data
 ```
 
