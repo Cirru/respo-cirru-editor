@@ -3,11 +3,8 @@
   :about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `calcit query` to inspect and `calcit edit`/`calcit tree` to modify. Run `calcit docs agents --contract` before mutations; use `--full` for first orientation or changed contract digest. Manual edits must follow format and schema conventions, then run `calcit edit format`."
   :package |cirru-editor
   :entries $ {} $ :default
-    {} (:description |)
-      :init-fn 'cirru-editor.main/main!
-      :mode :native
-      :reload-fn 'cirru-editor.main/reload!
-      :feature-policy $ {}
+    {} (:description |) (:init-fn 'cirru-editor.main/main!) (:mode :native) (:reload-fn 'cirru-editor.main/reload!) (:target :browser)
+      :feature-policy $ {} $ :js-ffi :error
       :modules $ [] |respo.calcit/ |lilac/ |memof/ |js-ffi/
       :type-slots $ {}
   :files $ {}
@@ -23,21 +20,31 @@
                 {} $ :class-name style-container
                 comp-editor states store on-update! on-command
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
+            :args $ [] 'cirru-editor.schema/Store
         'on-command $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn on-command (snapshot dispatch! e) (js/console.log |command e)
+          :code $ quote $ defn on-command (snapshot dispatch! e) (js/console.log |command e) &unit
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ [] 'cirru-editor.schema/Store
+              :: 'Fn $ {} (:return 'Unit)
+                :args $ [] 'Dynamic
+              , 'cirru-editor.schema/Event
+            :features $ #{} :js-ffi
         'on-update! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn on-update! (snapshot dispatch!) (dispatch! :save snapshot)
+          :code $ quote $ defn on-update! (snapshot dispatch!)
+            dispatch! $ :: :save snapshot
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'Fn
+              {} (:return 'Unit)
+                :args $ [] 'Dynamic
         'style-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-container
             {} $ |& $ {} (:position |absolute) (:width |100%) (:height |100%) (:display |flex) (:flex-direction |column)
               :background-color $ hsl 0 0 0
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns cirru-editor.comp.container
           :require
@@ -63,28 +70,58 @@
                     , true false
               ; comp-inspect snapshot $ {} (:bottom 0) (:left 0)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
+            :args $ [] 'cirru-editor.schema/Store 'cirru-editor.schema/Store
+              :: 'Fn $ {} (:return 'Unit)
+                :args $ [] 'cirru-editor.schema/Store $ :: 'Fn
+                  {} (:return 'Unit)
+                    :args $ [] 'Dynamic
+              :: 'Fn $ {} (:return 'Unit)
+                :args $ [] 'cirru-editor.schema/Store
+                  :: 'Fn $ {} (:return 'Unit)
+                    :args $ [] 'Dynamic
+                  , 'cirru-editor.schema/Event
         'handle-command $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn handle-command (on-command snapshot)
             fn (e dispatch!) (on-command snapshot dispatch! e)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {}
+            :args $ []
+              :: 'Fn $ {} (:return 'Unit)
+                :args $ [] 'cirru-editor.schema/Store
+                  :: 'Fn $ {} (:return 'Unit)
+                    :args $ [] 'Dynamic
+                  , 'cirru-editor.schema/Event
+              , 'cirru-editor.schema/Store
+            :return $ :: 'Fn $ {} (:return 'Unit)
+              :args $ [] 'cirru-editor.schema/Event $ :: 'Fn
+                {} (:return 'Unit)
+                  :args $ [] 'Dynamic
         'handle-update $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn handle-update (snapshot on-update!)
             fn (op dispatch!)
               on-update! (cirru-edit snapshot op) dispatch!
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {}
+            :args $ [] 'cirru-editor.schema/Store $ :: 'Fn
+              {} (:return 'Unit)
+                :args $ [] 'cirru-editor.schema/Store $ :: 'Fn
+                  {} (:return 'Unit)
+                    :args $ [] 'Dynamic
+            :return $ :: 'Fn $ {} (:return 'Unit)
+              :args $ [] 'Dynamic $ :: 'Fn
+                {} (:return 'Unit)
+                  :args $ [] 'Dynamic
         'style-box $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-box
             {} $ |& $ {} (:flex 1) (:overflow-y |auto) (:padding "|100px 0 200px 0")
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'String
         'style-editor $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-editor
             {} $ |& $ {} (:padding "|8px 8px 8px 8px") (:min-height |200px) (:display |flex) (:flex-direction |column) (:position |relative) (:flex 1)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns cirru-editor.comp.editor
           :require
@@ -129,26 +166,15 @@
                         {}
                     :on-click $ on-click modify! coord focus
                     :on-keydown $ on-keydown state modify! coord on-command cursor
-                    :on-mousedown $ fn (e d!)
-                      let
-                          event $
-                            get e :event
-                            , .unwrap
-                        if
-                          identical? (.-target event) (.-currentTarget event)
-                          -> event .-target .?-classList $ .?!add |mouse-active
-                    :on-mouseup $ fn (e d!)
-                      let
-                          event $
-                            get e :event
-                            , .unwrap
-                        if
-                          identical? (.-target event) (.-currentTarget event)
-                          -> event .-target .?-classList $ .?!remove |mouse-active
+                    :on-mousedown on-mousedown
+                    :on-mouseup on-mouseup
                   apply-args
                       []
                       , 0 expression nil
                     fn (acc idx expr prev-kind)
+                      hint-fn $ {}
+                        :args $ [] (:: 'List 'Dynamic) 'Number (:: 'List 'Dynamic) 'Dynamic
+                        :return $ :: 'List 'Dynamic
                       list-match expr
                         () acc
                         (item es)
@@ -190,14 +216,36 @@
                             ; println |kinds: prev-kind kind "| at " item
                             recur next-acc (inc idx) es kind
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
+            :args $ [] 'cirru-editor.schema/Store 'cirru-editor.schema/Expression
+              :: 'Fn $ {} (:return 'Unit)
+                :args $ [] 'Dynamic $ :: 'Fn
+                  {} (:return 'Unit)
+                    :args $ [] 'Dynamic
+              , 'cirru-editor.schema/Coord 'Number 'Bool 'cirru-editor.schema/Coord
+                :: 'Fn $ {} (:return 'Unit)
+                  :args $ [] 'cirru-editor.schema/Event $ :: 'Fn
+                    {} (:return 'Unit)
+                      :args $ [] 'Dynamic
+                , 'Bool 'Bool
+            :features $ #{} :js-ffi
         'on-click $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-click (modify! coord focus)
             fn (e dispatch!)
               if (not= coord focus)
                 modify! (:: :focus-to coord) dispatch!
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {}
+            :args $ []
+              :: 'Fn $ {} (:return 'Unit)
+                :args $ [] 'Dynamic $ :: 'Fn
+                  {} (:return 'Unit)
+                    :args $ [] 'Dynamic
+              , 'cirru-editor.schema/Coord 'cirru-editor.schema/Coord
+            :return $ :: 'Fn $ {} (:return 'Unit)
+              :args $ [] 'cirru-editor.schema/Event $ :: 'Fn
+                {} (:return 'Unit)
+                  :args $ [] 'Dynamic
         'on-keydown $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-keydown (state modify! coord on-command cursor)
             fn (e dispatch!)
@@ -205,60 +253,49 @@
                   code $
                     get e :key-code
                     , .unwrap-or 0
-                  event $
-                    get e :original-event
-                    , .unwrap
-                  shift? $ .-shiftKey event
-                  command? $ or (.-metaKey event) (.-ctrlKey event)
+                  event $ unsafe-coerce
+                      get e :original-event
+                      , .unwrap
+                    , js-ffi.browser/KeyboardEventHost
+                  shift? $ .-shift-key? event
+                  command? $ or (.-meta-key? event) (.-ctrl-key? event)
                 cond
                     = code keycode/space
-                    do (.!preventDefault event)
+                    do (.prevent-default! event)
                       if shift?
                         modify! (:: :before-token coord) dispatch!
                         modify! (:: :after-token coord) dispatch!
                   (= code keycode/tab)
-                    do (.!preventDefault event)
+                    do (.prevent-default! event)
                       if shift?
-                        modify!
-                          :: :unfold-expression coord
-                          , dispatch!
+                        modify! (:: :unfold-expression coord) dispatch!
                         modify! (:: :fold-node coord) dispatch!
                   (= code keycode/enter)
                     if command?
                       if shift?
-                        modify!
-                          :: :append-expression coord
-                          , dispatch!
-                        modify!
-                          :: :prepend-expression coord
-                          , dispatch!
+                        modify! (:: :append-expression coord) dispatch!
+                        modify! (:: :prepend-expression coord) dispatch!
                       if shift?
-                        modify!
-                          :: :before-expression coord
-                          , dispatch!
-                        modify!
-                          :: :after-expression coord
-                          , dispatch!
+                        modify! (:: :before-expression coord) dispatch!
+                        modify! (:: :after-expression coord) dispatch!
                   (= code keycode/backspace)
-                    do (.!preventDefault event)
+                    do (.prevent-default! event)
                       modify! (:: :remove-node coord) dispatch!
                   (= code keycode/left)
-                    do (.!preventDefault event)
+                    do (.prevent-default! event)
                       modify! (:: :node-left coord) dispatch!
                   (= code keycode/right)
-                    do (.!preventDefault event)
+                    do (.prevent-default! event)
                       modify! (:: :node-right coord) dispatch!
                   (= code keycode/up)
-                    do (.!preventDefault event)
+                    do (.prevent-default! event)
                       modify! (:: :node-up coord) dispatch!
                   (= code keycode/down)
-                    do (.!preventDefault event)
+                    do (.prevent-default! event)
                       modify! (:: :expression-down coord) dispatch!
                   (and command? (= code keycode/key-b))
-                    do (.!preventDefault event)
-                      modify!
-                        :: :duplicate-expression coord
-                        , dispatch!
+                    do (.prevent-default! event)
+                      modify! (:: :duplicate-expression coord) dispatch!
                   (and command? (= code keycode/key-c))
                     modify! (:: :command-copy coord) dispatch!
                   (and command? (= code keycode/key-x))
@@ -269,7 +306,53 @@
                     dispatch! $ :: :states cursor $ not state
                   true $ if command? (on-command e dispatch!) nil
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {}
+            :args $ [] 'Bool
+              :: 'Fn $ {} (:return 'Unit)
+                :args $ [] 'Dynamic $ :: 'Fn
+                  {} (:return 'Unit)
+                    :args $ [] 'Dynamic
+              , 'cirru-editor.schema/Coord
+                :: 'Fn $ {} (:return 'Unit)
+                  :args $ [] 'cirru-editor.schema/Event $ :: 'Fn
+                    {} (:return 'Unit)
+                      :args $ [] 'Dynamic
+                , 'cirru-editor.schema/Cursor
+            :features $ #{} :js-ffi
+            :return $ :: 'Fn $ {} (:return 'Unit)
+              :args $ [] 'cirru-editor.schema/Event $ :: 'Fn
+                {} (:return 'Unit)
+                  :args $ [] 'Dynamic
+        'on-mousedown $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn on-mousedown (e d!)
+            let
+                event $
+                  get e :event
+                  , .unwrap
+              if
+                identical? (.-target event) (.-currentTarget event)
+                -> event .-target .?-classList $ .?!add |mouse-active
+              , &unit
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ [] 'cirru-editor.schema/Event 'D
+            :features $ #{} :js-ffi
+            :generics $ [] 'D
+        'on-mouseup $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn on-mouseup (e d!)
+            let
+                event $
+                  get e :event
+                  , .unwrap
+              if
+                identical? (.-target event) (.-currentTarget event)
+                -> event .-target .?-classList $ .?!remove |mouse-active
+              , &unit
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ [] 'cirru-editor.schema/Event 'D
+            :features $ #{} :js-ffi
+            :generics $ [] 'D
         'style-expression $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-expression
             {}
@@ -278,7 +361,7 @@
                 :user-select :none
               |&.mouse-active $ {} $ :transform "|translate(1px,0)"
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'String
         'style-folded $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-folded
             {} $ |& $ {} (:display |inline-block)
@@ -297,20 +380,20 @@
               :cursor |pointer
               :margin-bottom |4px
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'String
         'style-inline $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def style-inline
             {} (:display :inline-block) (:border-width "|0 0 1px 0") (:padding-left 7) (:padding-right 7) (:padding-bottom 2) (:margin-left 8) (:margin-right 4) (:text-align |center)
               :background-color $ hsl 200 80 80 0
               :min-width 24
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'cirru-editor.schema/Style
         'style-tail $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def style-tail
             {} (:display |inline-block) (:border-width "|0 0 0 1px")
               :background-color $ hsl 0 80 80 0
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'cirru-editor.schema/Style
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns cirru-editor.comp.expression
           :require
@@ -325,10 +408,18 @@
             respo.css :refer $ defstyle
     'cirru-editor.comp.token $ %{} 'FileEntry
       :defs $ {}
+        'RegExpHost $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ deftrait RegExpHost
+            .test $ :: 'Fn $ {}
+              :args $ [] 'cirru-editor.comp.token/RegExpHost 'String
+              :return 'Bool
+          :examples $ []
+          :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
+          :schema $ :: 'Trait
         'code-font $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def code-font "|Source Code Pro,Menlo,monospace"
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'String
         'comp-token $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-token (token modify! coord focus on-command head?)
             input $ {} (:value token) (:spellcheck false)
@@ -348,7 +439,7 @@
                     {} $ :color "|rgb(75, 210, 75)"
                   (contains? (#{} |:) (slice token 0 1))
                     {} $ :color "|rgb(136, 136, 191)"
-                  (.!test pattern-number token)
+                  (.test pattern-number token)
                     {} $ :color "|rgb(173, 31, 31)"
                   head? $ {} $ :color (hsl 40 80 60 0.9)
                   true $ {}
@@ -362,11 +453,24 @@
                 :keydown $ on-keydown modify! coord token on-command
                 :click $ on-click modify! coord focus
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
+            :args $ [] 'String
+              :: 'Fn $ {} (:return 'Unit)
+                :args $ [] 'Dynamic $ :: 'Fn
+                  {} (:return 'Unit)
+                    :args $ [] 'Dynamic
+              , 'cirru-editor.schema/Coord 'cirru-editor.schema/Coord
+                :: 'Fn $ {} (:return 'Unit)
+                  :args $ [] 'cirru-editor.schema/Event $ :: 'Fn
+                    {} (:return 'Unit)
+                      :args $ [] 'Dynamic
+                , 'Bool
+            :features $ #{} :js-ffi
         'create-number-pattern $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn create-number-pattern () (new js/RegExp |-?[\d\.]+)
+          :code $ quote $ defn create-number-pattern ()
+            unsafe-coerce (new js/RegExp |-?[\d\.]+) cirru-editor.comp.token/RegExpHost
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.comp.token/RegExpHost)
             :args $ []
             :features $ #{} :js-ffi
         'on-click $ %{} 'CodeEntry (:doc |)
@@ -375,7 +479,17 @@
               if (not= coord focus)
                 modify! (:: :focus-to coord) dispatch!
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {}
+            :args $ []
+              :: 'Fn $ {} (:return 'Unit)
+                :args $ [] 'Dynamic $ :: 'Fn
+                  {} (:return 'Unit)
+                    :args $ [] 'Dynamic
+              , 'cirru-editor.schema/Coord 'cirru-editor.schema/Coord
+            :return $ :: 'Fn $ {} (:return 'Unit)
+              :args $ [] 'cirru-editor.schema/Event $ :: 'Fn
+                {} (:return 'Unit)
+                  :args $ [] 'Dynamic
         'on-input $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-input (modify! coord)
             fn (e dispatch!)
@@ -385,7 +499,17 @@
                   , .unwrap-or |
                 , dispatch!
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {}
+            :args $ []
+              :: 'Fn $ {} (:return 'Unit)
+                :args $ [] 'Dynamic $ :: 'Fn
+                  {} (:return 'Unit)
+                    :args $ [] 'Dynamic
+              , 'cirru-editor.schema/Coord
+            :return $ :: 'Fn $ {} (:return 'Unit)
+              :args $ [] 'cirru-editor.schema/Event $ :: 'Fn
+                {} (:return 'Unit)
+                  :args $ [] 'Dynamic
         'on-keydown $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-keydown (modify! coord token on-command)
             fn (e dispatch!)
@@ -440,12 +564,26 @@
                       modify! (:: :command-paste coord) dispatch!
                   true $ if command? (on-command e dispatch!) nil
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {}
+            :args $ []
+              :: 'Fn $ {} (:return 'Unit)
+                :args $ [] 'Dynamic $ :: 'Fn
+                  {} (:return 'Unit)
+                    :args $ [] 'Dynamic
+              , 'cirru-editor.schema/Coord 'String $ :: 'Fn
+                {} (:return 'Unit)
+                  :args $ [] 'cirru-editor.schema/Event $ :: 'Fn
+                    {} (:return 'Unit)
+                      :args $ [] 'Dynamic
+            :features $ #{} :js-ffi
+            :return $ :: 'Fn $ {} (:return 'Unit)
+              :args $ [] 'cirru-editor.schema/Event $ :: 'Fn
+                {} (:return 'Unit)
+                  :args $ [] 'Dynamic
         'pattern-number $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def pattern-number
-            create-number-pattern
+          :code $ quote $ def pattern-number (create-number-pattern)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'cirru-editor.comp.token/RegExpHost
         'style-token $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-token
             {}
@@ -457,7 +595,7 @@
               |&:focus $ {} $ :background-color (hsl 0 0 100 0.2)
               |&:active $ {} $ :transform "|translate(1px,0)"
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns cirru-editor.comp.token
           :require
@@ -479,9 +617,7 @@
           :schema $ :: 'Bool
         'site $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def site
-            {} (:title "|Cirru Editor")
-              :icon |http://cdn.tiye.me/logo/cirru.png
-              :storage-key |respo-cirru-editor
+            {} (:title "|Cirru Editor") (:icon |http://cdn.tiye.me/logo/cirru.png) (:storage-key |respo-cirru-editor)
           :examples $ []
           :schema $ :: 'Map 'Tag 'String
       :ns $ %{} 'NsEntry (:doc |)
@@ -491,70 +627,62 @@
         'cirru-edit $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn cirru-edit (snapshot op) (; println :update-state op)
             match op
-              (:update-token d)
-                tree/update-token snapshot d
+              (:update-token d) (tree/update-token snapshot d)
               (:after-token d) (tree/after-token snapshot d)
               (:fold-node d) (tree/fold-node snapshot d)
-              (:unfold-expression d)
-                tree/unfold-expression snapshot d
-              (:unfold-token d)
-                tree/unfold-token snapshot d
-              (:before-expression d)
-                tree/before-expression snapshot d
-              (:after-expression d)
-                tree/after-expression snapshot d
-              (:prepend-expression d)
-                tree/prepend-expression snapshot d
-              (:append-expression d)
-                tree/append-expression snapshot d
-              (:before-token d)
-                tree/before-token snapshot d
+              (:unfold-expression d) (tree/unfold-expression snapshot d)
+              (:unfold-token d) (tree/unfold-token snapshot d)
+              (:before-expression d) (tree/before-expression snapshot d)
+              (:after-expression d) (tree/after-expression snapshot d)
+              (:prepend-expression d) (tree/prepend-expression snapshot d)
+              (:append-expression d) (tree/append-expression snapshot d)
+              (:before-token d) (tree/before-token snapshot d)
               (:remove-node d) (tree/remove-node snapshot d)
               (:focus-to d) (focus/focus-to snapshot d)
               (:node-up d) (focus/node-up snapshot d)
-              (:expression-down d)
-                focus/expression-down snapshot d
+              (:expression-down d) (focus/expression-down snapshot d)
               (:node-left d) (focus/node-left snapshot d)
               (:node-right d) (focus/node-right snapshot d)
               (:command-copy d) (command/copy snapshot d)
               (:command-cut d) (command/cut snapshot d)
               (:command-paste d) (command/paste snapshot d)
               (:tree-reset d) (tree/tree-reset snapshot d)
-              (:duplicate-expression d)
-                tree/duplicate-expression snapshot d
+              (:duplicate-expression d) (tree/duplicate-expression snapshot d)
               _ $ do (eprintln "|Unknown op:" op) snapshot
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store 'Dynamic
         'default-handler $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn default-handler (snapshot op-data) snapshot
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'T)
+            :args $ [] 'T 'U
+            :generics $ [] 'T 'U
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns cirru-editor.core
-          :require
-            cirru-editor.modifier.tree :as tree
-            cirru-editor.modifier.focus :as focus
-            cirru-editor.modifier.command :as command
+          :require (cirru-editor.modifier.tree :as tree) (cirru-editor.modifier.focus :as focus) (cirru-editor.modifier.command :as command)
     'cirru-editor.main $ %{} 'FileEntry
       :defs $ {}
         '*store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defatom *store schema/store
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Ref 'cirru-editor.schema/Store
         '*touched $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defatom *touched false
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Ref 'Bool
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op) (; println |dispatch: op op-data)
             match op
-              (:save d) (reset! *store d)
+              (:save d)
+                reset! *store $ assert-type d $ :: 'Map 'Tag 'Dynamic
               (:states cursor s)
-                reset! *store $ update-states @*store cursor s
+                reset! *store $ assert-type (update-states @*store cursor s) (:: 'Map 'Tag 'Dynamic)
               _ @*store
             reset! *touched true
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ [] 'Dynamic
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             if config/dev? $ load-console-formatter!
@@ -563,14 +691,17 @@
             add-watch *store :changes $ fn (s p) (render-app!)
             println "|app started!"
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
             :features $ #{} :js-ffi
         'mount-target $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def mount-target
-            js/document.querySelector |.app
+          :code $ quote $ defn mount-target () (js/document.querySelector |.app)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :ffi $ {} (:backend :js) (:target :browser)
+          :schema $ :: 'Fn $ {}
+            :args $ []
+            :features $ #{} :js-ffi
+            :return $ :: 'JsNullish 'JsObject
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (nil? build-errors)
@@ -580,13 +711,16 @@
                 hud! |ok~ |Ok
               hud! |error build-errors
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ []
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
-            render! mount-target (comp-container @*store) dispatch!
+            render! (mount-target) (comp-container @*store) dispatch!
             if @*touched $ do (reset! *touched false) (println "|changing focus") (focus!)
+            , &unit
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ []
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns cirru-editor.main
           :require
@@ -608,7 +742,8 @@
                 expression $ get-in snapshot $ concat ([] :tree) coord
               -> snapshot $ assoc :clipboard expression
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
         'cut $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn cut (snapshot op-data)
             let
@@ -623,21 +758,27 @@
                 update-in
                   concat ([] :tree) (butlast coord)
                   fn (parent)
+                    hint-fn $ {}
+                      :args $ [] $ :: 'Option 'Dynamic
+                      :return 'Dynamic
                     let
                         parent $ parent.unwrap-or $ []
+                      assert-type parent $ :: 'List 'Dynamic
                       cond
                           = 1 $ count parent
                           []
-                        (zero? position) (.slice parent 1)
+                        (zero? position)
+                          &list:slice parent 1 $ count parent
                         (= position (dec (count parent)))
                           butlast parent
-                        true $ concat (.slice parent 0 position)
-                          .slice parent $ inc position
+                        true $ concat (&list:slice parent 0 position)
+                          &list:slice parent (inc position) (count parent)
                 assoc :focus $ if (zero? position) (butlast coord)
                   conj (butlast coord) (dec position)
                 assoc :clipboard expression
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
         'paste $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn paste (snapshot op-data)
             let
@@ -647,7 +788,8 @@
                   , .unwrap-or $ []
               -> snapshot $ assoc-in (prepend coord :tree) clipboard
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns cirru-editor.modifier.command
           :require $ cirru-editor.util :refer $ zero?
@@ -662,14 +804,16 @@
                 conj coord 0
                 , coord
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
         'focus-to $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn focus-to (snapshot op-data)
             let
                 coord op-data
               assoc snapshot :focus coord
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
         'node-left $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn node-left (snapshot focus)
             if (empty? focus) (assoc snapshot :focus focus)
@@ -680,7 +824,8 @@
                 conj (butlast focus)
                   if (pos? position) (dec position) position
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
         'node-right $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn node-right (snapshot focus)
             if (empty? focus) (assoc snapshot :focus focus)
@@ -697,7 +842,8 @@
                     inc position
                     , position
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
         'node-up $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn node-up (snapshot focus)
             -> snapshot $ assoc :focus $ if
@@ -705,7 +851,8 @@
               slice focus 0 $ dec $ count focus
               , focus
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns cirru-editor.modifier.focus
           :require $ cirru-editor.util :refer $ pos?
@@ -727,11 +874,15 @@
                 update-in
                   cons :tree $ butlast coord
                   fn (parent)
+                    hint-fn $ {}
+                      :args $ [] $ :: 'Option 'Dynamic
+                      :return 'Dynamic
                     let
                         parent $ parent.unwrap-or $ []
                         position $
                           last coord
                           , .unwrap-or 0
+                      assert-type parent $ :: 'List 'Dynamic
                       cond
                           = position $ dec $ count parent
                           conj parent $ [] |
@@ -745,7 +896,8 @@
                     , .unwrap-or 0
                   , 0
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
         'after-token $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn after-token (snapshot op-data)
             let
@@ -756,11 +908,15 @@
                   update-in
                     cons :tree $ butlast coord
                     fn (expression)
+                      hint-fn $ {}
+                        :args $ [] $ :: 'Option 'Dynamic
+                        :return 'Dynamic
                       let
                           expression $ expression.unwrap-or $ []
                           position $
                             last coord
                             , .unwrap-or 0
+                        assert-type expression $ :: 'List 'Dynamic
                         if
                           = position $ dec $ count expression
                           conj expression $ str |
@@ -782,7 +938,8 @@
                     assoc :tree $ [] |
                   , snapshot
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
         'append-expression $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn append-expression (snapshot op-data)
             let
@@ -793,23 +950,32 @@
               -> snapshot
                 update-in (cons :tree coord)
                   fn (parent)
-                    conj
-                      parent.unwrap-or $ []
-                      str |
+                    hint-fn $ {}
+                      :args $ [] $ :: 'Option 'Dynamic
+                      :return 'Dynamic
+                    let
+                        parent $ parent.unwrap-or $ []
+                      assert-type parent $ :: 'List 'Dynamic
+                      conj parent $ str |
                 assoc :focus $ conj coord $ count expression
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
         'before-expression $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn before-expression (snapshot coord)
             if (empty? coord) snapshot $ -> snapshot
               update-in
                 cons :tree $ butlast coord
                 fn (parent)
+                  hint-fn $ {}
+                    :args $ [] $ :: 'Option 'Dynamic
+                    :return 'Dynamic
                   let
                       parent $ parent.unwrap-or $ []
                       position $
                         last coord
                         , .unwrap-or 0
+                    assert-type parent $ :: 'List 'Dynamic
                     cond
                         zero? position
                         cons ([] |) parent
@@ -819,23 +985,29 @@
                         subvec parent position
               assoc :focus $ conj coord 0
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
         'before-token $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn before-token (snapshot coord)
             if (empty? coord) snapshot $ -> snapshot $ update-in
               cons :tree $ butlast coord
               fn (parent)
+                hint-fn $ {}
+                  :args $ [] $ :: 'Option 'Dynamic
+                  :return 'Dynamic
                 let
                     parent $ parent.unwrap-or $ []
                     position $
                       last coord
                       , .unwrap-or 0
+                  assert-type parent $ :: 'List 'Dynamic
                   cond
                       zero? position
                       cons | parent
                     true $ concat (&list:slice parent 0 position) ([] |) (&list:slice parent position)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
         'duplicate-expression $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn duplicate-expression (snapshot focus)
             if (empty? focus) snapshot $ -> snapshot
@@ -852,6 +1024,10 @@
                       , .unwrap-or 0
                   conj (butlast focus) (inc pos)
               update :tree $ fn (tree)
+                hint-fn $ {}
+                  :args $ [] 'Dynamic
+                  :return 'Dynamic
+                assert-type tree $ :: 'List 'Dynamic
                 if
                   = 1 $ count focus
                   let
@@ -863,36 +1039,54 @@
                       slice tree pos
                   update-in tree (butlast focus)
                     fn (parent)
+                      hint-fn $ {}
+                        :args $ [] $ :: 'Option 'Dynamic
+                        :return 'Dynamic
                       let
                           parent $ parent.unwrap-or $ []
                           pos $
                             last focus
                             , .unwrap-or 0
+                        assert-type parent $ :: 'List 'Dynamic
                         concat
-                          .slice parent 0 $ inc pos
-                          .slice parent pos
+                          &list:slice parent 0 $ inc pos
+                          &list:slice parent pos $ count parent
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
         'fold-node $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn fold-node (snapshot op-data)
             let
                 coord op-data
               -> snapshot
                 update-in (cons :tree coord)
-                  fn (node) ([] node)
+                  fn (node)
+                    hint-fn $ {}
+                      :args $ [] $ :: 'Option 'Dynamic
+                      :return 'Dynamic
+                    [] $ node.unwrap-or $ []
                 assoc :focus $ conj coord 0
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
         'prepend-expression $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn prepend-expression (snapshot op-data)
             let
                 coord op-data
               -> snapshot
                 update-in (cons :tree coord)
-                  fn (parent) (cons | parent)
+                  fn (parent)
+                    hint-fn $ {}
+                      :args $ [] $ :: 'Option 'Dynamic
+                      :return 'Dynamic
+                    let
+                        parent $ parent.unwrap-or $ []
+                      assert-type parent $ :: 'List 'Dynamic
+                      cons | parent
                 assoc :focus $ conj coord 0
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
         'remove-node $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn remove-node (snapshot op-data)
             let
@@ -903,19 +1097,23 @@
                   update-in
                     prepend (butlast coord) :tree
                     fn (parent)
+                      hint-fn $ {}
+                        :args $ [] $ :: 'Option 'Dynamic
+                        :return 'Dynamic
                       let
                           parent $ parent.unwrap-or $ []
                           position $
                             last coord
                             , .unwrap-or 0
+                        assert-type parent $ :: 'List 'Dynamic
                         cond
                             = 1 $ count parent
                             []
                           (zero? position) (rest parent)
                           (= position (dec (count parent)))
                             butlast parent
-                          true $ concat (.slice parent 0 position)
-                            .slice parent $ inc position
+                          true $ concat (&list:slice parent 0 position)
+                            &list:slice parent (inc position) (count parent)
                   assoc :focus $ let
                       position $
                         last coord
@@ -925,7 +1123,8 @@
                         [] $ dec position
                 , snapshot
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
         'tree-reset $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn tree-reset (snapshot op-data)
             let
@@ -933,7 +1132,8 @@
               -> snapshot (assoc :tree tree)
                 assoc :focus $ []
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
         'unfold-expression $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn unfold-expression (snapshot op-data)
             let
@@ -942,6 +1142,10 @@
                   > (count coord) 1
                   -> snapshot
                     update :tree $ fn (tree)
+                      hint-fn $ {}
+                        :args $ [] 'Dynamic
+                        :return 'Dynamic
+                      assert-type tree $ :: 'List 'Dynamic
                       let
                           expression $
                             get-in tree coord
@@ -949,10 +1153,15 @@
                           position $
                             last coord
                             , .unwrap-or 0
+                        assert-type expression $ :: 'List 'Dynamic
                         update-in tree (butlast coord)
                           fn (parent)
+                            hint-fn $ {}
+                              :args $ [] $ :: 'Option 'Dynamic
+                              :return 'Dynamic
                             let
                                 parent $ parent.unwrap-or $ []
+                              assert-type parent $ :: 'List 'Dynamic
                               cond
                                   zero? position
                                   concat expression $ rest parent
@@ -964,6 +1173,10 @@
                     assoc :focus $ butlast coord
                 (= 1 (count coord))
                   -> snapshot $ update :tree $ fn (parent)
+                    hint-fn $ {}
+                      :args $ [] 'Dynamic
+                      :return 'Dynamic
+                    assert-type parent $ :: 'List 'Dynamic
                     let
                         expression $
                           get-in parent coord
@@ -971,6 +1184,7 @@
                         position $
                           last coord
                           , .unwrap-or 0
+                      assert-type expression $ :: 'List 'Dynamic
                       cond
                           zero? position
                           concat expression $ rest parent
@@ -981,7 +1195,8 @@
                           , expression $ subvec parent (inc position)
                 true snapshot
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
         'unfold-token $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn unfold-token (snapshot op-data)
             let
@@ -999,27 +1214,59 @@
                   -> snapshot
                     update-in (cons :tree parent-coord)
                       fn (value)
+                        hint-fn $ {}
+                          :args $ [] $ :: 'Option 'Dynamic
+                          :return 'Dynamic
                         let
                             value $ value.unwrap-or $ []
-                          first value
+                          assert-type value $ :: 'List 'Dynamic
+                          option:unwrap-or (first value) |
                     assoc :focus parent-coord
                   , snapshot
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
         'update-token $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn update-token (snapshot op-data)
             let-sugar
                   [] coord new-token
                   , op-data
+              assert-type coord $ :: 'List 'Dynamic
+              assert-type new-token 'String
               -> snapshot $ assoc-in (cons :tree coord) new-token
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
+            :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns cirru-editor.modifier.tree
           :require $ cirru-editor.util :refer $ zero? pos? subvec cons
     'cirru-editor.schema $ %{} 'FileEntry
-      :defs $ {} $ 'store
-        %{} 'CodeEntry (:doc |)
+      :defs $ {}
+        'Coord $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ def Coord &unit
+          :examples $ []
+          :schema $ :: 'List 'Number
+        'Cursor $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ def Cursor &unit
+          :examples $ []
+          :schema $ :: 'List 'Dynamic
+        'Event $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ def Event &unit
+          :examples $ []
+          :schema $ :: 'Map 'Tag 'Dynamic
+        'Expression $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ def Expression &unit
+          :examples $ []
+          :schema $ :: 'List 'Dynamic
+        'Store $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ def Store &unit
+          :examples $ []
+          :schema $ :: 'Map 'Tag 'Dynamic
+        'Style $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ def Style &unit
+          :examples $ []
+          :schema $ :: 'Map 'Tag 'Dynamic
+        'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             {}
               :states $ {}
@@ -1027,7 +1274,7 @@
               :focus $ []
               :clipboard $ []
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'cirru-editor.schema/Store
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns cirru-editor.schema
     'cirru-editor.util $ %{} 'FileEntry
@@ -1035,7 +1282,10 @@
         'cons $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn cons (y xs) (prepend xs y)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {}
+            :args $ [] 'T $ :: 'List 'T
+            :generics $ [] 'T
+            :return $ :: 'List 'T
         'pos? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn pos? (x) (&> x 0)
           :examples $ []
@@ -1072,7 +1322,8 @@
           :code $ quote $ defn deep? (expression)
             any? expression $ fn (item) (list? item)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Bool)
+            :args $ [] $ :: 'List 'Dynamic
         'has-blank? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn has-blank? (x) (includes? x "| ")
           :examples $ []
@@ -1080,9 +1331,7 @@
             :args $ [] 'String
         'shallow? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn shallow? (expression)
-            every?
-              fn (item) (string? item)
-              , expression
+            every? expression $ fn (item) (string? item)
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Bool)
             :args $ [] $ :: 'List 'String
@@ -1094,16 +1343,20 @@
           :code $ quote $ defn focus! ()
             js/requestAnimationFrame $ fn (timestap)
               let
-                  editor-focus $ .?!querySelector js/document |.editor-focused
+                  editor-focus $ unsafe-coerce (.?!querySelector js/document |.editor-focused) (:: 'JsNullish 'respo.dom/DomElement)
                   current-focus js/document.activeElement
                 if (js-present? editor-focus)
                   if
                     not $ identical? editor-focus current-focus
-                    .!focus editor-focus
+                    .focus! editor-focus
                     , nil
                   println "|Editor warning: cannot find focus target."
+            , &unit
           :examples $ []
-          :schema $ :: 'Dynamic
+          :ffi $ {} (:backend :js) (:target :browser)
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ []
+            :features $ #{} :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns cirru-editor.util.dom
     'cirru-editor.util.keycode $ %{} 'FileEntry
@@ -1175,9 +1428,7 @@
         'create-context $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn create-context ()
             if (exists? js/document)
-              .?!getContext
-                js/document.createElement |canvas
-                , |2d
+              .?!getContext (js/document.createElement |canvas) |2d
               , nil
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Dynamic)
