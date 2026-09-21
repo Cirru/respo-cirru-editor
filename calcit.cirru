@@ -5,7 +5,7 @@
   :entries $ {} $ :default
     {} (:description |) (:init-fn 'cirru-editor.main/main!) (:mode :native) (:reload-fn 'cirru-editor.main/reload!) (:target :browser)
       :feature-policy $ {} $ :js-ffi :error
-      :modules $ [] |respo.calcit/ |lilac/ |memof/ |js-ffi/
+      :modules $ [] |respo.calcit/ |js-ffi/
       :type-slots $ {}
   :files $ {}
     'cirru-editor.comp.container $ %{} 'FileEntry
