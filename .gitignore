@@ -11,3 +11,5 @@ dist/
 install-state.gz
 
 .DS_Store
+.pnp.cjs
+.pnp.loader.mjs

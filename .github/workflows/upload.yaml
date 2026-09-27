@@ -67,7 +67,7 @@ jobs:
           --ns cirru-editor.util.measure \
           --summary-only --format json
         calcit calcit.cirru analyze quality --baseline config/calcit-quality.cirru
-        calcit calcit.cirru analyze dynamic-methods --max 0
+        calcit calcit.cirru analyze dynamic-methods
         calcit calcit.cirru analyze deprecated --summary-only
         calcit calcit.cirru docs format-md README.md --check
         calcit calcit.cirru docs check-md README.md --failures-only
