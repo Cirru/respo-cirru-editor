@@ -142,7 +142,7 @@
                 cursor $
                   get states :cursor
                   , .unwrap-or $ []
-                state $ either (get states :data) false
+                state $ option:unwrap-or (get states :data) false
               if state
                 div
                   {} (:class-name style-folded)
@@ -739,11 +739,22 @@
           :code $ quote $ defn copy (snapshot op-data)
             let
                 coord op-data
-                expression $ get-in snapshot $ concat ([] :tree) coord
+                expression $ option:unwrap-or
+                  get-in snapshot $ concat ([] :tree) coord
+                  []
               -> snapshot $ assoc :clipboard expression
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
             :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
+          :tests $ [] $ %{} 'TestEntry (:name |unwraps-expression-for-clipboard)
+            :code $ quote $ let
+                snapshot $ {}
+                  :tree $ [] $ [] |a
+                  :focus $ []
+                  :clipboard $ []
+                  :states $ {}
+                expected $ assoc snapshot :clipboard $ [] |a
+              assert= expected $ copy snapshot $ [] 0
         'cut $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn cut (snapshot op-data)
             let
@@ -798,7 +809,9 @@
         'expression-down $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn expression-down (snapshot coord)
             let
-                expression $ get-in snapshot $ prepend coord :tree
+                expression $ option:unwrap-or
+                  get-in snapshot $ prepend coord :tree
+                  []
               -> snapshot $ assoc :focus $ if
                 pos? $ count expression
                 conj coord 0
@@ -806,6 +819,15 @@
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'cirru-editor.schema/Store)
             :args $ [] 'cirru-editor.schema/Store $ :: 'List 'Dynamic
+          :tests $ [] $ %{} 'TestEntry (:name |unwraps-present-expression)
+            :code $ quote $ let
+                snapshot $ {}
+                  :tree $ [] $ [] |a
+                  :focus $ []
+                  :clipboard $ []
+                  :states $ {}
+                expected $ assoc snapshot :focus $ [] 0
+              assert= expected $ expression-down snapshot $ []
         'focus-to $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn focus-to (snapshot op-data)
             let
@@ -887,7 +909,7 @@
                           = position $ dec $ count parent
                           conj parent $ [] |
                         true $ concat
-                          subvec parent 0 $ %some $ inc position
+                          subvec parent 0 $ Option :some $ inc position
                           [] $ [] |
                           subvec parent $ inc position
                 assoc :focus $ conj (butlast coord)
@@ -921,7 +943,7 @@
                           = position $ dec $ count expression
                           conj expression $ str |
                           concat
-                            subvec expression 0 $ %some $ inc position
+                            subvec expression 0 $ Option :some $ inc position
                             [] |
                             subvec expression $ inc position
                   assoc :focus $ conj (butlast coord)
@@ -980,7 +1002,7 @@
                         zero? position
                         cons ([] |) parent
                       true $ concat
-                        subvec parent 0 $ %some position
+                        subvec parent 0 $ Option :some position
                         [] $ [] |
                         subvec parent position
               assoc :focus $ conj coord 0
@@ -1168,7 +1190,7 @@
                                 (= position (dec (count parent)))
                                   concat (butlast parent) expression
                                 true $ concat
-                                  subvec parent 0 $ %some position
+                                  subvec parent 0 $ Option :some position
                                   , expression $ subvec parent (inc position)
                     assoc :focus $ butlast coord
                 (= 1 (count coord))
@@ -1191,7 +1213,7 @@
                         (= position (dec (count parent)))
                           concat (butlast parent) expression
                         true $ concat
-                          subvec parent 0 $ %some position
+                          subvec parent 0 $ Option :some position
                           , expression $ subvec parent (inc position)
                 true snapshot
           :examples $ []
