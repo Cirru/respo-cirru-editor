@@ -10,8 +10,9 @@ permissions:
   contents: read
 
 concurrency:
-  group: upload-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  group: cos-upload-${{ github.repository }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+  queue: max
 
 jobs:
   test:
@@ -82,13 +83,14 @@ jobs:
       id: asset-path
       env:
         CDN_ORIGIN: https://cos-sh.tiye.me
+        PR_NUMBER: ${{ github.event.pull_request.number }}
       run: |
         if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
-          asset_prefix="${GITHUB_REPOSITORY}/pr/"
+          asset_prefix="${GITHUB_REPOSITORY}/pr/${PR_NUMBER}/${GITHUB_RUN_ID}/${GITHUB_RUN_ATTEMPT}/"
         elif [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
           asset_prefix="${GITHUB_REPOSITORY}/"
         else
-          asset_prefix="${GITHUB_REPOSITORY}/branches/${GITHUB_REF_NAME}/"
+          asset_prefix="${GITHUB_REPOSITORY}/branches/${GITHUB_REF_NAME}/${GITHUB_RUN_ID}/${GITHUB_RUN_ATTEMPT}/"
         fi
         base_url="${CDN_ORIGIN}/${asset_prefix}"
         echo "VITE_BASE_URL=${base_url}" >> "$GITHUB_ENV"
@@ -100,9 +102,24 @@ jobs:
         yarn compile
         yarn build
 
+    - name: Skip superseded production deployment
+      id: deploy-head
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        current=true
+        if [[ "$GITHUB_EVENT_NAME" == "push" && "$GITHUB_REF" == "refs/heads/main" ]]; then
+          latest_sha=$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/main" --jq '.object.sha')
+          if [[ "$latest_sha" != "$GITHUB_SHA" ]]; then
+            current=false
+            echo "::notice::Skipping superseded production deployment; main HEAD has changed."
+          fi
+        fi
+        echo "current=${current}" >> "$GITHUB_OUTPUT"
+
     - name: Check COS credentials
       id: cos-credentials
-      if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+      if: steps.deploy-head.outputs.current == 'true' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
       env:
         COS_BUCKET: ${{ secrets.COS_BUCKET }}
         COS_SECRET_ID: ${{ secrets.COS_SECRET_ID }}
@@ -121,8 +138,8 @@ jobs:
         fi
 
     - name: Upload and verify static assets on COS
-      if: steps.cos-credentials.outputs.available == 'true'
-      uses: worktools/cos-upload-action@17e6d213fe9f6772a6090a13c8ba044cd6cbcb09 # v1.1.1
+      if: steps.deploy-head.outputs.current == 'true' && steps.cos-credentials.outputs.available == 'true'
+      uses: worktools/cos-upload-action@06d6027dcca6413c5936e04a9b6e9f0d5ef71ba0 # v1.2.0
       with:
         source-dir: dist
         bucket: ${{ secrets.COS_BUCKET }}
@@ -133,7 +150,7 @@ jobs:
         secret-key: ${{ secrets.COS_SECRET_KEY }}
 
     - name: Configure verified SSH host
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: steps.deploy-head.outputs.current == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
       env:
         DEPLOY_KEY: ${{ secrets.rsync_private_key }}
       run: |
@@ -145,7 +162,7 @@ jobs:
         chmod 600 "$HOME/.ssh/known_hosts"
 
     - name: Deploy web assets
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: steps.deploy-head.outputs.current == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: |
         set -euo pipefail
         rsync -avzr --progress \

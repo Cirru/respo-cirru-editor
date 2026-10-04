@@ -94,6 +94,13 @@ returns structure:
 
 https://github.com/calcit-lang/respo-calcit-workflow
 
+前端 `dist` 使用 COS Action 1.2.0 内置公开 URL 校验，不增加上传验证脚本。
+PR 资源路径按编号、run、attempt 隔离；上传排队且不中断正在执行的运行。
+发布前过期 main 运行跳过 COS 与服务器部署，原生产 COS 前缀、SSH 和服务器路径不变。
+
+此次部署更新不修改源码、原有测试或质量预算；Calcit/procs 仍为正式 0.27.0，
+已有模块版本与非严格 Caps 冲突策略不变，不代表完成 0.28 类型迁移。
+
 ### License
 
 MIT
