@@ -19,12 +19,12 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - name: Check out repository
-      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      uses: actions/checkout@v7.0.1
       with:
         persist-credentials: false
 
     - name: Set up Node.js
-      uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+      uses: actions/setup-node@v6.5.0
       with:
         node-version: 24
         package-manager-cache: false
@@ -36,16 +36,14 @@ jobs:
         yarn --version
 
     - name: Set up Calcit and Caps
-      uses: calcit-lang/setup-calcit@ca701be5a471759e442aa053cd100720bbe1f09f # v1.5.0
+      uses: calcit-lang/setup-calcit@v1.5.0
       with:
         tools: calcit,caps
         caps-version: "0.1.1"
 
     - name: Resolve immutable dependencies
       run: |
-        # Respo requests an older compatible js-ffi alpha, so resolve the
-        # direct project's newer compatible version deterministically.
-        caps --ci
+        caps --strict --ci
         yarn install --immutable
         caps verify --toolchain
 
@@ -54,7 +52,9 @@ jobs:
         calcit edit format
         git diff --exit-code -- calcit.cirru
         calcit calcit.cirru --check-only
-        calcit calcit.cirru analyze check-public \
+        calcit fix --workflow strict --verify
+        calcit --check-only --all-defs
+        calcit calcit.cirru --check-only \
           --ns cirru-editor.comp.container \
           --ns cirru-editor.comp.editor \
           --ns cirru-editor.comp.expression \
@@ -74,8 +74,8 @@ jobs:
           --summary-only --format json
         calcit calcit.cirru analyze quality --baseline config/calcit-quality.cirru
         calcit calcit.cirru test --require-match
-        calcit calcit.cirru analyze dynamic-methods --summary-only --format json
-        calcit calcit.cirru analyze deprecated --summary-only --format json
+        calcit calcit.cirru analyze weak-types --only dynamic-method --summary-only --format json
+        calcit calcit.cirru analyze weak-types --only deprecated-call --summary-only --format json
         calcit calcit.cirru docs format-md README.md --check
         calcit calcit.cirru docs check-md README.md --failures-only
 
@@ -99,7 +99,6 @@ jobs:
 
     - name: Build web assets with CDN URLs
       run: |
-        yarn compile
         yarn build
 
     - name: Skip superseded production deployment
@@ -139,7 +138,7 @@ jobs:
 
     - name: Upload and verify static assets on COS
       if: steps.deploy-head.outputs.current == 'true' && steps.cos-credentials.outputs.available == 'true'
-      uses: worktools/cos-upload-action@06d6027dcca6413c5936e04a9b6e9f0d5ef71ba0 # v1.2.0
+      uses: worktools/cos-upload-action@v1.2.0
       with:
         source-dir: dist
         bucket: ${{ secrets.COS_BUCKET }}
