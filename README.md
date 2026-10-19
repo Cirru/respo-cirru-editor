@@ -8,9 +8,15 @@ Support several basic shortcuts from [Clacit Editor](https://github.com/Cirru/ca
 
 ### 0.30.1 迁移候选：使用者先注意
 
-当前分支配对已发布 Calcit/procs **0.30.1-alpha.4**（编译器仍为预发布版），模块使用正式 Respo 0.16.122 和 js-ffi 0.2.3。尚未发版或部署，不把本地候选当作已发布 0.6.10 的行为。
+当前分支配对已发布 Calcit/procs **0.30.1-alpha.5**（编译器仍为预发布版），模块使用正式 Respo 0.16.122 和 js-ffi 0.2.3。尚未发版或部署，不把本地候选当作已发布 0.6.10 的行为。
 
 树、焦点、剪贴板与 Respo 状态的数据布局保持不变。坐标是数字 List；从开放操作 payload 进入树修改时检查实际形状，错误值会更早报错，不回退成空数据。未知 enum 操作仍走原日志/原快照返回分支。六个以 Unit 冒充 Map/List 的类型占位符 `cirru-editor.schema/{Coord,Cursor,Event,Expression,Store,Style}` 已移除；消费者若在 schema 中引用它们，需写出实际 Map/List 合同，不能继续把 Unit 当作数据类型。`cirru-edit` 的实际接口一直是两个参数：snapshot 和操作 tuple。
+
+操作及转发 dispatch 回调现在明确要求单个 `Enum`，不再把已知操作标成 Dynamic；
+事件 Map、混合状态 Map 和递归代码树的数据边界不因此放宽。
+消费者要同时迁移旧的 `dispatch! :save snapshot` 为 `dispatch! $ :: :save snapshot`。
+Respo 的公开 render 回调仍兼容直接 Dynamic 操作，因此只在该开放入口检查 Enum，
+通过检查后再调用内部严格接口；不以断言或伪泛型抹掉两种合同的差别。
 
 编辑器状态树真实包含数字与 Tag key，仅 states 边界使用 `Map<Dynamic,Dynamic>`；业务快照仍为 `Map<Tag,Dynamic>`，没有统一放宽。内部一直传递同一全局焦点坐标，子节点比较完整路径，不再用 nil 冒充坐标。折叠节点补齐焦点标记与 tab-index，支持直接用原快捷键继续展开（[问题 #26](https://github.com/Cirru/respo-cirru-editor/issues/26)）；首元素为表达式时，折叠标签显式转成文本。
 

@@ -29,7 +29,7 @@
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ [] (:: 'Map 'Tag 'Dynamic)
               :: 'Fn $ {} (:return 'Unit)
-                :args $ [] 'Dynamic
+                :args $ [] 'Enum
               :: 'Map 'Tag 'Dynamic
             :features $ #{} :js-ffi
         'on-update! $ %{} 'CodeEntry (:doc |)
@@ -39,7 +39,7 @@
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ [] (:: 'Map 'Tag 'Dynamic)
               :: 'Fn $ {} (:return 'Unit)
-                :args $ [] 'Dynamic
+                :args $ [] 'Enum
         'style-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-container
             {} $ |& $ {} (:position |absolute) (:width |100%) (:height |100%) (:display |flex) (:flex-direction |column)
@@ -82,11 +82,11 @@
               :: 'Fn $ {} (:return 'Unit)
                 :args $ [] (:: 'Map 'Tag 'Dynamic)
                   :: 'Fn $ {} (:return 'Unit)
-                    :args $ [] 'Dynamic
+                    :args $ [] 'Enum
               :: 'Fn $ {} (:return 'Unit)
                 :args $ [] (:: 'Map 'Tag 'Dynamic)
                   :: 'Fn $ {} (:return 'Unit)
-                    :args $ [] 'Dynamic
+                    :args $ [] 'Enum
                   :: 'Map 'Tag 'Dynamic
         'handle-command $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn handle-command (on-command snapshot)
@@ -94,7 +94,7 @@
               hint-fn $ {} (:return 'Unit)
                 :args $ [] (:: 'Map 'Tag 'Dynamic)
                   :: 'Fn $ {} (:return 'Unit)
-                    :args $ [] 'Dynamic
+                    :args $ [] 'Enum
               on-command snapshot dispatch! e
               , &unit
           :examples $ []
@@ -103,20 +103,20 @@
               :: 'Fn $ {} (:return 'Unit)
                 :args $ [] (:: 'Map 'Tag 'Dynamic)
                   :: 'Fn $ {} (:return 'Unit)
-                    :args $ [] 'Dynamic
+                    :args $ [] 'Enum
                   :: 'Map 'Tag 'Dynamic
               :: 'Map 'Tag 'Dynamic
             :return $ :: 'Fn $ {} (:return 'Unit)
               :args $ [] (:: 'Map 'Tag 'Dynamic)
                 :: 'Fn $ {} (:return 'Unit)
-                  :args $ [] 'Dynamic
+                  :args $ [] 'Enum
         'handle-update $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn handle-update (snapshot on-update!)
             fn (op dispatch!)
               hint-fn $ {} (:return 'Unit)
-                :args $ [] 'Dynamic $ :: 'Fn
+                :args $ [] 'Enum $ :: 'Fn
                   {} (:return 'Unit)
-                    :args $ [] 'Dynamic
+                    :args $ [] 'Enum
               on-update! (cirru-edit snapshot op) dispatch!
               , &unit
           :examples $ []
@@ -125,11 +125,11 @@
               :: 'Fn $ {} (:return 'Unit)
                 :args $ [] (:: 'Map 'Tag 'Dynamic)
                   :: 'Fn $ {} (:return 'Unit)
-                    :args $ [] 'Dynamic
+                    :args $ [] 'Enum
             :return $ :: 'Fn $ {} (:return 'Unit)
-              :args $ [] 'Dynamic $ :: 'Fn
+              :args $ [] 'Enum $ :: 'Fn
                 {} (:return 'Unit)
-                  :args $ [] 'Dynamic
+                  :args $ [] 'Enum
         'style-box $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-box
             {} $ |& $ {} (:flex 1) (:overflow-y |auto) (:padding "|100px 0 200px 0")
@@ -250,15 +250,15 @@
           :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
             :args $ [] (:: 'Map 'Dynamic 'Dynamic) (:: 'List 'Dynamic)
               :: 'Fn $ {} (:return 'Unit)
-                :args $ [] 'Dynamic $ :: 'Fn
+                :args $ [] 'Enum $ :: 'Fn
                   {} (:return 'Unit)
-                    :args $ [] 'Dynamic
+                    :args $ [] 'Enum
               :: 'List 'Number
               , 'Number 'Bool (:: 'List 'Number)
                 :: 'Fn $ {} (:return 'Unit)
                   :args $ [] (:: 'Map 'Tag 'Dynamic)
                     :: 'Fn $ {} (:return 'Unit)
-                      :args $ [] 'Dynamic
+                      :args $ [] 'Enum
                 , 'Bool 'Bool
             :features $ #{} :js-ffi
         'on-click $ %{} 'CodeEntry (:doc |)
@@ -267,7 +267,7 @@
               hint-fn $ {} (:return 'Unit)
                 :args $ [] (:: 'Map 'Tag 'Dynamic)
                   :: 'Fn $ {} (:return 'Unit)
-                    :args $ [] 'Dynamic
+                    :args $ [] 'Enum
               if (not= coord focus)
                 modify! (:: :focus-to coord) dispatch!
               , &unit
@@ -275,22 +275,22 @@
           :schema $ :: 'Fn $ {}
             :args $ []
               :: 'Fn $ {} (:return 'Unit)
-                :args $ [] 'Dynamic $ :: 'Fn
+                :args $ [] 'Enum $ :: 'Fn
                   {} (:return 'Unit)
-                    :args $ [] 'Dynamic
+                    :args $ [] 'Enum
               :: 'List 'Number
               :: 'List 'Number
             :return $ :: 'Fn $ {} (:return 'Unit)
               :args $ [] (:: 'Map 'Tag 'Dynamic)
                 :: 'Fn $ {} (:return 'Unit)
-                  :args $ [] 'Dynamic
+                  :args $ [] 'Enum
         'on-keydown $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-keydown (state modify! coord on-command cursor)
             fn (e dispatch!)
               hint-fn $ {} (:return 'Unit)
                 :args $ [] (:: 'Map 'Tag 'Dynamic)
                   :: 'Fn $ {} (:return 'Unit)
-                    :args $ [] 'Dynamic
+                    :args $ [] 'Enum
                 :features $ #{} :js-ffi
               let
                   code $
@@ -352,20 +352,20 @@
           :schema $ :: 'Fn $ {}
             :args $ [] 'Bool
               :: 'Fn $ {} (:return 'Unit)
-                :args $ [] 'Dynamic $ :: 'Fn
+                :args $ [] 'Enum $ :: 'Fn
                   {} (:return 'Unit)
-                    :args $ [] 'Dynamic
+                    :args $ [] 'Enum
               :: 'List 'Number
               :: 'Fn $ {} (:return 'Unit)
                 :args $ [] (:: 'Map 'Tag 'Dynamic)
                   :: 'Fn $ {} (:return 'Unit)
-                    :args $ [] 'Dynamic
+                    :args $ [] 'Enum
               :: 'List 'Dynamic
             :features $ #{} :js-ffi
             :return $ :: 'Fn $ {} (:return 'Unit)
               :args $ [] (:: 'Map 'Tag 'Dynamic)
                 :: 'Fn $ {} (:return 'Unit)
-                  :args $ [] 'Dynamic
+                  :args $ [] 'Enum
         'on-mousedown $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-mousedown (e d!)
             let
@@ -500,15 +500,15 @@
           :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
             :args $ [] 'String
               :: 'Fn $ {} (:return 'Unit)
-                :args $ [] 'Dynamic $ :: 'Fn
+                :args $ [] 'Enum $ :: 'Fn
                   {} (:return 'Unit)
-                    :args $ [] 'Dynamic
+                    :args $ [] 'Enum
               :: 'List 'Number
               :: 'List 'Number
               :: 'Fn $ {} (:return 'Unit)
                 :args $ [] (:: 'Map 'Tag 'Dynamic)
                   :: 'Fn $ {} (:return 'Unit)
-                    :args $ [] 'Dynamic
+                    :args $ [] 'Enum
               , 'Bool
             :features $ #{} :js-ffi
         'create-number-pattern $ %{} 'CodeEntry (:doc |)
@@ -524,7 +524,7 @@
               hint-fn $ {} (:return 'Unit)
                 :args $ [] (:: 'Map 'Tag 'Dynamic)
                   :: 'Fn $ {} (:return 'Unit)
-                    :args $ [] 'Dynamic
+                    :args $ [] 'Enum
               if (not= coord focus)
                 modify! (:: :focus-to coord) dispatch!
               , &unit
@@ -532,22 +532,22 @@
           :schema $ :: 'Fn $ {}
             :args $ []
               :: 'Fn $ {} (:return 'Unit)
-                :args $ [] 'Dynamic $ :: 'Fn
+                :args $ [] 'Enum $ :: 'Fn
                   {} (:return 'Unit)
-                    :args $ [] 'Dynamic
+                    :args $ [] 'Enum
               :: 'List 'Number
               :: 'List 'Number
             :return $ :: 'Fn $ {} (:return 'Unit)
               :args $ [] (:: 'Map 'Tag 'Dynamic)
                 :: 'Fn $ {} (:return 'Unit)
-                  :args $ [] 'Dynamic
+                  :args $ [] 'Enum
         'on-input $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-input (modify! coord)
             fn (e dispatch!)
               hint-fn $ {} (:return 'Unit)
                 :args $ [] (:: 'Map 'Tag 'Dynamic)
                   :: 'Fn $ {} (:return 'Unit)
-                    :args $ [] 'Dynamic
+                    :args $ [] 'Enum
               modify!
                 :: :update-token $ [] coord $
                   get e :value
@@ -558,21 +558,21 @@
           :schema $ :: 'Fn $ {}
             :args $ []
               :: 'Fn $ {} (:return 'Unit)
-                :args $ [] 'Dynamic $ :: 'Fn
+                :args $ [] 'Enum $ :: 'Fn
                   {} (:return 'Unit)
-                    :args $ [] 'Dynamic
+                    :args $ [] 'Enum
               :: 'List 'Number
             :return $ :: 'Fn $ {} (:return 'Unit)
               :args $ [] (:: 'Map 'Tag 'Dynamic)
                 :: 'Fn $ {} (:return 'Unit)
-                  :args $ [] 'Dynamic
+                  :args $ [] 'Enum
         'on-keydown $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-keydown (modify! coord token on-command)
             fn (e dispatch!)
               hint-fn $ {} (:return 'Unit)
                 :args $ [] (:: 'Map 'Tag 'Dynamic)
                   :: 'Fn $ {} (:return 'Unit)
-                    :args $ [] 'Dynamic
+                    :args $ [] 'Enum
                 :features $ #{} :js-ffi
               let
                   code $
@@ -629,20 +629,20 @@
           :schema $ :: 'Fn $ {}
             :args $ []
               :: 'Fn $ {} (:return 'Unit)
-                :args $ [] 'Dynamic $ :: 'Fn
+                :args $ [] 'Enum $ :: 'Fn
                   {} (:return 'Unit)
-                    :args $ [] 'Dynamic
+                    :args $ [] 'Enum
               :: 'List 'Number
               , 'String $ :: 'Fn
                 {} (:return 'Unit)
                   :args $ [] (:: 'Map 'Tag 'Dynamic)
                     :: 'Fn $ {} (:return 'Unit)
-                      :args $ [] 'Dynamic
+                      :args $ [] 'Enum
             :features $ #{} :js-ffi
             :return $ :: 'Fn $ {} (:return 'Unit)
               :args $ [] (:: 'Map 'Tag 'Dynamic)
                 :: 'Fn $ {} (:return 'Unit)
-                  :args $ [] 'Dynamic
+                  :args $ [] 'Enum
         'pattern-number $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def pattern-number (create-number-pattern)
           :examples $ []
@@ -737,7 +737,7 @@
               raise "|Expected a Cirru editor operation tuple"
           :examples $ []
           :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Dynamic
+            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Enum
             :return $ :: 'Map 'Tag 'Dynamic
         'default-handler $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn default-handler (snapshot op-data) snapshot
@@ -774,7 +774,7 @@
             , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ [] 'Dynamic
+            :args $ [] 'Enum
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             if config/dev? $ load-console-formatter!
@@ -809,7 +809,12 @@
             :features $ #{} :js-ffi
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
-            render! (mount-target) (comp-container @*store) dispatch!
+            render! (mount-target) (comp-container @*store)
+              fn (op)
+                hint-fn $ {} (:return 'Unit)
+                  :args $ [] 'Dynamic
+                if (enum? op) (dispatch! op) (raise "|Expected a Cirru editor operation Enum")
+                , &unit
             if @*touched $ do (reset! *touched false) (println "|changing focus") (focus!)
             , &unit
           :examples $ []
