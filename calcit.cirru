@@ -426,11 +426,11 @@
           :schema $ :: 'String
         'style-inline $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def style-inline
-            {} (:display :inline-block) (:border-width "|0 0 1px 0") (:padding-left 7) (:padding-right 7) (:padding-bottom 2) (:margin-left 8) (:margin-right 4) (:text-align |center)
+            {} (:display |inline-block) (:border-width "|0 0 1px 0") (:padding-left |7px) (:padding-right |7px) (:padding-bottom |2px) (:margin-left |8px) (:margin-right |4px) (:text-align |center)
               :background-color $ hsl 200 80 80 0
-              :min-width 24
+              :min-width |24px
           :examples $ []
-          :schema $ :: 'Map 'Tag 'Dynamic
+          :schema $ :: 'Map 'Tag 'String
         'style-tail $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def style-tail
             {} (:display |inline-block) (:border-width "|0 0 0 1px")

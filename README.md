@@ -22,6 +22,8 @@ Respo 的公开 render 回调仍兼容直接 Dynamic 操作，因此只在该开
 
 当前普通检查、完整 strict、原两项及新增一项树根语义测试、JS 构建与实际浏览器编辑/折叠/展开回归通过；unsafe 从 3 降至 0。仍有开放 Map/List 合同，不宣称 Dynamic 清零。旧质量计数基线仍保留并失败，展开真实合同所需的基线迁移待维护者逐项确认；不得删除或跳过这条门禁。
 
+进一步的类型收紧：`style-tail` 与 `style-inline` 均声明真实的 `Map<Tag,String>`。`style-inline` 原 `:display` Tag 和六个长度 Number 改为对应字符串 / px 字符串，直接读取该公开 Map 并做数值运算的调用方需要适配；生成的十条 CSS 声明逐项相同，但 Map 遍历导致声明顺序变化，不保证 CSS 字节相同。Respo 正常样式消费无需修改。未增加强转、默认值、测试脚本或预算；当前候选 schemaDynamic=73、typeNotFull=42、unresolved=80，原预算仍失败 67 项。该步骤仅在匹配的 alpha.5 工具链上验证，不冒称已完成正式 0.30.1 远端 CI 或已发版。
+
 ### Usage
 
 Import `comp-editor` like this:
