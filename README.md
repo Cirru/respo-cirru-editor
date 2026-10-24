@@ -6,7 +6,15 @@ Demo http://repo.cirru.org/respo-cirru-editor/
 
 Support several basic shortcuts from [Clacit Editor](https://github.com/Cirru/calcit-editor/wiki/Keyboard-Shortcuts).
 
-### 0.30.1 迁移候选：使用者先注意
+### 正式 0.30.1 候选：使用者先注意
+
+当前工作分支尝试配对正式 Calcit/procs0.30.1、Respo0.16.126、JS-FFI0.2.6及Vite8.3.3，
+请重新安装完整图，不混用旧alpha缓存。质量基线仍保留，不放宽任何预算；在正式CI和真实消费者验收完成前，
+不发布0.6.10、不作为下游已发布依赖、不合并或部署Demo。
+
+以下为原alpha.5候选的迁移记录，不代表当前正式图已通过：
+
+### 原 alpha.5 候选的使用者影响与历史验证
 
 当前分支配对已发布 Calcit/procs **0.30.1-alpha.5**（编译器仍为预发布版），模块使用正式 Respo 0.16.122 和 js-ffi 0.2.3。尚未发版或部署，不把本地候选当作已发布 0.6.10 的行为。
 
