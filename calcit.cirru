@@ -60,14 +60,14 @@
                   decode-map-as
                       get snapshot :tree
                       , .unwrap-or $ []
-                    quote $ List cirru-editor.schema/CirruNode
+                    List cirru-editor.schema/CirruNode
                   handle-update snapshot on-update!
                   []
                   , 0 false
                     decode-map-as
                         get snapshot :focus
                         , .unwrap-or $ []
-                      quote $ List Number
+                      List Number
                     handle-command on-command snapshot
                     , true false
               ; comp-inspect snapshot $ {} (:bottom 0) (:left 0)
@@ -143,7 +143,7 @@
                 cursor $ decode-map-as
                     get states :cursor
                     , .unwrap-or $ []
-                  quote $ List Dynamic
+                  List Dynamic
                 state $ decode-map-as
                   option:unwrap-or (get states :data) false
                   quote Bool
@@ -176,8 +176,7 @@
                     :on-mousedown on-mousedown
                     :on-mouseup on-mouseup
                   loop
-                      acc $ assert-type ([])
-                        quote $ List respo.schema/ChildPair
+                      acc $ assert-type ([]) (List respo.schema/ChildPair)
                       idx 0
                       expr expression
                       prev-kind :start
@@ -423,7 +422,7 @@
       :defs $ {}
         'RegExpHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait RegExpHost
-            .test $ quote $ Fn cirru-editor.comp.token/RegExpHost String (-> Bool)
+            .test $ Fn cirru-editor.comp.token/RegExpHost String $ -> Bool
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
           :schema $ quote Trait
@@ -634,51 +633,47 @@
           :code $ quote $ defn cirru-edit (snapshot op) (; println :update-state op)
             match op
               (:update-token d)
-                let[] (raw-coord raw-token)
-                  decode-map-as d $ quote $ List Dynamic
-                  tree/update-token snapshot $ []
-                    decode-map-as raw-coord $ quote $ List Number
-                    decode-map-as raw-token $ quote String
+                tree/update-token snapshot $ decode-map-as d $ Tuple (List Number) String
               (:after-token d)
-                tree/after-token snapshot $ decode-map-as d $ quote (List Number)
+                tree/after-token snapshot $ decode-map-as d $ List Number
               (:fold-node d)
-                tree/fold-node snapshot $ decode-map-as d $ quote (List Number)
+                tree/fold-node snapshot $ decode-map-as d $ List Number
               (:unfold-expression d)
-                tree/unfold-expression snapshot $ decode-map-as d $ quote (List Number)
+                tree/unfold-expression snapshot $ decode-map-as d $ List Number
               (:unfold-token d)
-                tree/unfold-token snapshot $ decode-map-as d $ quote (List Number)
+                tree/unfold-token snapshot $ decode-map-as d $ List Number
               (:before-expression d)
-                tree/before-expression snapshot $ decode-map-as d $ quote (List Number)
+                tree/before-expression snapshot $ decode-map-as d $ List Number
               (:after-expression d)
-                tree/after-expression snapshot $ decode-map-as d $ quote (List Number)
+                tree/after-expression snapshot $ decode-map-as d $ List Number
               (:prepend-expression d)
-                tree/prepend-expression snapshot $ decode-map-as d $ quote (List Number)
+                tree/prepend-expression snapshot $ decode-map-as d $ List Number
               (:append-expression d)
-                tree/append-expression snapshot $ decode-map-as d $ quote (List Number)
+                tree/append-expression snapshot $ decode-map-as d $ List Number
               (:before-token d)
-                tree/before-token snapshot $ decode-map-as d $ quote (List Number)
+                tree/before-token snapshot $ decode-map-as d $ List Number
               (:remove-node d)
-                tree/remove-node snapshot $ decode-map-as d $ quote (List Number)
+                tree/remove-node snapshot $ decode-map-as d $ List Number
               (:focus-to d)
-                focus/focus-to snapshot $ decode-map-as d $ quote (List Number)
+                focus/focus-to snapshot $ decode-map-as d $ List Number
               (:node-up d)
-                focus/node-up snapshot $ decode-map-as d $ quote (List Number)
+                focus/node-up snapshot $ decode-map-as d $ List Number
               (:expression-down d)
-                focus/expression-down snapshot $ decode-map-as d $ quote (List Number)
+                focus/expression-down snapshot $ decode-map-as d $ List Number
               (:node-left d)
-                focus/node-left snapshot $ decode-map-as d $ quote (List Number)
+                focus/node-left snapshot $ decode-map-as d $ List Number
               (:node-right d)
-                focus/node-right snapshot $ decode-map-as d $ quote (List Number)
+                focus/node-right snapshot $ decode-map-as d $ List Number
               (:command-copy d)
-                command/copy snapshot $ decode-map-as d $ quote (List Number)
+                command/copy snapshot $ decode-map-as d $ List Number
               (:command-cut d)
-                command/cut snapshot $ decode-map-as d $ quote (List Number)
+                command/cut snapshot $ decode-map-as d $ List Number
               (:command-paste d)
-                command/paste snapshot $ decode-map-as d $ quote (List Number)
+                command/paste snapshot $ decode-map-as d $ List Number
               (:tree-reset d)
                 tree/tree-reset snapshot $ decode-map-as d $ quote cirru-editor.schema/CirruNode
               (:duplicate-expression d)
-                tree/duplicate-expression snapshot $ decode-map-as d $ quote (List Number)
+                tree/duplicate-expression snapshot $ decode-map-as d $ List Number
               _ $ do (eprintln "|Unknown op:" op) snapshot
           :examples $ []
           :schema $ quote $ Fn cirru-editor.schema/Store Dynamic (-> cirru-editor.schema/Store)
@@ -707,7 +702,7 @@
               (:states cursor s)
                 reset! *store $ decode-map-as
                   update-states @*store
-                    decode-map-as cursor $ quote $ List Dynamic
+                    decode-map-as cursor $ List Dynamic
                     , s
                   quote cirru-editor.schema/Store
               _ @*store
@@ -1071,8 +1066,7 @@
     'cirru-editor.schema $ %{} 'FileEntry
       :defs $ {}
         'CirruNode $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defunion CirruNode String
-            quote $ List CirruNode
+          :code $ quote $ defunion CirruNode String (List CirruNode)
           :examples $ []
           :schema $ quote UnionDef
         'Coord $ %{} 'CodeEntry (:doc |)
