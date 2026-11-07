@@ -6,7 +6,7 @@
     {} (:description |) (:init-fn 'cirru-editor.main/main!) (:mode :js) (:reload-fn 'cirru-editor.main/reload!) (:target :browser)
       :feature-policy $ {} $ :js-ffi :error
       :modules $ [] |respo.calcit/ |js-ffi/
-      :type-slots $ {}
+      :type-slots $ {} $ :dispatch-op 'cirru-editor.schema/DemoOp
   :files $ {}
     'cirru-editor.comp.container $ %{} 'FileEntry
       :defs $ {}
@@ -26,14 +26,14 @@
           :code $ quote $ defn on-command (snapshot dispatch! e) (js/console.log |command e) &unit
           :examples $ []
           :schema $ quote $ Fn cirru-editor.schema/Store
-            Fn Dynamic $ -> Unit
+            Fn AnyEnum $ -> Unit
             , respo.schema/RespoEvent (-> Unit) (:features :js-ffi)
         'on-update! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-update! (snapshot dispatch!)
-            dispatch! $ :: :save snapshot
+            dispatch! $ cirru-editor.schema/DemoOp :save snapshot
           :examples $ []
           :schema $ quote $ Fn cirru-editor.schema/Store
-            Fn Dynamic $ -> Unit
+            Fn AnyEnum $ -> Unit
             -> Unit
         'style-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-container
@@ -74,44 +74,44 @@
           :examples $ []
           :schema $ quote $ Fn respo.schema/States cirru-editor.schema/Store
             Fn cirru-editor.schema/Store
-              Fn Dynamic $ -> Unit
+              Fn AnyEnum $ -> Unit
               -> Unit
             Fn cirru-editor.schema/Store
-              Fn Dynamic $ -> Unit
+              Fn AnyEnum $ -> Unit
               , respo.schema/RespoEvent $ -> Unit
             -> respo.schema/Component
         'handle-command $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn handle-command (on-command snapshot)
             fn (e dispatch!)
               hint-fn $ Fn respo.schema/RespoEvent
-                Fn Dynamic $ -> Unit
+                Fn AnyEnum $ -> Unit
                 -> Unit
               on-command snapshot dispatch! e
               , &unit
           :examples $ []
           :schema $ quote $ Fn
             Fn cirru-editor.schema/Store
-              Fn Dynamic $ -> Unit
+              Fn AnyEnum $ -> Unit
               , respo.schema/RespoEvent $ -> Unit
             , cirru-editor.schema/Store
               -> $ Fn respo.schema/RespoEvent
-                Fn Dynamic $ -> Unit
+                Fn AnyEnum $ -> Unit
                 -> Unit
         'handle-update $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn handle-update (snapshot on-update!)
             fn (op dispatch!)
-              hint-fn $ Fn Dynamic
-                Fn Dynamic $ -> Unit
+              hint-fn $ Fn cirru-editor.schema/EditOp
+                Fn AnyEnum $ -> Unit
                 -> Unit
               on-update! (cirru-edit snapshot op) dispatch!
               , &unit
           :examples $ []
           :schema $ quote $ Fn cirru-editor.schema/Store
             Fn cirru-editor.schema/Store
-              Fn Dynamic $ -> Unit
+              Fn AnyEnum $ -> Unit
               -> Unit
-            -> $ Fn Dynamic
-              Fn Dynamic $ -> Unit
+            -> $ Fn cirru-editor.schema/EditOp
+              Fn AnyEnum $ -> Unit
               -> Unit
         'style-box $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-box
@@ -202,13 +202,13 @@
                           recur next-acc (inc idx) es kind
           :examples $ []
           :schema $ quote $ Fn respo.schema/States (List cirru-editor.schema/CirruNode)
-            Fn Dynamic
-              Fn Dynamic $ -> Unit
+            Fn cirru-editor.schema/EditOp
+              Fn AnyEnum $ -> Unit
               -> Unit
             List Number
             , Number Bool (List Number)
               Fn respo.schema/RespoEvent
-                Fn Dynamic $ -> Unit
+                Fn AnyEnum $ -> Unit
                 -> Unit
               , Bool Bool (-> respo.schema/Component) (:features :js-ffi)
         'node-kind $ %{} 'CodeEntry (:doc |)
@@ -248,25 +248,25 @@
           :code $ quote $ defn on-click (modify! coord focus)
             fn (e dispatch!)
               hint-fn $ Fn respo.schema/RespoEvent
-                Fn Dynamic $ -> Unit
+                Fn AnyEnum $ -> Unit
                 -> Unit
               if (not= coord focus)
-                modify! (:: :focus-to coord) dispatch!
+                modify! (cirru-editor.schema/EditOp :focus-to coord) dispatch!
               , &unit
           :examples $ []
           :schema $ quote $ Fn
-            Fn Dynamic
-              Fn Dynamic $ -> Unit
+            Fn cirru-editor.schema/EditOp
+              Fn AnyEnum $ -> Unit
               -> Unit
             , cirru-editor.schema/Coord cirru-editor.schema/Coord
               -> $ Fn respo.schema/RespoEvent
-                Fn Dynamic $ -> Unit
+                Fn AnyEnum $ -> Unit
                 -> Unit
         'on-keydown $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-keydown (state modify! coord on-command cursor)
             fn (e dispatch!)
               hint-fn $ Fn respo.schema/RespoEvent
-                Fn Dynamic $ -> Unit
+                Fn AnyEnum $ -> Unit
                 -> Unit
               let
                   keyboard $ respo.core/keyboard-info e
@@ -280,61 +280,61 @@
                     = code keycode/space
                     do (.prevent-default! event)
                       if shift?
-                        modify! (:: :before-token coord) dispatch!
-                        modify! (:: :after-token coord) dispatch!
+                        modify! (cirru-editor.schema/EditOp :before-token coord) dispatch!
+                        modify! (cirru-editor.schema/EditOp :after-token coord) dispatch!
                   (= code keycode/tab)
                     do (.prevent-default! event)
                       if shift?
-                        modify! (:: :unfold-expression coord) dispatch!
-                        modify! (:: :fold-node coord) dispatch!
+                        modify! (cirru-editor.schema/EditOp :unfold-expression coord) dispatch!
+                        modify! (cirru-editor.schema/EditOp :fold-node coord) dispatch!
                   (= code keycode/enter)
                     if command?
                       if shift?
-                        modify! (:: :append-expression coord) dispatch!
-                        modify! (:: :prepend-expression coord) dispatch!
+                        modify! (cirru-editor.schema/EditOp :append-expression coord) dispatch!
+                        modify! (cirru-editor.schema/EditOp :prepend-expression coord) dispatch!
                       if shift?
-                        modify! (:: :before-expression coord) dispatch!
-                        modify! (:: :after-expression coord) dispatch!
+                        modify! (cirru-editor.schema/EditOp :before-expression coord) dispatch!
+                        modify! (cirru-editor.schema/EditOp :after-expression coord) dispatch!
                   (= code keycode/backspace)
                     do (.prevent-default! event)
-                      modify! (:: :remove-node coord) dispatch!
+                      modify! (cirru-editor.schema/EditOp :remove-node coord) dispatch!
                   (= code keycode/left)
                     do (.prevent-default! event)
-                      modify! (:: :node-left coord) dispatch!
+                      modify! (cirru-editor.schema/EditOp :node-left coord) dispatch!
                   (= code keycode/right)
                     do (.prevent-default! event)
-                      modify! (:: :node-right coord) dispatch!
+                      modify! (cirru-editor.schema/EditOp :node-right coord) dispatch!
                   (= code keycode/up)
                     do (.prevent-default! event)
-                      modify! (:: :node-up coord) dispatch!
+                      modify! (cirru-editor.schema/EditOp :node-up coord) dispatch!
                   (= code keycode/down)
                     do (.prevent-default! event)
-                      modify! (:: :expression-down coord) dispatch!
+                      modify! (cirru-editor.schema/EditOp :expression-down coord) dispatch!
                   (and command? (= code keycode/key-b))
                     do (.prevent-default! event)
-                      modify! (:: :duplicate-expression coord) dispatch!
+                      modify! (cirru-editor.schema/EditOp :duplicate-expression coord) dispatch!
                   (and command? (= code keycode/key-c))
-                    modify! (:: :command-copy coord) dispatch!
+                    modify! (cirru-editor.schema/EditOp :command-copy coord) dispatch!
                   (and command? (= code keycode/key-x))
-                    modify! (:: :command-cut coord) dispatch!
+                    modify! (cirru-editor.schema/EditOp :command-cut coord) dispatch!
                   (and command? (= code keycode/key-v))
-                    modify! (:: :command-paste coord) dispatch!
+                    modify! (cirru-editor.schema/EditOp :command-paste coord) dispatch!
                   (and command? shift? (= code keycode/key-f))
                     dispatch! $ :: :states cursor $ not state
                   true $ if command? (on-command e dispatch!) nil
               , &unit
           :examples $ []
           :schema $ quote $ Fn Bool
-            Fn Dynamic
-              Fn Dynamic $ -> Unit
+            Fn cirru-editor.schema/EditOp
+              Fn AnyEnum $ -> Unit
               -> Unit
             , cirru-editor.schema/Coord
               Fn respo.schema/RespoEvent
-                Fn Dynamic $ -> Unit
+                Fn AnyEnum $ -> Unit
                 -> Unit
               , cirru-editor.schema/Cursor
                 -> $ Fn respo.schema/RespoEvent
-                  Fn Dynamic $ -> Unit
+                  Fn AnyEnum $ -> Unit
                   -> Unit
                 :features :js-ffi
         'on-mousedown $ %{} 'CodeEntry (:doc |)
@@ -464,12 +464,12 @@
                 :click $ on-click modify! coord focus
           :examples $ []
           :schema $ quote $ Fn String
-            Fn Dynamic
-              Fn Dynamic $ -> Unit
+            Fn cirru-editor.schema/EditOp
+              Fn AnyEnum $ -> Unit
               -> Unit
             , cirru-editor.schema/Coord cirru-editor.schema/Coord
               Fn respo.schema/RespoEvent
-                Fn Dynamic $ -> Unit
+                Fn AnyEnum $ -> Unit
                 -> Unit
               , Bool (-> respo.schema/Component) (:features :js-ffi)
         'create-number-pattern $ %{} 'CodeEntry (:doc |)
@@ -481,44 +481,46 @@
           :code $ quote $ defn on-click (modify! coord focus)
             fn (e dispatch!)
               hint-fn $ Fn respo.schema/RespoEvent
-                Fn Dynamic $ -> Unit
+                Fn AnyEnum $ -> Unit
                 -> Unit
               if (not= coord focus)
-                modify! (:: :focus-to coord) dispatch!
+                modify! (cirru-editor.schema/EditOp :focus-to coord) dispatch!
               , &unit
           :examples $ []
           :schema $ quote $ Fn
-            Fn Dynamic
-              Fn Dynamic $ -> Unit
+            Fn cirru-editor.schema/EditOp
+              Fn AnyEnum $ -> Unit
               -> Unit
             , cirru-editor.schema/Coord cirru-editor.schema/Coord
               -> $ Fn respo.schema/RespoEvent
-                Fn Dynamic $ -> Unit
+                Fn AnyEnum $ -> Unit
                 -> Unit
         'on-input $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-input (modify! coord)
             fn (e dispatch!)
               hint-fn $ Fn respo.schema/RespoEvent
-                Fn Dynamic $ -> Unit
+                Fn AnyEnum $ -> Unit
                 -> Unit
               modify!
-                :: :update-token $ [] coord $ respo.core/event-value e
+                cirru-editor.schema/EditOp :update-token $ decode-map-as
+                  [] coord $ respo.core/event-value e
+                  Tuple (List Number) String
                 , dispatch!
               , &unit
           :examples $ []
           :schema $ quote $ Fn
-            Fn Dynamic
-              Fn Dynamic $ -> Unit
+            Fn cirru-editor.schema/EditOp
+              Fn AnyEnum $ -> Unit
               -> Unit
             , cirru-editor.schema/Coord
               -> $ Fn respo.schema/RespoEvent
-                Fn Dynamic $ -> Unit
+                Fn AnyEnum $ -> Unit
                 -> Unit
         'on-keydown $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-keydown (modify! coord token on-command)
             fn (e dispatch!)
               hint-fn $ Fn respo.schema/RespoEvent
-                Fn Dynamic $ -> Unit
+                Fn AnyEnum $ -> Unit
                 -> Unit
               let
                   keyboard $ respo.core/keyboard-info e
@@ -543,46 +545,46 @@
                 cond
                     and (= code keycode/space) (not shift?)
                     do (.prevent-default! event)
-                      modify! (:: :after-token coord) dispatch!
+                      modify! (cirru-editor.schema/EditOp :after-token coord) dispatch!
                   (= code keycode/tab)
                     do (.prevent-default! event)
                       if shift?
-                        modify! (:: :unfold-token coord) dispatch!
-                        modify! (:: :fold-node coord) dispatch!
+                        modify! (cirru-editor.schema/EditOp :unfold-token coord) dispatch!
+                        modify! (cirru-editor.schema/EditOp :fold-node coord) dispatch!
                   (= code keycode/enter)
                     if shift?
-                      modify! (:: :before-token coord) dispatch!
-                      modify! (:: :after-token coord) dispatch!
+                      modify! (cirru-editor.schema/EditOp :before-token coord) dispatch!
+                      modify! (cirru-editor.schema/EditOp :after-token coord) dispatch!
                   (= code keycode/backspace)
                     if (= token |)
                       do
-                        modify! (:: :remove-node coord) dispatch!
+                        modify! (cirru-editor.schema/EditOp :remove-node coord) dispatch!
                         .prevent-default! event
                   (= code keycode/up)
                     do (.prevent-default! event)
-                      modify! (:: :node-up coord) dispatch!
+                      modify! (cirru-editor.schema/EditOp :node-up coord) dispatch!
                   (and thin-cursor? at-start? (= code keycode/left))
                     do (.prevent-default! event)
-                      modify! (:: :node-left coord) dispatch!
+                      modify! (cirru-editor.schema/EditOp :node-left coord) dispatch!
                   (and thin-cursor? at-end? (= code keycode/right))
                     do (.prevent-default! event)
-                      modify! (:: :node-right coord) dispatch!
+                      modify! (cirru-editor.schema/EditOp :node-right coord) dispatch!
                   (and shift? command? (= code keycode/key-v))
                     do (.prevent-default! event)
-                      modify! (:: :command-paste coord) dispatch!
+                      modify! (cirru-editor.schema/EditOp :command-paste coord) dispatch!
                   true $ if command? (on-command e dispatch!) nil
               , &unit
           :examples $ []
           :schema $ quote $ Fn
-            Fn Dynamic
-              Fn Dynamic $ -> Unit
+            Fn cirru-editor.schema/EditOp
+              Fn AnyEnum $ -> Unit
               -> Unit
             , cirru-editor.schema/Coord String
               Fn respo.schema/RespoEvent
-                Fn Dynamic $ -> Unit
+                Fn AnyEnum $ -> Unit
                 -> Unit
               -> $ Fn respo.schema/RespoEvent
-                Fn Dynamic $ -> Unit
+                Fn AnyEnum $ -> Unit
                 -> Unit
               :features :js-ffi
         'pattern-number $ %{} 'CodeEntry (:doc |)
@@ -676,7 +678,18 @@
                 tree/duplicate-expression snapshot $ decode-map-as d $ List Number
               _ $ do (eprintln "|Unknown op:" op) snapshot
           :examples $ []
-          :schema $ quote $ Fn cirru-editor.schema/Store Dynamic (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn cirru-editor.schema/Store AnyEnum (-> cirru-editor.schema/Store)
+          :tests $ [] $ %{} 'TestEntry (:name |named-and-legacy-token-edit)
+            :code $ quote $ let
+                snapshot $ {}
+                  :tree $ [] |old
+                  :extra |kept
+                payload $ [] ([] 0) |new
+                typed-op $ cirru-editor.schema/EditOp :update-token $ decode-map-as payload
+                  Tuple (List Number) String
+                expected $ assoc snapshot :tree $ [] |new
+              assert= expected $ cirru-edit snapshot typed-op
+              assert= expected $ cirru-edit snapshot $ :: :update-token payload
         'default-handler $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn default-handler (snapshot op-data) snapshot
           :examples $ []
@@ -709,7 +722,7 @@
             reset! *touched true
             , &unit
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> Unit)
+          :schema $ quote $ Fn cirru-editor.schema/DemoOp (-> Unit)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             if config/dev? $ load-console-formatter!
@@ -1077,6 +1090,37 @@
           :code $ quote $ def Cursor ([])
           :examples $ []
           :schema $ quote $ List Dynamic
+        'DemoOp $ %{} 'CodeEntry (:doc "|Actions used by the standalone demo.")
+          :code $ quote $ defenum DemoOp (:save cirru-editor.schema/Store)
+            :states (List respo.schema/CoordKey) Bool
+          :examples $ []
+          :schema $ quote EnumDef
+        'EditOp $ %{} 'CodeEntry
+          :doc "|Typed commands produced by the editor views. The public cirru-edit adapter also accepts legacy anonymous commands."
+          :code $ quote $ defenum EditOp
+            :update-token $ Tuple (List Number) String
+            :after-token $ List Number
+            :fold-node $ List Number
+            :unfold-expression $ List Number
+            :unfold-token $ List Number
+            :before-expression $ List Number
+            :after-expression $ List Number
+            :prepend-expression $ List Number
+            :append-expression $ List Number
+            :before-token $ List Number
+            :remove-node $ List Number
+            :focus-to $ List Number
+            :node-up $ List Number
+            :expression-down $ List Number
+            :node-left $ List Number
+            :node-right $ List Number
+            :command-copy $ List Number
+            :command-cut $ List Number
+            :command-paste $ List Number
+            :tree-reset cirru-editor.schema/CirruNode
+            :duplicate-expression $ List Number
+          :examples $ []
+          :schema $ quote EnumDef
         'Event $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def Event ({})
           :examples $ []
