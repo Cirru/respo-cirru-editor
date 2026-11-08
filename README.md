@@ -8,7 +8,7 @@ Support several basic shortcuts from [Clacit Editor](https://github.com/Cirru/ca
 
 ### 0.7 迁移说明
 
-0.7.2 需要 Calcit / `@calcit/procs` 0.37.0，配套 Respo 0.19.5 和 JS-FFI 0.2.13。宿主可继续通过 `cirru-edit` 传入匿名 Enum 命令，编辑器内部使用具名 `EditOp`。宿主的 dispatch 回调接收 Enum。事件回调使用 `respo.schema/RespoEvent`，不再把事件当 Map 读取；输入值和键盘信息可通过 `respo.core/event-value`、`respo.core/keyboard-info` 获取。
+当前源码需要 Calcit / `@calcit/procs` 0.38.0，配套 Respo 0.19.5 和 JS-FFI 0.2.13。宿主可继续通过 `cirru-edit` 传入匿名 Enum 命令，编辑器内部使用具名 `EditOp`。宿主的 dispatch 回调使用当前入口 `:dispatch-op` 绑定的操作类型。嵌入组件时用 `calcit config set-type-slot :dispatch-op app.schema/Op` 绑定宿主操作，并提供编辑器折叠所需的 `:states` 操作。事件回调使用 `respo.schema/RespoEvent`，不再把事件当 Map 读取；输入值和键盘信息可通过 `respo.core/event-value`、`respo.core/keyboard-info` 获取。
 
 编辑数据仍是含 `:tree`、`:focus`、`:clipboard` 的 Map，额外字段会保留。树节点采用递归 union `CirruNode = String | List<CirruNode>`，路径是 `List<Number>`；传入编辑命令的数据会在使用处检查，非法节点或 payload 会报错。编辑器视图的根树仍需为表达式 List。
 
