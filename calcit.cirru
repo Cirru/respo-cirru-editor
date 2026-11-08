@@ -26,14 +26,14 @@
           :code $ quote $ defn on-command (snapshot dispatch! e) (js/console.log |command e) &unit
           :examples $ []
           :schema $ quote $ Fn cirru-editor.schema/Store
-            Fn AnyEnum $ -> Unit
+            Fn cirru-editor.schema/DemoOp $ -> Unit
             , respo.schema/RespoEvent (-> Unit) (:features :js-ffi)
         'on-update! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-update! (snapshot dispatch!)
             dispatch! $ cirru-editor.schema/DemoOp :save snapshot
           :examples $ []
           :schema $ quote $ Fn cirru-editor.schema/Store
-            Fn AnyEnum $ -> Unit
+            Fn cirru-editor.schema/DemoOp $ -> Unit
             -> Unit
         'style-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-container
@@ -74,44 +74,44 @@
           :examples $ []
           :schema $ quote $ Fn respo.schema/States cirru-editor.schema/Store
             Fn cirru-editor.schema/Store
-              Fn AnyEnum $ -> Unit
+              Fn *dispatch-op $ -> Unit
               -> Unit
             Fn cirru-editor.schema/Store
-              Fn AnyEnum $ -> Unit
+              Fn *dispatch-op $ -> Unit
               , respo.schema/RespoEvent $ -> Unit
             -> respo.schema/Component
         'handle-command $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn handle-command (on-command snapshot)
             fn (e dispatch!)
               hint-fn $ Fn respo.schema/RespoEvent
-                Fn AnyEnum $ -> Unit
+                Fn *dispatch-op $ -> Unit
                 -> Unit
               on-command snapshot dispatch! e
               , &unit
           :examples $ []
           :schema $ quote $ Fn
             Fn cirru-editor.schema/Store
-              Fn AnyEnum $ -> Unit
+              Fn *dispatch-op $ -> Unit
               , respo.schema/RespoEvent $ -> Unit
             , cirru-editor.schema/Store
               -> $ Fn respo.schema/RespoEvent
-                Fn AnyEnum $ -> Unit
+                Fn *dispatch-op $ -> Unit
                 -> Unit
         'handle-update $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn handle-update (snapshot on-update!)
             fn (op dispatch!)
               hint-fn $ Fn cirru-editor.schema/EditOp
-                Fn AnyEnum $ -> Unit
+                Fn *dispatch-op $ -> Unit
                 -> Unit
               on-update! (cirru-edit snapshot op) dispatch!
               , &unit
           :examples $ []
           :schema $ quote $ Fn cirru-editor.schema/Store
             Fn cirru-editor.schema/Store
-              Fn AnyEnum $ -> Unit
+              Fn *dispatch-op $ -> Unit
               -> Unit
             -> $ Fn cirru-editor.schema/EditOp
-              Fn AnyEnum $ -> Unit
+              Fn *dispatch-op $ -> Unit
               -> Unit
         'style-box $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-box
@@ -143,16 +143,19 @@
                 cursor $ decode-map-as
                     get states :cursor
                     , .unwrap-or $ []
-                  List Dynamic
+                  List respo.schema/CoordKey
                 state $ decode-map-as
                   option:unwrap-or (get states :data) false
                   quote Bool
+                toggle-fold! $ fn (e dispatch!)
+                  hint-fn $ Fn respo.schema/RespoEvent
+                    Fn *dispatch-op $ -> Unit
+                    -> Unit
+                  dispatch! $ :: :states cursor $ not state
               if state
                 div
-                  {} (:class-name style-folded)
-                    :on-click $ fn (e dispatch!)
-                      dispatch! $ :: :states cursor $ not state
-                    :on-keydown $ on-keydown state modify! coord on-command cursor
+                  {} (:class-name style-folded) (:on-click toggle-fold!)
+                    :on-keydown $ on-keydown modify! coord on-command toggle-fold!
                   <>
                     match
                         first expression
@@ -172,7 +175,7 @@
                         {} $ :border-color $ hsl 0 0 100 0.6
                         {}
                     :on-click $ on-click modify! coord focus
-                    :on-keydown $ on-keydown state modify! coord on-command cursor
+                    :on-keydown $ on-keydown modify! coord on-command toggle-fold!
                     :on-mousedown on-mousedown
                     :on-mouseup on-mouseup
                   loop
@@ -203,12 +206,12 @@
           :examples $ []
           :schema $ quote $ Fn respo.schema/States (List cirru-editor.schema/CirruNode)
             Fn cirru-editor.schema/EditOp
-              Fn AnyEnum $ -> Unit
+              Fn *dispatch-op $ -> Unit
               -> Unit
             List Number
             , Number Bool (List Number)
               Fn respo.schema/RespoEvent
-                Fn AnyEnum $ -> Unit
+                Fn *dispatch-op $ -> Unit
                 -> Unit
               , Bool Bool (-> respo.schema/Component) (:features :js-ffi)
         'node-kind $ %{} 'CodeEntry (:doc |)
@@ -248,7 +251,7 @@
           :code $ quote $ defn on-click (modify! coord focus)
             fn (e dispatch!)
               hint-fn $ Fn respo.schema/RespoEvent
-                Fn AnyEnum $ -> Unit
+                Fn *dispatch-op $ -> Unit
                 -> Unit
               if (not= coord focus)
                 modify! (cirru-editor.schema/EditOp :focus-to coord) dispatch!
@@ -256,17 +259,17 @@
           :examples $ []
           :schema $ quote $ Fn
             Fn cirru-editor.schema/EditOp
-              Fn AnyEnum $ -> Unit
+              Fn *dispatch-op $ -> Unit
               -> Unit
             , cirru-editor.schema/Coord cirru-editor.schema/Coord
               -> $ Fn respo.schema/RespoEvent
-                Fn AnyEnum $ -> Unit
+                Fn *dispatch-op $ -> Unit
                 -> Unit
         'on-keydown $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn on-keydown (state modify! coord on-command cursor)
+          :code $ quote $ defn on-keydown (modify! coord on-command toggle-fold!)
             fn (e dispatch!)
               hint-fn $ Fn respo.schema/RespoEvent
-                Fn AnyEnum $ -> Unit
+                Fn HostOp $ -> Unit
                 -> Unit
               let
                   keyboard $ respo.core/keyboard-info e
@@ -320,23 +323,26 @@
                   (and command? (= code keycode/key-v))
                     modify! (cirru-editor.schema/EditOp :command-paste coord) dispatch!
                   (and command? shift? (= code keycode/key-f))
-                    dispatch! $ :: :states cursor $ not state
+                    toggle-fold! e dispatch!
                   true $ if command? (on-command e dispatch!) nil
               , &unit
           :examples $ []
-          :schema $ quote $ Fn Bool
+          :schema $ quote $ Fn
             Fn cirru-editor.schema/EditOp
-              Fn AnyEnum $ -> Unit
+              Fn HostOp $ -> Unit
               -> Unit
             , cirru-editor.schema/Coord
               Fn respo.schema/RespoEvent
-                Fn AnyEnum $ -> Unit
+                Fn HostOp $ -> Unit
                 -> Unit
-              , cirru-editor.schema/Cursor
-                -> $ Fn respo.schema/RespoEvent
-                  Fn AnyEnum $ -> Unit
-                  -> Unit
-                :features :js-ffi
+              Fn respo.schema/RespoEvent
+                Fn HostOp $ -> Unit
+                -> Unit
+              -> $ Fn respo.schema/RespoEvent
+                Fn HostOp $ -> Unit
+                -> Unit
+              :generics HostOp
+              :features :js-ffi
         'on-mousedown $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-mousedown (e d!)
             let
@@ -465,13 +471,13 @@
           :examples $ []
           :schema $ quote $ Fn String
             Fn cirru-editor.schema/EditOp
-              Fn AnyEnum $ -> Unit
+              Fn HostOp $ -> Unit
               -> Unit
             , cirru-editor.schema/Coord cirru-editor.schema/Coord
               Fn respo.schema/RespoEvent
-                Fn AnyEnum $ -> Unit
+                Fn HostOp $ -> Unit
                 -> Unit
-              , Bool (-> respo.schema/Component) (:features :js-ffi)
+              , Bool (-> respo.schema/Component) (:generics HostOp) (:features :js-ffi)
         'create-number-pattern $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn create-number-pattern ()
             unsafe-coerce (new js/RegExp |-?[\d\.]+) cirru-editor.comp.token/RegExpHost
@@ -481,7 +487,7 @@
           :code $ quote $ defn on-click (modify! coord focus)
             fn (e dispatch!)
               hint-fn $ Fn respo.schema/RespoEvent
-                Fn AnyEnum $ -> Unit
+                Fn HostOp $ -> Unit
                 -> Unit
               if (not= coord focus)
                 modify! (cirru-editor.schema/EditOp :focus-to coord) dispatch!
@@ -489,17 +495,18 @@
           :examples $ []
           :schema $ quote $ Fn
             Fn cirru-editor.schema/EditOp
-              Fn AnyEnum $ -> Unit
+              Fn HostOp $ -> Unit
               -> Unit
             , cirru-editor.schema/Coord cirru-editor.schema/Coord
               -> $ Fn respo.schema/RespoEvent
-                Fn AnyEnum $ -> Unit
+                Fn HostOp $ -> Unit
                 -> Unit
+              :generics HostOp
         'on-input $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-input (modify! coord)
             fn (e dispatch!)
               hint-fn $ Fn respo.schema/RespoEvent
-                Fn AnyEnum $ -> Unit
+                Fn HostOp $ -> Unit
                 -> Unit
               modify!
                 cirru-editor.schema/EditOp :update-token $ decode-map-as
@@ -510,17 +517,18 @@
           :examples $ []
           :schema $ quote $ Fn
             Fn cirru-editor.schema/EditOp
-              Fn AnyEnum $ -> Unit
+              Fn HostOp $ -> Unit
               -> Unit
             , cirru-editor.schema/Coord
               -> $ Fn respo.schema/RespoEvent
-                Fn AnyEnum $ -> Unit
+                Fn HostOp $ -> Unit
                 -> Unit
+              :generics HostOp
         'on-keydown $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-keydown (modify! coord token on-command)
             fn (e dispatch!)
               hint-fn $ Fn respo.schema/RespoEvent
-                Fn AnyEnum $ -> Unit
+                Fn HostOp $ -> Unit
                 -> Unit
               let
                   keyboard $ respo.core/keyboard-info e
@@ -577,15 +585,16 @@
           :examples $ []
           :schema $ quote $ Fn
             Fn cirru-editor.schema/EditOp
-              Fn AnyEnum $ -> Unit
+              Fn HostOp $ -> Unit
               -> Unit
             , cirru-editor.schema/Coord String
               Fn respo.schema/RespoEvent
-                Fn AnyEnum $ -> Unit
+                Fn HostOp $ -> Unit
                 -> Unit
               -> $ Fn respo.schema/RespoEvent
-                Fn AnyEnum $ -> Unit
+                Fn HostOp $ -> Unit
                 -> Unit
+              :generics HostOp
               :features :js-ffi
         'pattern-number $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def pattern-number (create-number-pattern)
