@@ -103,7 +103,7 @@
               hint-fn $ Fn cirru-editor.schema/EditOp
                 Fn *dispatch-op $ -> Unit
                 -> Unit
-              on-update! (cirru-edit snapshot op) dispatch!
+              on-update! (edit-typed snapshot op) dispatch!
               , &unit
           :examples $ []
           :schema $ quote $ Fn cirru-editor.schema/Store
@@ -130,7 +130,7 @@
             respo.core :refer $ defcomp <> div style span
             respo.comp.inspect :refer $ comp-inspect
             respo.comp.space :refer $ =<
-            cirru-editor.core :refer $ cirru-edit
+            cirru-editor.core :refer $ edit-typed
             cirru-editor.comp.expression :refer $ comp-expression
             respo.css :refer $ defstyle
     'cirru-editor.comp.expression $ %{} 'FileEntry
@@ -644,47 +644,48 @@
           :code $ quote $ defn cirru-edit (snapshot op) (; println :update-state op)
             match op
               (:update-token d)
-                tree/update-token snapshot $ decode-map-as d $ Tuple (List Number) String
+                edit-typed snapshot $ cirru-editor.schema/EditOp :update-token $ decode-map-as d
+                  Tuple (List Number) String
               (:after-token d)
-                tree/after-token snapshot $ decode-map-as d $ List Number
+                edit-typed snapshot $ cirru-editor.schema/EditOp :after-token $ decode-map-as d (List Number)
               (:fold-node d)
-                tree/fold-node snapshot $ decode-map-as d $ List Number
+                edit-typed snapshot $ cirru-editor.schema/EditOp :fold-node $ decode-map-as d (List Number)
               (:unfold-expression d)
-                tree/unfold-expression snapshot $ decode-map-as d $ List Number
+                edit-typed snapshot $ cirru-editor.schema/EditOp :unfold-expression $ decode-map-as d (List Number)
               (:unfold-token d)
-                tree/unfold-token snapshot $ decode-map-as d $ List Number
+                edit-typed snapshot $ cirru-editor.schema/EditOp :unfold-token $ decode-map-as d (List Number)
               (:before-expression d)
-                tree/before-expression snapshot $ decode-map-as d $ List Number
+                edit-typed snapshot $ cirru-editor.schema/EditOp :before-expression $ decode-map-as d (List Number)
               (:after-expression d)
-                tree/after-expression snapshot $ decode-map-as d $ List Number
+                edit-typed snapshot $ cirru-editor.schema/EditOp :after-expression $ decode-map-as d (List Number)
               (:prepend-expression d)
-                tree/prepend-expression snapshot $ decode-map-as d $ List Number
+                edit-typed snapshot $ cirru-editor.schema/EditOp :prepend-expression $ decode-map-as d (List Number)
               (:append-expression d)
-                tree/append-expression snapshot $ decode-map-as d $ List Number
+                edit-typed snapshot $ cirru-editor.schema/EditOp :append-expression $ decode-map-as d (List Number)
               (:before-token d)
-                tree/before-token snapshot $ decode-map-as d $ List Number
+                edit-typed snapshot $ cirru-editor.schema/EditOp :before-token $ decode-map-as d (List Number)
               (:remove-node d)
-                tree/remove-node snapshot $ decode-map-as d $ List Number
+                edit-typed snapshot $ cirru-editor.schema/EditOp :remove-node $ decode-map-as d (List Number)
               (:focus-to d)
-                focus/focus-to snapshot $ decode-map-as d $ List Number
+                edit-typed snapshot $ cirru-editor.schema/EditOp :focus-to $ decode-map-as d (List Number)
               (:node-up d)
-                focus/node-up snapshot $ decode-map-as d $ List Number
+                edit-typed snapshot $ cirru-editor.schema/EditOp :node-up $ decode-map-as d (List Number)
               (:expression-down d)
-                focus/expression-down snapshot $ decode-map-as d $ List Number
+                edit-typed snapshot $ cirru-editor.schema/EditOp :expression-down $ decode-map-as d (List Number)
               (:node-left d)
-                focus/node-left snapshot $ decode-map-as d $ List Number
+                edit-typed snapshot $ cirru-editor.schema/EditOp :node-left $ decode-map-as d (List Number)
               (:node-right d)
-                focus/node-right snapshot $ decode-map-as d $ List Number
+                edit-typed snapshot $ cirru-editor.schema/EditOp :node-right $ decode-map-as d (List Number)
               (:command-copy d)
-                command/copy snapshot $ decode-map-as d $ List Number
+                edit-typed snapshot $ cirru-editor.schema/EditOp :command-copy $ decode-map-as d (List Number)
               (:command-cut d)
-                command/cut snapshot $ decode-map-as d $ List Number
+                edit-typed snapshot $ cirru-editor.schema/EditOp :command-cut $ decode-map-as d (List Number)
               (:command-paste d)
-                command/paste snapshot $ decode-map-as d $ List Number
+                edit-typed snapshot $ cirru-editor.schema/EditOp :command-paste $ decode-map-as d (List Number)
               (:tree-reset d)
-                tree/tree-reset snapshot $ decode-map-as d $ quote cirru-editor.schema/CirruNode
+                edit-typed snapshot $ cirru-editor.schema/EditOp :tree-reset $ decode-map-as d (quote cirru-editor.schema/CirruNode)
               (:duplicate-expression d)
-                tree/duplicate-expression snapshot $ decode-map-as d $ List Number
+                edit-typed snapshot $ cirru-editor.schema/EditOp :duplicate-expression $ decode-map-as d (List Number)
               _ $ do (eprintln "|Unknown op:" op) snapshot
           :examples $ []
           :schema $ quote $ Fn cirru-editor.schema/Store AnyEnum (-> cirru-editor.schema/Store)
@@ -703,6 +704,41 @@
           :code $ quote $ defn default-handler (snapshot op-data) snapshot
           :examples $ []
           :schema $ quote $ Fn T U (-> T) (:generics T U)
+        'edit-typed $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn edit-typed (snapshot op)
+            match op
+              (:update-token d) (tree/update-token snapshot d)
+              (:after-token d) (tree/after-token snapshot d)
+              (:fold-node d) (tree/fold-node snapshot d)
+              (:unfold-expression d) (tree/unfold-expression snapshot d)
+              (:unfold-token d) (tree/unfold-token snapshot d)
+              (:before-expression d) (tree/before-expression snapshot d)
+              (:after-expression d) (tree/after-expression snapshot d)
+              (:prepend-expression d) (tree/prepend-expression snapshot d)
+              (:append-expression d) (tree/append-expression snapshot d)
+              (:before-token d) (tree/before-token snapshot d)
+              (:remove-node d) (tree/remove-node snapshot d)
+              (:focus-to d) (.assoc snapshot :focus d)
+              (:node-up d)
+                .assoc snapshot :focus $ focus/node-up d
+              (:expression-down d)
+                .assoc snapshot :focus $ focus/expression-down (snapshot-tree snapshot) d
+              (:node-left d)
+                .assoc snapshot :focus $ focus/node-left d
+              (:node-right d)
+                .assoc snapshot :focus $ if (.empty? d) d $ focus/node-right (snapshot-tree snapshot) d
+              (:command-copy d) (command/copy snapshot d)
+              (:command-cut d) (command/cut snapshot d)
+              (:command-paste d) (command/paste snapshot d)
+              (:tree-reset d) (tree/tree-reset snapshot d)
+              (:duplicate-expression d) (tree/duplicate-expression snapshot d)
+          :examples $ []
+          :schema $ quote $ Fn cirru-editor.schema/Store cirru-editor.schema/EditOp (-> cirru-editor.schema/Store)
+        'snapshot-tree $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn snapshot-tree (snapshot)
+            cirru-editor.schema/read-node $ .unwrap-or (get snapshot :tree) ([])
+          :examples $ []
+          :schema $ quote $ Fn cirru-editor.schema/Store (-> cirru-editor.schema/CirruNode)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns cirru-editor.core
           :require (cirru-editor.modifier.tree :as tree) (cirru-editor.modifier.focus :as focus) (cirru-editor.modifier.command :as command)
@@ -821,44 +857,36 @@
     'cirru-editor.modifier.focus $ %{} 'FileEntry
       :defs $ {}
         'expression-down $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn expression-down (snapshot coord)
+          :code $ quote $ defn expression-down (tree coord)
             let
-                tree $ cirru-editor.schema/read-node $ .unwrap-or (get snapshot :tree) ([])
                 size $ match (cirru-editor.schema/node-at-path tree coord)
                   (:some node) (cirru-editor.schema/node-length node)
                   (:none) 0
-              .assoc snapshot :focus $ if (pos? size) (.append coord 0) coord
+              if (pos? size) (.append coord 0) coord
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (List Number) (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn cirru-editor.schema/CirruNode (List Number)
+            -> $ List Number
           :tests $ [] $ %{} 'TestEntry (:name |unwraps-present-expression)
-            :code $ quote $ let
-                snapshot $ {}
-                  :tree $ [] $ [] |a
-                  :focus $ []
-                  :clipboard $ []
-                  :states $ {}
-                expected $ assoc snapshot :focus $ [] 0
-              assert= expected $ expression-down snapshot $ []
-        'focus-to $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn focus-to (snapshot op-data) (.assoc snapshot :focus op-data)
-          :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (List Number) (-> cirru-editor.schema/Store)
+            :code $ quote $ assert= ([] 0)
+              expression-down
+                cirru-editor.schema/read-node $ [] $ [] |a
+                []
         'node-left $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn node-left (snapshot focus)
-            .assoc snapshot :focus $ if (.empty? focus) focus $ let
+          :code $ quote $ defn node-left (focus)
+            if (.empty? focus) focus $ let
                 position $ .unwrap-or (.last focus) 0
               .append
                 .slice focus 0 $ Option :some $ dec (.len focus)
                 if (pos? position) (dec position) position
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (List Number) (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn (List Number)
+            -> $ List Number
         'node-right $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn node-right (snapshot focus)
-            .assoc snapshot :focus $ if (.empty? focus) focus $ let
+          :code $ quote $ defn node-right (tree focus)
+            let
                 position $ .unwrap-or (.last focus) 0
                 parent-coord $ .slice focus 0 $ Option :some
                   dec $ .len focus
-                tree $ cirru-editor.schema/read-node $ .unwrap-or (get snapshot :tree) ([])
                 siblings $ match (cirru-editor.schema/node-at-path tree parent-coord)
                   (:some node) (cirru-editor.schema/node-length node)
                   (:none) 0
@@ -867,13 +895,15 @@
                 inc position
                 , position
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (List Number) (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn cirru-editor.schema/CirruNode (List Number)
+            -> $ List Number
         'node-up $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn node-up (snapshot focus)
-            .assoc snapshot :focus $ if (.empty? focus) focus $ .slice focus 0
-              Option :some $ dec $ .len focus
+          :code $ quote $ defn node-up (focus)
+            if (.empty? focus) focus $ .slice focus 0 $ Option :some
+              dec $ .len focus
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (List Number) (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn (List Number)
+            -> $ List Number
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns cirru-editor.modifier.focus
           :require $ cirru-editor.util :refer $ pos?
