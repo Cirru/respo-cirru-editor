@@ -688,7 +688,7 @@
                 edit-typed snapshot $ cirru-editor.schema/EditOp :duplicate-expression $ decode-map-as d (List Number)
               _ $ do (eprintln "|Unknown op:" op) snapshot
           :examples $ []
-          :schema $ quote $ Fn cirru-editor.schema/Store AnyEnum (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn cirru-editor.schema/Store AnyEnum (-> cirru-editor.schema/Store) (:open :decode)
           :tests $ [] $ %{} 'TestEntry (:name |named-and-legacy-token-edit)
             :code $ quote $ let
                 snapshot $ {}
@@ -758,11 +758,7 @@
               (:save d)
                 reset! *store $ decode-map-as d $ quote cirru-editor.schema/Store
               (:states cursor s)
-                reset! *store $ decode-map-as
-                  update-states @*store
-                    decode-map-as cursor $ List Dynamic
-                    , s
-                  quote cirru-editor.schema/Store
+                reset! *store $ decode-map-as (update-states @*store cursor s) (quote cirru-editor.schema/Store)
               _ @*store
             reset! *touched true
             , &unit
@@ -796,7 +792,9 @@
           :schema $ quote $ Fn (-> Unit)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
-            render! (mount-target) (comp-container @*store) dispatch!
+            render-with! (mount-target)
+              fn () $ comp-container @*store
+              , dispatch!
             if @*touched $ do (reset! *touched false) (println "|changing focus") (focus!)
             , &unit
           :examples $ []
@@ -804,7 +802,7 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns cirru-editor.main
           :require
-            respo.core :refer $ render! clear-cache! realize-ssr!
+            respo.core :refer $ render-with! clear-cache!
             respo.cursor :refer $ update-states
             cirru-editor.comp.container :refer $ comp-container
             cljs.reader :refer $ read-string
