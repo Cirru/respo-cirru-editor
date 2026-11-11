@@ -1,0 +1,122 @@
+{
+  "coverage": {
+    "cirru-editor.comp.editor/comp-editor": "partial",
+    "cirru-editor.comp.editor/handle-command": "partial",
+    "cirru-editor.comp.editor/handle-update": "partial",
+    "cirru-editor.comp.expression/comp-expression": "partial",
+    "cirru-editor.comp.expression/on-click": "partial",
+    "cirru-editor.modifier.command/copy": "partial",
+    "cirru-editor.modifier.command/cut": "partial",
+    "cirru-editor.modifier.command/paste": "partial",
+    "cirru-editor.modifier.tree/after-expression": "partial",
+    "cirru-editor.modifier.tree/after-token": "partial",
+    "cirru-editor.modifier.tree/append-expression": "partial",
+    "cirru-editor.modifier.tree/before-expression": "partial",
+    "cirru-editor.modifier.tree/before-token": "partial",
+    "cirru-editor.modifier.tree/duplicate-expression": "partial",
+    "cirru-editor.modifier.tree/fold-node": "partial",
+    "cirru-editor.modifier.tree/prepend-expression": "partial",
+    "cirru-editor.modifier.tree/remove-node": "partial",
+    "cirru-editor.modifier.tree/tree-reset": "partial",
+    "cirru-editor.modifier.tree/unfold-expression": "partial",
+    "cirru-editor.modifier.tree/unfold-token": "partial",
+    "cirru-editor.modifier.tree/update-token": "partial",
+    "cirru-editor.schema/Cursor": "partial",
+    "cirru-editor.schema/Event": "partial",
+    "cirru-editor.schema/Store": "partial",
+    "cirru-editor.schema/Style": "partial"
+  },
+  "weak": {
+    "cirru-editor.comp.expression/on-keydown": {
+      "code-nil": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.comp.token/create-number-pattern": {
+      "unsafe-coerce": 1
+    },
+    "cirru-editor.comp.token/on-keydown": {
+      "code-nil": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.modifier.command/copy": {
+      "schema-dynamic": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.modifier.command/cut": {
+      "schema-dynamic": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.modifier.command/paste": {
+      "schema-dynamic": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.modifier.tree/after-expression": {
+      "schema-dynamic": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.modifier.tree/after-token": {
+      "schema-dynamic": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.modifier.tree/append-expression": {
+      "schema-dynamic": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.modifier.tree/before-expression": {
+      "schema-dynamic": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.modifier.tree/before-token": {
+      "schema-dynamic": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.modifier.tree/duplicate-expression": {
+      "schema-dynamic": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.modifier.tree/fold-node": {
+      "schema-dynamic": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.modifier.tree/prepend-expression": {
+      "schema-dynamic": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.modifier.tree/remove-node": {
+      "schema-dynamic": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.modifier.tree/tree-reset": {
+      "schema-dynamic": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.modifier.tree/unfold-expression": {
+      "schema-dynamic": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.modifier.tree/unfold-token": {
+      "schema-dynamic": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.modifier.tree/update-token": {
+      "schema-dynamic": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.schema/Cursor": {
+      "schema-dynamic": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.schema/Event": {
+      "schema-dynamic": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.schema/Store": {
+      "schema-dynamic": 1,
+      "unresolved": 1
+    },
+    "cirru-editor.schema/Style": {
+      "schema-dynamic": 1,
+      "unresolved": 1
+    }
+  }
+}

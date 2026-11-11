@@ -70,7 +70,16 @@ jobs:
           --ns cirru-editor.util.keycode \
           --ns cirru-editor.util.measure \
           --summary-only --format json
-        calcit calcit.cirru analyze quality --baseline config/calcit-quality.cirru
+        calcit calcit.cirru fix --workflow strict --verify --format json |
+          jq -e '.data.workflow.status == "passed" and .diagnostics == []'
+        calcit calcit.cirru analyze weak-types --only coverage --coverage-level none,partial --format json |
+          jq -e --slurpfile budget config/weak-types-budget.json '
+            all(.data.definitions[]; .coverage == $budget[0].coverage[.id])'
+        calcit calcit.cirru analyze weak-types --format json |
+          jq -e --slurpfile budget config/weak-types-budget.json '
+            all(.data.definitions[]; .id as $id |
+              all(.occurrences | map(.kind) + map(select(.intent == "unresolved") | .intent) | group_by(.)[];
+                length <= ($budget[0].weak[$id][.[0]] // 0)))'
         calcit calcit.cirru test --require-match
         calcit calcit.cirru analyze weak-types --only dynamic-method --summary-only --format json | jq -e '.data.summary.findings == 0'
         calcit calcit.cirru analyze weak-types --only deprecated-call --summary-only --format json | jq -e '.data.summary.calls == 0'
