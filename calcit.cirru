@@ -21,7 +21,7 @@
                 {} $ :class-name style-container
                 comp-editor states store on-update! on-command
           :examples $ []
-          :schema $ quote $ Fn cirru-editor.schema/Store (-> respo.schema/Component)
+          :schema $ quote $ Fn cirru-editor.schema/Store (-> respo.schema/Component) (:features :state)
         'on-command $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-command (snapshot dispatch! e) (js/console.log |command e) &unit
           :examples $ []
@@ -80,6 +80,7 @@
               Fn *dispatch-op $ -> Unit
               , respo.schema/RespoEvent $ -> Unit
             -> respo.schema/Component
+            :features :state
         'handle-command $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn handle-command (on-command snapshot)
             fn (e dispatch!)
@@ -217,7 +218,7 @@
               Fn respo.schema/RespoEvent
                 Fn *dispatch-op $ -> Unit
                 -> Unit
-              , Bool Bool (-> respo.schema/Component) (:features :js-ffi)
+              , Bool Bool (-> respo.schema/Component) (:features :js-ffi :state)
         'node-kind $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn node-kind (node prev-kind)
             match node
@@ -481,7 +482,7 @@
               Fn respo.schema/RespoEvent
                 Fn HostOp $ -> Unit
                 -> Unit
-              , Bool (-> respo.schema/Component) (:generics HostOp) (:features :js-ffi)
+              , Bool (-> respo.schema/Component) (:generics HostOp) (:features :js-ffi :state)
         'create-number-pattern $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn create-number-pattern ()
             unsafe-coerce (new js/RegExp |-?[\d\.]+) cirru-editor.comp.token/RegExpHost
@@ -513,7 +514,7 @@
                 Fn HostOp $ -> Unit
                 -> Unit
               modify!
-                cirru-editor.schema/EditOp :update-token $ decode-map-as
+                cirru-editor.schema/EditOp :update-token $ assert-type
                   [] coord $ respo.core/event-value e
                   Tuple (List Number) String
                 , dispatch!
@@ -692,7 +693,7 @@
                 edit-typed snapshot $ cirru-editor.schema/EditOp :duplicate-expression $ decode-map-as d (List Number)
               _ $ do (eprintln "|Unknown op:" op) snapshot
           :examples $ []
-          :schema $ quote $ Fn cirru-editor.schema/Store AnyEnum (-> cirru-editor.schema/Store) (:open :decode)
+          :schema $ quote $ Fn cirru-editor.schema/Store AnyEnum (-> cirru-editor.schema/Store) (:features :io) (:open :decode)
           :tests $ [] $ %{} 'TestEntry (:name |named-and-legacy-token-edit)
             :code $ quote $ let
                 snapshot $ {}
@@ -767,7 +768,7 @@
             reset! *touched true
             , &unit
           :examples $ []
-          :schema $ quote $ Fn schema/DemoOp (-> Unit)
+          :schema $ quote $ Fn schema/DemoOp (-> Unit) (:features :state)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             if config/dev? $ load-console-formatter!
@@ -776,7 +777,7 @@
             add-watch! *store :changes $ fn (s p) (render-app!)
             println "|app started!"
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi :state)
         'mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn mount-target ()
             .unwrap $ respo.ffi.browser/query-selector |.app
@@ -793,7 +794,7 @@
               hud! |error build-errors
             , &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit)
+          :schema $ quote $ Fn (-> Unit) (:features :io :state)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             render-with! (mount-target)
@@ -802,7 +803,7 @@
             if @*touched $ do (reset! *touched false) (println "|changing focus") (focus!)
             , &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit)
+          :schema $ quote $ Fn (-> Unit) (:features :io :state)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns cirru-editor.main
           :require
@@ -1329,7 +1330,7 @@
             , &unit
           :examples $ []
           :ffi $ {} (:backend :js) (:target :browser)
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns cirru-editor.util.dom
     'cirru-editor.util.keycode $ %{} 'FileEntry
@@ -1417,6 +1418,6 @@
               (:none)
                 + 4 $ * (.len content) 9
           :examples $ []
-          :schema $ quote $ Fn String Number String (-> Number) (:features :js-ffi)
+          :schema $ quote $ Fn String Number String (-> Number) (:features :js-ffi :state)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns cirru-editor.util.measure
