@@ -822,11 +822,11 @@
             let
                 tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
                 selected $ cirru-editor.schema/node-at-path tree op-data
-              .assoc snapshot :clipboard $ match selected
+              assoc snapshot :clipboard $ match selected
                 (:some node) node
                 (:none) ([])
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (List Number) (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn (Map Tag V) (List Number) (-> cirru-editor.schema/Store) (:generics V)
           :tests $ [] $ %{} 'TestEntry (:name |unwraps-expression-for-clipboard)
             :code $ quote $ let
                 snapshot $ {}
@@ -841,18 +841,18 @@
             let
                 tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
                 clipboard $ .unwrap-or (cirru-editor.schema/node-at-path tree coord) ([])
-              cirru-editor.modifier.tree/remove-node (.assoc snapshot :clipboard clipboard)
+              cirru-editor.modifier.tree/remove-node (assoc snapshot :clipboard clipboard)
                 if (.empty? coord) ([] 0) coord
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (List Number) (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn (Map Tag V) (List Number) (-> cirru-editor.schema/Store) (:generics V)
         'paste $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn paste (snapshot coord)
             let
                 tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
                 clipboard $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :clipboard) ([])
-              .assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree coord clipboard
+              assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree coord clipboard
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (List Number) (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn (Map Tag V) (List Number) (-> cirru-editor.schema/Store) (:generics V)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns cirru-editor.modifier.command
           :require $ cirru-editor.util :refer $ zero?
