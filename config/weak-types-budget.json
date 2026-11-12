@@ -21,7 +21,6 @@
     "cirru-editor.modifier.tree/unfold-expression": "partial",
     "cirru-editor.modifier.tree/unfold-token": "partial",
     "cirru-editor.modifier.tree/update-token": "partial",
-    "cirru-editor.schema/Cursor": "partial",
     "cirru-editor.schema/Event": "partial",
     "cirru-editor.schema/Store": "partial",
     "cirru-editor.schema/Style": "partial"
@@ -99,10 +98,6 @@
       "unresolved": 1
     },
     "cirru-editor.modifier.tree/update-token": {
-      "schema-dynamic": 1,
-      "unresolved": 1
-    },
-    "cirru-editor.schema/Cursor": {
       "schema-dynamic": 1,
       "unresolved": 1
     },
