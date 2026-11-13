@@ -1024,11 +1024,22 @@
             let
                 tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
                 node $ .unwrap-or (cirru-editor.schema/node-at-path tree coord) ([])
-              -> snapshot
-                .assoc :tree $ cirru-editor.schema/replace-node-at-path tree coord $ [] node
-                .assoc :focus $ .append coord 0
+              merge snapshot $ {}
+                :tree $ cirru-editor.schema/replace-node-at-path tree coord $ [] node
+                :focus $ .append coord 0
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (List Number) (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn (Map Tag V) (List Number) (-> cirru-editor.schema/Store) (:generics V)
+          :tests $ [] $ %{} 'TestEntry (:name |preserves-snapshot-fields)
+            :code $ quote $ let
+                before $ {}
+                  :tree $ [] |a
+                  :focus $ [] 0
+                  :metadata false
+                after $ fold-node before $ [] 0
+              assert= after $ {}
+                :tree $ [] $ [] |a
+                :focus $ [] 0 0
+                :metadata false
         'prepend-expression $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn prepend-expression (snapshot coord)
             let
