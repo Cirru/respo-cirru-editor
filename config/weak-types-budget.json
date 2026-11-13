@@ -73,10 +73,6 @@
       "schema-dynamic": 1,
       "unresolved": 1
     },
-    "cirru-editor.modifier.tree/fold-node": {
-      "schema-dynamic": 1,
-      "unresolved": 1
-    },
     "cirru-editor.modifier.tree/prepend-expression": {
       "schema-dynamic": 1,
       "unresolved": 1
