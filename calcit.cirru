@@ -1074,10 +1074,9 @@
           :schema $ quote $ Fn (Map Tag Dynamic) (List Number) (-> cirru-editor.schema/Store)
         'tree-reset $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn tree-reset (snapshot tree)
-            -> snapshot (.assoc :tree tree)
-              .assoc :focus $ []
+            assoc (assoc snapshot :tree tree) :focus $ []
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) cirru-editor.schema/CirruNode (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn (Map Tag V) cirru-editor.schema/CirruNode (-> cirru-editor.schema/Store) (:generics V)
         'unfold-expression $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn unfold-expression (snapshot coord)
             if (.empty? coord) snapshot $ let
@@ -1122,11 +1121,12 @@
           :code $ quote $ defn update-token (snapshot op-data)
             let[] (coord new-token) op-data $ let
                 tree $ cirru-editor.schema/read-snapshot-node snapshot :tree
-              .assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree coord new-token
+              assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree coord new-token
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic)
+          :schema $ quote $ Fn (Map Tag V)
             Tuple (List Number) String
             -> cirru-editor.schema/Store
+            :generics V
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns cirru-editor.modifier.tree
           :require $ cirru-editor.util :refer $ zero? pos? subvec cons
