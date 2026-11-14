@@ -742,8 +742,7 @@
           :examples $ []
           :schema $ quote $ Fn cirru-editor.schema/Store cirru-editor.schema/EditOp (-> cirru-editor.schema/Store)
         'snapshot-tree $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn snapshot-tree (snapshot)
-            cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
+          :code $ quote $ defn snapshot-tree (snapshot) (cirru-editor.schema/read-snapshot-node snapshot :tree)
           :examples $ []
           :schema $ quote $ Fn cirru-editor.schema/Store (-> cirru-editor.schema/CirruNode)
       :ns $ %{} 'NsEntry (:doc |)
@@ -823,7 +822,7 @@
         'copy $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn copy (snapshot op-data)
             let
-                tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
+                tree $ cirru-editor.schema/read-snapshot-node snapshot :tree
                 selected $ cirru-editor.schema/node-at-path tree op-data
               assoc snapshot :clipboard $ match selected
                 (:some node) node
@@ -842,7 +841,7 @@
         'cut $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn cut (snapshot coord)
             let
-                tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
+                tree $ cirru-editor.schema/read-snapshot-node snapshot :tree
                 clipboard $ .unwrap-or (cirru-editor.schema/node-at-path tree coord) ([])
               cirru-editor.modifier.tree/remove-node (assoc snapshot :clipboard clipboard)
                 if (.empty? coord) ([] 0) coord
@@ -851,8 +850,8 @@
         'paste $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn paste (snapshot coord)
             let
-                tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
-                clipboard $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :clipboard) ([])
+                tree $ cirru-editor.schema/read-snapshot-node snapshot :tree
+                clipboard $ cirru-editor.schema/read-snapshot-node snapshot :clipboard
               assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree coord clipboard
           :examples $ []
           :schema $ quote $ Fn (Map Tag V) (List Number) (-> cirru-editor.schema/Store) (:generics V)
@@ -918,21 +917,21 @@
           :code $ quote $ defn after-expression (snapshot coord)
             if (.empty? coord)
               let
-                  tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
+                  tree $ cirru-editor.schema/read-snapshot-node snapshot :tree
                 if
                   = tree $ []
-                  .assoc
-                    .assoc snapshot :tree $ [] |
+                  assoc
+                    assoc snapshot :tree $ [] |
                     , :focus $ [] 0
                   , snapshot
               let
-                  tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
+                  tree $ cirru-editor.schema/read-snapshot-node snapshot :tree
                   parent-coord $ .slice coord 0 $ Some
                     dec $ .len coord
                   position $ .unwrap-or (.last coord) 0
                   siblings $ cirru-editor.schema/node-children $ .unwrap-or (cirru-editor.schema/node-at-path tree parent-coord) ([])
-                .assoc
-                  .assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree parent-coord $ concat
+                assoc
+                  assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree parent-coord $ concat
                     .slice siblings 0 $ Some $ inc position
                     [] $ [] |
                     .slice siblings (inc position) None
@@ -940,91 +939,91 @@
                     .append parent-coord $ inc position
                     , 0
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (List Number) (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn (Map Tag V) (List Number) (-> cirru-editor.schema/Store) (:generics V)
         'after-token $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn after-token (snapshot coord)
             if (.empty? coord)
               let
-                  tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
+                  tree $ cirru-editor.schema/read-snapshot-node snapshot :tree
                 if
                   = tree $ []
-                  .assoc
-                    .assoc snapshot :tree $ [] |
+                  assoc
+                    assoc snapshot :tree $ [] |
                     , :focus $ [] 0
                   , snapshot
               let
-                  tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
+                  tree $ cirru-editor.schema/read-snapshot-node snapshot :tree
                   parent-coord $ .slice coord 0 $ Some
                     dec $ .len coord
                   position $ .unwrap-or (.last coord) 0
                   siblings $ cirru-editor.schema/node-children $ .unwrap-or (cirru-editor.schema/node-at-path tree parent-coord) ([])
-                .assoc
-                  .assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree parent-coord $ concat
+                assoc
+                  assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree parent-coord $ concat
                     .slice siblings 0 $ Some $ inc position
                     [] |
                     .slice siblings (inc position) None
                   , :focus $ .append parent-coord $ inc position
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (List Number) (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn (Map Tag V) (List Number) (-> cirru-editor.schema/Store) (:generics V)
         'append-expression $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn append-expression (snapshot coord)
             let
-                tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
+                tree $ cirru-editor.schema/read-snapshot-node snapshot :tree
                 children $ cirru-editor.schema/node-children $ .unwrap-or (cirru-editor.schema/node-at-path tree coord) ([])
               -> snapshot
-                .assoc :tree $ cirru-editor.schema/replace-node-at-path tree coord $ .append children |
-                .assoc :focus $ .append coord $ .len children
+                assoc :tree $ cirru-editor.schema/replace-node-at-path tree coord $ .append children |
+                assoc :focus $ .append coord $ .len children
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (List Number) (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn (Map Tag V) (List Number) (-> cirru-editor.schema/Store) (:generics V)
         'before-expression $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn before-expression (snapshot coord)
             if (.empty? coord) snapshot $ let
-                tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
+                tree $ cirru-editor.schema/read-snapshot-node snapshot :tree
                 parent-coord $ .slice coord 0 $ Some
                   dec $ .len coord
                 position $ .unwrap-or (.last coord) 0
                 siblings $ cirru-editor.schema/node-children $ .unwrap-or (cirru-editor.schema/node-at-path tree parent-coord) ([])
-              .assoc
-                .assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree parent-coord $ concat
+              assoc
+                assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree parent-coord $ concat
                   .slice siblings 0 $ Some position
                   [] $ [] |
                   .slice siblings position None
                 , :focus $ .append coord 0
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (List Number) (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn (Map Tag V) (List Number) (-> cirru-editor.schema/Store) (:generics V)
         'before-token $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn before-token (snapshot coord)
             if (.empty? coord) snapshot $ let
-                tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
+                tree $ cirru-editor.schema/read-snapshot-node snapshot :tree
                 parent-coord $ .slice coord 0 $ Some
                   dec $ .len coord
                 position $ .unwrap-or (.last coord) 0
                 siblings $ cirru-editor.schema/node-children $ .unwrap-or (cirru-editor.schema/node-at-path tree parent-coord) ([])
-              .assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree parent-coord $ concat
+              assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree parent-coord $ concat
                 .slice siblings 0 $ Some position
                 [] |
                 .slice siblings position None
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (List Number) (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn (Map Tag V) (List Number) (-> cirru-editor.schema/Store) (:generics V)
         'duplicate-expression $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn duplicate-expression (snapshot coord)
             if (.empty? coord) snapshot $ let
-                tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
+                tree $ cirru-editor.schema/read-snapshot-node snapshot :tree
                 parent-coord $ .slice coord 0 $ Some
                   dec $ .len coord
                 position $ .unwrap-or (.last coord) 0
                 siblings $ cirru-editor.schema/node-children $ .unwrap-or (cirru-editor.schema/node-at-path tree parent-coord) ([])
-              .assoc
-                .assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree parent-coord $ concat
+              assoc
+                assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree parent-coord $ concat
                   .slice siblings 0 $ Some $ inc position
                   .slice siblings position None
                 , :focus $ .append parent-coord $ inc position
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (List Number) (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn (Map Tag V) (List Number) (-> cirru-editor.schema/Store) (:generics V)
         'fold-node $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn fold-node (snapshot coord)
             let
-                tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
+                tree $ cirru-editor.schema/read-snapshot-node snapshot :tree
                 node $ .unwrap-or (cirru-editor.schema/node-at-path tree coord) ([])
               merge snapshot $ {}
                 :tree $ cirru-editor.schema/replace-node-at-path tree coord $ [] node
@@ -1045,23 +1044,23 @@
         'prepend-expression $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn prepend-expression (snapshot coord)
             let
-                tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
+                tree $ cirru-editor.schema/read-snapshot-node snapshot :tree
                 children $ cirru-editor.schema/node-children $ .unwrap-or (cirru-editor.schema/node-at-path tree coord) ([])
               -> snapshot
-                .assoc :tree $ cirru-editor.schema/replace-node-at-path tree coord $ .prepend children |
-                .assoc :focus $ .append coord 0
+                assoc :tree $ cirru-editor.schema/replace-node-at-path tree coord $ .prepend children |
+                assoc :focus $ .append coord 0
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (List Number) (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn (Map Tag V) (List Number) (-> cirru-editor.schema/Store) (:generics V)
         'remove-node $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn remove-node (snapshot coord)
             if (.empty? coord) snapshot $ let
-                tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
+                tree $ cirru-editor.schema/read-snapshot-node snapshot :tree
                 parent-coord $ .slice coord 0 $ Some
                   dec $ .len coord
                 position $ .unwrap-or (.last coord) 0
                 siblings $ cirru-editor.schema/node-children $ .unwrap-or (cirru-editor.schema/node-at-path tree parent-coord) ([])
-              .assoc
-                .assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree parent-coord $ cond
+              assoc
+                assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree parent-coord $ cond
                     = 1 $ .len siblings
                     []
                   (zero? position) (.rest siblings)
@@ -1072,17 +1071,16 @@
                     .slice siblings (inc position) None
                 , :focus $ if (zero? position) parent-coord $ .append parent-coord (dec position)
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (List Number) (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn (Map Tag V) (List Number) (-> cirru-editor.schema/Store) (:generics V)
         'tree-reset $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn tree-reset (snapshot tree)
-            -> snapshot (.assoc :tree tree)
-              .assoc :focus $ []
+            assoc (assoc snapshot :tree tree) :focus $ []
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) cirru-editor.schema/CirruNode (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn (Map Tag V) cirru-editor.schema/CirruNode (-> cirru-editor.schema/Store) (:generics V)
         'unfold-expression $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn unfold-expression (snapshot coord)
             if (.empty? coord) snapshot $ let
-                tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
+                tree $ cirru-editor.schema/read-snapshot-node snapshot :tree
                 parent-coord $ .slice coord 0 $ Some
                   dec $ .len coord
                 position $ .unwrap-or (.last coord) 0
@@ -1090,22 +1088,22 @@
                 expression $ cirru-editor.schema/node-children $ .unwrap-or (cirru-editor.schema/node-at-path tree coord) ([])
               if
                 > (.len coord) 1
-                .assoc
-                  .assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree parent-coord $ concat
+                assoc
+                  assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree parent-coord $ concat
                     .slice siblings 0 $ Some position
                     , expression
                       .slice siblings (inc position) None
                   , :focus parent-coord
-                .assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree parent-coord $ concat
+                assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree parent-coord $ concat
                   .slice siblings 0 $ Some position
                   , expression
                     .slice siblings (inc position) None
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (List Number) (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn (Map Tag V) (List Number) (-> cirru-editor.schema/Store) (:generics V)
         'unfold-token $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn unfold-token (snapshot coord)
             if (.empty? coord) snapshot $ let
-                tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
+                tree $ cirru-editor.schema/read-snapshot-node snapshot :tree
                 parent-coord $ .slice coord 0 $ Some
                   dec $ .len coord
                 parent $ .unwrap-or (cirru-editor.schema/node-at-path tree parent-coord) ([])
@@ -1113,21 +1111,22 @@
                 = 1 $ cirru-editor.schema/node-length parent
                 let
                     siblings $ cirru-editor.schema/node-children parent
-                  .assoc
-                    .assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree parent-coord $ .unwrap-or (.first siblings) |
+                  assoc
+                    assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree parent-coord $ .unwrap-or (.first siblings) |
                     , :focus parent-coord
                 , snapshot
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (List Number) (-> cirru-editor.schema/Store)
+          :schema $ quote $ Fn (Map Tag V) (List Number) (-> cirru-editor.schema/Store) (:generics V)
         'update-token $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn update-token (snapshot op-data)
             let[] (coord new-token) op-data $ let
-                tree $ cirru-editor.schema/read-node $ .unwrap-or (cirru-editor.schema/map-field snapshot :tree) ([])
-              .assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree coord new-token
+                tree $ cirru-editor.schema/read-snapshot-node snapshot :tree
+              assoc snapshot :tree $ cirru-editor.schema/replace-node-at-path tree coord new-token
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic)
+          :schema $ quote $ Fn (Map Tag V)
             Tuple (List Number) String
             -> cirru-editor.schema/Store
+            :generics V
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns cirru-editor.modifier.tree
           :require $ cirru-editor.util :refer $ zero? pos? subvec cons
@@ -1240,6 +1239,13 @@
             decode-map-as raw $ quote cirru-editor.schema/CirruNode
           :examples $ []
           :schema $ quote $ Fn T (-> CirruNode) (:generics T)
+        'read-snapshot-node $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn read-snapshot-node (snapshot key)
+            match (map-field snapshot key)
+              (:some raw) (read-node raw)
+              (:none) ([])
+          :examples $ []
+          :schema $ quote $ Fn (Map Tag V) Tag (-> CirruNode) (:generics V)
         'replace-node-at-path $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn replace-node-at-path (node coord replacement)
             if (.empty? coord) replacement $ match node
