@@ -329,7 +329,7 @@
                     modify! (cirru-editor.schema/EditOp :command-paste coord) dispatch!
                   (and command? shift? (= code keycode/key-f))
                     toggle-fold! e dispatch!
-                  true $ if command? (on-command e dispatch!) nil
+                  true $ when command? $ on-command e dispatch!
               , &unit
           :examples $ []
           :schema $ quote $ Fn
@@ -585,7 +585,7 @@
                   (and shift? command? (= code keycode/key-v))
                     do (.prevent-default! event)
                       modify! (cirru-editor.schema/EditOp :command-paste coord) dispatch!
-                  true $ if command? (on-command e dispatch!) nil
+                  true $ when command? $ on-command e dispatch!
               , &unit
           :examples $ []
           :schema $ quote $ Fn
