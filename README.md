@@ -8,9 +8,11 @@ Support several basic shortcuts from [Clacit Editor](https://github.com/Cirru/ca
 
 ### 0.7 迁移说明
 
-当前源码需要 Calcit / `@calcit/procs` 0.42.1，配套 Respo 0.19.5 和 JS-FFI 0.2.13。宿主可继续通过 `cirru-edit` 传入匿名 Enum 命令，编辑器内部使用具名 `EditOp`。公开 `Cursor` 类型使用 Respo 的 `CoordKey`，支持 Tag、String 和 Number。宿主的 dispatch 回调使用当前入口 `:dispatch-op` 绑定的操作类型。嵌入组件时用 `calcit config set-type-slot :dispatch-op app.schema/Op` 绑定宿主操作，并提供编辑器折叠所需的 `:states` 操作。事件回调使用 `respo.schema/RespoEvent`，不再把事件当 Map 读取；输入值和键盘信息可通过 `respo.core/event-value`、`respo.core/keyboard-info` 获取。
+当前源码需要 Calcit / `@calcit/procs` 0.43.0，配套 Respo 0.19.11 和 JS-FFI 0.2.18。宿主可继续通过 `cirru-edit` 传入匿名 Enum 命令，编辑器内部使用具名 `EditOp`。公开 `Cursor` 类型使用 Respo 的 `CoordKey`，支持 Tag、String 和 Number。宿主的 dispatch 回调使用当前入口 `:dispatch-op` 绑定的操作类型。嵌入组件时用 `calcit config set-type-slot :dispatch-op app.schema/Op` 绑定宿主操作，并提供编辑器折叠所需的 `:states` 操作。事件回调使用 `respo.schema/RespoEvent`，不再把事件当 Map 读取；输入值和键盘信息可通过 `respo.core/event-value`、`respo.core/keyboard-info` 获取。
 
 编辑数据仍是含 `:tree`、`:focus`、`:clipboard` 的 Map，额外字段会保留。视图产生的具名命令直接进入编辑分发，公开 `cirru-edit` 在入口检查旧匿名命令。焦点计算只读取具名树和数字坐标。树节点采用递归 union `CirruNode = String | List<CirruNode>`，路径是 `List<Number>`；传入编辑命令的数据会在使用处检查，非法节点或 payload 会报错。编辑器视图的根树仍需为表达式 List。
+
+`comp-editor` 的更新和命令回调允许 `:io` / `:js-ffi` 效果，以支持宿主调用 `focus!`；使用组件的函数需按其实际调用链声明相应效果。
 
 本次保留匿名 Enum 命令协议、内部剪贴板和页面 `hud!` 报错展示，更新了旧 Ref、循环、匹配及 List/Option 写法，使用 Respo 已有的 `keyed->`/`ChildPair` 渲染子节点。输入框末尾导航按浏览器 UTF-16 选区计算，修复含 emoji 的 token 无法用右箭头离开的问题。
 

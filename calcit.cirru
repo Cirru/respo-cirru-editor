@@ -21,7 +21,7 @@
                 {} $ :class-name style-container
                 comp-editor states store on-update! on-command
           :examples $ []
-          :schema $ quote $ Fn cirru-editor.schema/Store (-> respo.schema/Component) (:features :state)
+          :schema $ quote $ Fn cirru-editor.schema/Store (-> respo.schema/Component) (:features :io :state)
         'on-command $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-command (snapshot dispatch! e) (js/console.log |command e) &unit
           :examples $ []
@@ -76,11 +76,12 @@
             Fn cirru-editor.schema/Store
               Fn *dispatch-op $ -> Unit
               -> Unit
+              :features :io :js-ffi
             Fn cirru-editor.schema/Store
               Fn *dispatch-op $ -> Unit
-              , respo.schema/RespoEvent $ -> Unit
+              , respo.schema/RespoEvent (-> Unit) (:features :io :js-ffi)
             -> respo.schema/Component
-            :features :state
+            :features :io :state
         'handle-command $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn handle-command (on-command snapshot)
             fn (e dispatch!)
@@ -93,11 +94,13 @@
           :schema $ quote $ Fn
             Fn cirru-editor.schema/Store
               Fn *dispatch-op $ -> Unit
-              , respo.schema/RespoEvent $ -> Unit
+              , respo.schema/RespoEvent (-> Unit) (:features :io :js-ffi)
             , cirru-editor.schema/Store
               -> $ Fn respo.schema/RespoEvent
                 Fn *dispatch-op $ -> Unit
                 -> Unit
+                :features :io :js-ffi
+              :features :io
         'handle-update $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn handle-update (snapshot on-update!)
             fn (op dispatch!)
@@ -111,9 +114,12 @@
             Fn cirru-editor.schema/Store
               Fn *dispatch-op $ -> Unit
               -> Unit
+              :features :io :js-ffi
             -> $ Fn cirru-editor.schema/EditOp
               Fn *dispatch-op $ -> Unit
               -> Unit
+              :features :io :js-ffi
+            :features :io
         'style-box $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-box
             {} $ |& $ {} (:flex 1) (:overflow-y |auto) (:padding "|100px 0 200px 0")
@@ -213,12 +219,14 @@
             Fn cirru-editor.schema/EditOp
               Fn *dispatch-op $ -> Unit
               -> Unit
+              :features :io :js-ffi
             List Number
             , Number Bool (List Number)
               Fn respo.schema/RespoEvent
                 Fn *dispatch-op $ -> Unit
                 -> Unit
-              , Bool Bool (-> respo.schema/Component) (:features :js-ffi :state)
+                :features :io :js-ffi
+              , Bool Bool (-> respo.schema/Component) (:features :io :js-ffi :state)
         'node-kind $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn node-kind (node prev-kind)
             match node
@@ -266,10 +274,13 @@
             Fn cirru-editor.schema/EditOp
               Fn *dispatch-op $ -> Unit
               -> Unit
+              :features :io :js-ffi
             , cirru-editor.schema/Coord cirru-editor.schema/Coord
               -> $ Fn respo.schema/RespoEvent
                 Fn *dispatch-op $ -> Unit
                 -> Unit
+                :features :io :js-ffi
+              :features :io
         'on-keydown $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-keydown (modify! coord on-command toggle-fold!)
             fn (e dispatch!)
@@ -336,18 +347,21 @@
             Fn cirru-editor.schema/EditOp
               Fn HostOp $ -> Unit
               -> Unit
+              :features :io :js-ffi
             , cirru-editor.schema/Coord
               Fn respo.schema/RespoEvent
                 Fn HostOp $ -> Unit
                 -> Unit
+                :features :io :js-ffi
               Fn respo.schema/RespoEvent
                 Fn HostOp $ -> Unit
                 -> Unit
               -> $ Fn respo.schema/RespoEvent
                 Fn HostOp $ -> Unit
                 -> Unit
+                :features :io :js-ffi
               :generics HostOp
-              :features :js-ffi
+              :features :io :js-ffi
         'on-mousedown $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-mousedown (e d!)
             let
@@ -478,11 +492,13 @@
             Fn cirru-editor.schema/EditOp
               Fn HostOp $ -> Unit
               -> Unit
+              :features :io :js-ffi
             , cirru-editor.schema/Coord cirru-editor.schema/Coord
               Fn respo.schema/RespoEvent
                 Fn HostOp $ -> Unit
                 -> Unit
-              , Bool (-> respo.schema/Component) (:generics HostOp) (:features :js-ffi :state)
+                :features :io :js-ffi
+              , Bool (-> respo.schema/Component) (:generics HostOp) (:features :io :js-ffi :state)
         'create-number-pattern $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn create-number-pattern ()
             unsafe-coerce (new js/RegExp |-?[\d\.]+) cirru-editor.comp.token/RegExpHost
@@ -502,11 +518,14 @@
             Fn cirru-editor.schema/EditOp
               Fn HostOp $ -> Unit
               -> Unit
+              :features :io :js-ffi
             , cirru-editor.schema/Coord cirru-editor.schema/Coord
               -> $ Fn respo.schema/RespoEvent
                 Fn HostOp $ -> Unit
                 -> Unit
+                :features :io :js-ffi
               :generics HostOp
+              :features :io
         'on-input $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-input (modify! coord)
             fn (e dispatch!)
@@ -524,11 +543,14 @@
             Fn cirru-editor.schema/EditOp
               Fn HostOp $ -> Unit
               -> Unit
+              :features :io :js-ffi
             , cirru-editor.schema/Coord
               -> $ Fn respo.schema/RespoEvent
                 Fn HostOp $ -> Unit
                 -> Unit
+                :features :io :js-ffi
               :generics HostOp
+              :features :io
         'on-keydown $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-keydown (modify! coord token on-command)
             fn (e dispatch!)
@@ -592,15 +614,18 @@
             Fn cirru-editor.schema/EditOp
               Fn HostOp $ -> Unit
               -> Unit
+              :features :io :js-ffi
             , cirru-editor.schema/Coord String
               Fn respo.schema/RespoEvent
                 Fn HostOp $ -> Unit
                 -> Unit
+                :features :io :js-ffi
               -> $ Fn respo.schema/RespoEvent
                 Fn HostOp $ -> Unit
                 -> Unit
+                :features :io :js-ffi
               :generics HostOp
-              :features :js-ffi
+              :features :io :js-ffi
         'pattern-number $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def pattern-number (create-number-pattern)
           :examples $ []
