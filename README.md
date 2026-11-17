@@ -12,6 +12,8 @@ Support several basic shortcuts from [Clacit Editor](https://github.com/Cirru/ca
 
 编辑数据仍是含 `:tree`、`:focus`、`:clipboard` 的 Map，额外字段会保留。视图产生的具名命令直接进入编辑分发，公开 `cirru-edit` 在入口检查旧匿名命令。焦点计算只读取具名树和数字坐标。树节点采用递归 union `CirruNode = String | List<CirruNode>`，路径是 `List<Number>`；传入编辑命令的数据会在使用处检查，非法节点或 payload 会报错。编辑器视图的根树仍需为表达式 List。
 
+`comp-editor` 的更新和命令回调允许 `:io` / `:js-ffi` 效果，以支持宿主调用 `focus!`；使用组件的函数需按其实际调用链声明相应效果。
+
 本次保留匿名 Enum 命令协议、内部剪贴板和页面 `hud!` 报错展示，更新了旧 Ref、循环、匹配及 List/Option 写法，使用 Respo 已有的 `keyed->`/`ChildPair` 渲染子节点。输入框末尾导航按浏览器 UTF-16 选区计算，修复含 emoji 的 token 无法用右箭头离开的问题。
 
 Demo 的 COS 预览和生产部署路径沿用原配置；上传校验由 COS action 自身执行。
