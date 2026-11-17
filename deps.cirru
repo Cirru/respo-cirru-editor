@@ -1,5 +1,5 @@
 
-{} (:calcit-version |0.42.1)
-  :version |0.7.2
-  :dependencies $ {} (|Respo/respo.calcit |0.19.5)
-    |calcit-lang/js-ffi |0.2.13
+{} (:calcit-version |0.43.0)
+  :version |0.7.3
+  :dependencies $ {} (|Respo/respo.calcit |0.19.10)
+    |calcit-lang/js-ffi |0.2.18
